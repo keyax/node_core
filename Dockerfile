@@ -17,8 +17,11 @@ RUN set -ex \
     B9AE9905FFD7803F25714661B63B535A4C206CA9 \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
   ; do \
-    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-  done
+    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" \
+#    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
+#         apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
+#         apt-key adv --recv-key --keyserver keyserver.pgp.com $key
+  ; done
 
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 7.4.0
