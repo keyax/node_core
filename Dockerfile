@@ -1,5 +1,7 @@
 FROM keyax/ubuntu_core:latest
 
+MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
+
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
