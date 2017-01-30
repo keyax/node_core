@@ -1,0 +1,24 @@
+{
+  "name": "kyx",
+  "version": "1.0.0",
+  "description": "kyx app nodejs ubuntu core",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keyax/node_core.git"
+  },
+  "keywords": [
+    "keyax",
+    "multilingual",
+    "clusters"
+  ],
+  "author": "yones lebady",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keyax/node_core/issues"
+  },
+  "homepage": "https://github.com/keyax/node_core#readme"
+}
