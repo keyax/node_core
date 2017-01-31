@@ -1,4 +1,4 @@
-FROM keyax/ubuntu_core:latest
+FROM buildpack-deps:jessie
 
 MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
@@ -6,8 +6,8 @@ RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node
-# RUN set -ex
-RUN for key in \
+RUN set -ex \
+  && for key in \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
     B9AE9905FFD7803F25714661B63B535A4C206CA9 \
     71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
