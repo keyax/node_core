@@ -14,9 +14,9 @@ RUN set -ex \
     0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93 \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
     DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-    9554F04D7259F04124DE6B476D5A82AC7E37093B \
-    FD3A5288F042B6850C66B31F09FE44734EB7990E \
-  ;  do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" ; done
+#    9554F04D7259F04124DE6B476D5A82AC7E37093B \
+#    FD3A5288F042B6850C66B31F09FE44734EB7990E \
+  ;  do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done
 #    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
 #    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
