@@ -36,6 +36,6 @@ RUN ["/bin/bash", "-c", "gpg --decrypt --output SHASUMS256.txt SHASUMS256.txt.as
 RUN ["/bin/bash", "-c", "grep \\ node-v$NODE_VERSION-linux-x64.tar.xz\\$ SHASUMS256.txt | sha256sum -c -"]
 RUN ["/bin/bash", "-c", "tar -xJf node-v$NODE_VERSION-linux-x64.tar.xz -C /usr/local --strip-components=1; \
   rm node-v$NODE_VERSION-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt; \
-  ln -s /usr/local/bin/node /usr/local/bin/nodejs']
+  ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 
 CMD [ "node" ]
