@@ -4,7 +4,7 @@ MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
-
+# RUN apt-get update && apt-get install dirmngr
 # gpg keys listed at https://github.com/nodejs/node
 RUN set -ex \
   gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
@@ -28,7 +28,7 @@ RUN set -ex \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 6.9.3
+ENV NODE_VERSION 7.4.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
