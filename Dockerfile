@@ -17,10 +17,10 @@ RUN set -ex \
 #    9554F04D7259F04124DE6B476D5A82AC7E37093B \
 #    FD3A5288F042B6850C66B31F09FE44734EB7990E \
     ; do \
-#    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" \
-    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
-    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
-    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
+    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" \
+#    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
+#    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
+#    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
     ; done
 
 ENV NPM_CONFIG_LOGLEVEL info
