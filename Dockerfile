@@ -6,7 +6,7 @@ RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 # RUN apt-get update && apt-get install dirmngr
 # gpg keys listed at https://github.com/nodejs/node
-CMD ["/bin/bash", "set -ex \
+CMD ["/bin/bash", "-c", "set -ex \
   && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
   && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys B9AE9905FFD7803F25714661B63B535A4C206CA9 \
   && gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
