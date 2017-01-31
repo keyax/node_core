@@ -6,7 +6,7 @@ RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node
-RUN /bin/bash set -ex \
+RUN /bin/bash set -e \
   && for key in \
     94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
     B9AE9905FFD7803F25714661B63B535A4C206CA9 \
@@ -15,8 +15,8 @@ RUN /bin/bash set -ex \
     C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
     DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
     9554F04D7259F04124DE6B476D5A82AC7E37093B \
-    FD3A5288F042B6850C66B31F09FE44734EB7990E ;\
-    do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done
+    FD3A5288F042B6850C66B31F09FE44734EB7990E \
+  ;  do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done
 #    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
 #    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
