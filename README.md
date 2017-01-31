@@ -7,6 +7,8 @@ See: http://nodejs.org
 
 Usage
 
+[![](https://images.microbadger.com/badges/image/keyax/node_core.svg)](https://microbadger.com/images/keyax/node_core "Get your own image badge on microbadger.com")  [![](https://images.microbadger.com/badges/version/keyax/node_core.svg)](https://microbadger.com/images/keyax/node_core "Get your own version badge on microbadger.com")
+
 How to use this image
 
 Create a Dockerfile in your Node.js app project
