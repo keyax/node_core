@@ -13,6 +13,7 @@ RUN ["/bin/bash", "-c",  "set -ex; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys DD8F2338BAE7501E3DD5AC78C273792F7D83545D"]
+
 #  &&   for key in \
 #    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
 #    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
@@ -37,25 +38,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-
-# RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz"
-# RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc"
-# RUN gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc
-# RUN grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c -
-# RUN tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1
-# RUN rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc" SHASUMS256.txt
-# RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-
-
-# RUN curl -SLO https://nodejs.org/dist/v"$NODE_VERSION"/node-v"$NODE_VERSION"-linux-x64.tar.xz \
-#  && curl -SLO https://nodejs.org/dist/v"$NODE_VERSION"/SHASUMS256.txt.asc \
-#  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-#  && grep \\ node-v"$NODE_VERSION"-linux-x64.tar.xz\\$ SHASUMS256.txt | sha256sum -c - \
-#  && tar -xJf node-v"$NODE_VERSION"-linux-x64.tar.xz -C /usr/local --strip-components=1 \
-#  && rm node-v"$NODE_VERSION"-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt \
-#  && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 # RUN ["/bin/bash", "-c", "curl -SLO https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz; \
 #   curl -SLO https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc; \
