@@ -1,11 +1,11 @@
 # Ubuntu Core Yaketty 16.10 for Docker images bases
-What is Node.js?
+What is Node.js  ?
 
 Node.js is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
 
 See: http://nodejs.org
 
-Usage
+Usage of this image
 
 [![](https://images.microbadger.com/badges/image/keyax/node_core.svg)](https://microbadger.com/images/keyax/node_core "Get your own image badge on microbadger.com")  [![](https://images.microbadger.com/badges/version/keyax/node_core.svg)](https://microbadger.com/images/keyax/node_core "Get your own version badge on microbadger.com")
 
