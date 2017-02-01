@@ -12,7 +12,7 @@ RUN ["/bin/bash", "-c",  "set -ex; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8; \
-  gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys DD8F2338BAE7501E3DD5AC78C273792F7D83545D" ]
+  gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys DD8F2338BAE7501E3DD5AC78C273792F7D83545D"]
 #  &&   for key in \
 #    94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
 #    B9AE9905FFD7803F25714661B63B535A4C206CA9 \
