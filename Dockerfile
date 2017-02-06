@@ -48,10 +48,12 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 
 RUN npm install pm2 -g --no-optional \
+  && npm install express -g \
   && npm install http -g \
   && npm install https -g \
   && npm install jquery -g \
   && npm install mongodb -g \
   && npm install mongoose -g
 
-CMD [ "node" ]
+EXPOSE 8080
+CMD [ "pm2 start server.js" ]
