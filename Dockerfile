@@ -63,6 +63,6 @@ EXPOSE 8080
 COPY server.js /home/server.js
 # RUN chmod +x /home/server.js
 
-ENTRYPOINT ["cd /home"]
-CMD [ "slc start" ]
+# ENTRYPOINT ["cd /home"]
+# CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
