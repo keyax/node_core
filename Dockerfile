@@ -70,6 +70,7 @@ COPY index.js /home/node/index.js
 
 EXPOSE 8000
 
+CMD [ "node", "index.js"]
 # ENTRYPOINT ["cd /home"]
 # CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
