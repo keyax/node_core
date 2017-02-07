@@ -1,7 +1,7 @@
 FROM keyax/ubuntu_core
 
-LABEL maintainer "yones.lebady AT gmail.com" \
-      net.keyax.os= "ubuntu core" \
+LABEL maintainer "yones.lebady AT gmail.com"
+LABEL net.keyax.os= "ubuntu core" \
       net.keyax.os.ver= "16.10 yaketty" \
       net.keyax.vendor= "Keyax" \
       net.keyax.app= "Nodejs" \
@@ -61,10 +61,10 @@ RUN su node \
   && cd /home/node \
   && npm init --yes
 
-RUN npm install express \
-  && npm install http \
-  && npm install https \
-  && npm install jquery \
+RUN npm install express -g \
+  && npm install http -g \
+  && npm install https -g \
+  && npm install jquery -g \
   && npm install mongodb -g \
   && npm install mongoose -g \
   && npm install pm2 --no-optional -g
