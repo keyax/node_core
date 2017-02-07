@@ -70,7 +70,7 @@ COPY index.js /home/node/index.js
 
 EXPOSE 8000
 
-CMD [ "pm2", "start", "index.js"]
+CMD [ "pm2-docker", "index.js"]
 # ENTRYPOINT ["cd /home"]
 # CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
