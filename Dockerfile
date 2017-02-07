@@ -1,6 +1,7 @@
 FROM keyax/ubuntu_core
 
-MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
+LABEL maintainer "yones.lebady AT gmail.com")
+# MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
@@ -53,7 +54,15 @@ RUN npm install pm2 -g --no-optional \
   && npm install https -g \
   && npm install jquery -g \
   && npm install mongodb -g \
-  && npm install mongoose -g
+  && npm install mongoose -g \
+  && npm install pm2 -g \
+  && npm install strongloop -g
 
 EXPOSE 8080
-CMD [ "pm2 start server.js" ]
+
+COPY server.js /home/server.js
+# RUN chmod +x /home/server.js
+
+ENTRYPOINT ["cd /home"]
+CMD [ "slc start" ]
+# CMD [ "pm2 start server.js" ]
