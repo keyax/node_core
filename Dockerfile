@@ -54,15 +54,15 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN su node \
   && cd /home/node \
   && npm init --yes
-RUN npm install http
-# RUN npm install pm2 --no-optional \
-#  && npm install express \
-#  && npm install http \
-#  && npm install https \
-#  && npm install jquery \
-#  && npm install mongodb -g \
-#  && npm install mongoose -g \
-#  && npm install pm2 -g \
+
+RUN npm install pm2 --no-optional \
+  && npm install express \
+  && npm install http \
+  && npm install https \
+  && npm install jquery \
+  && npm install mongodb -g \
+  && npm install mongoose -g \
+  && npm install pm2 -g
 #  && npm install strongloop -g
 
 COPY index.js /home/node/index.js
@@ -70,7 +70,7 @@ COPY index.js /home/node/index.js
 
 EXPOSE 8000
 
-CMD [ "node", "index.js"]
+CMD [ "pm2", "start", "index.js"]
 # ENTRYPOINT ["cd /home"]
 # CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
