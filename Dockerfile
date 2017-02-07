@@ -3,9 +3,12 @@ FROM keyax/ubuntu_core
 LABEL maintainer "yones.lebady AT gmail.com"
 # MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
+# RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+
 # RUN apt-get update && apt-get install dirmngr
+
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
@@ -48,6 +51,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "rm node-v$NODE_VERSION-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt"]
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 
+RUN cd /home/node \
+  && npm init --yes
 RUN npm install pm2 -g --no-optional \
   && npm install express -g \
   && npm install http -g \
