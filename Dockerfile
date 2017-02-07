@@ -53,19 +53,20 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 
 RUN cd /home/node \
   && npm init --yes
-RUN npm install pm2 -g --no-optional \
-  && npm install express -g \
-  && npm install http -g \
-  && npm install https -g \
-  && npm install jquery -g \
-  && npm install mongodb -g \
-  && npm install mongoose -g \
-  && npm install pm2 -g \
-  && npm install strongloop -g
+RUN npm install http
+# RUN npm install pm2 --no-optional \
+#  && npm install express \
+#  && npm install http \
+#  && npm install https \
+#  && npm install jquery \
+#  && npm install mongodb -g \
+#  && npm install mongoose -g \
+#  && npm install pm2 -g \
+#  && npm install strongloop -g
 
-EXPOSE 80
+EXPOSE 8000
 
-COPY server.js /home/server.js
+COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
 # ENTRYPOINT ["cd /home"]
