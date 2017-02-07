@@ -1,11 +1,11 @@
 FROM keyax/ubuntu_core
 
 LABEL maintainer "yones.lebady AT gmail.com"
-LABEL net.keyax.os= "ubuntu core" \
-      net.keyax.os.ver= "16.10 yaketty" \
-      net.keyax.vendor= "Keyax" \
-      net.keyax.app= "Nodejs" \
-      net.keyay.app.ver= "2.1"
+# LABEL net.keyax.os= "ubuntu core" \
+#      net.keyax.os.ver= "16.10 yaketty" \
+#      net.keyax.vendor= "Keyax" \
+#      net.keyax.app= "Nodejs" \
+#      net.keyay.app.ver= "2.1"
 
 # MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
