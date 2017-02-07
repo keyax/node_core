@@ -51,7 +51,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "rm node-v$NODE_VERSION-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt"]
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 
-RUN cd /home/node \
+RUN su node \
+  && cd /home/node \
   && npm init --yes
 RUN npm install http
 # RUN npm install pm2 --no-optional \
@@ -64,10 +65,10 @@ RUN npm install http
 #  && npm install pm2 -g \
 #  && npm install strongloop -g
 
-EXPOSE 8000
-
 COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
+
+EXPOSE 8000
 
 # ENTRYPOINT ["cd /home"]
 # CMD [ "slc start" ]
