@@ -1,6 +1,6 @@
 FROM keyax/ubuntu_core
 
-LABEL maintainer "yones.lebady AT gmail.com")
+LABEL maintainer "yones.lebady AT gmail.com"
 # MAINTAINER Yones Lebady (yones.lebady AT gmail.com)
 
 RUN groupadd --gid 1000 node \
@@ -58,7 +58,7 @@ RUN npm install pm2 -g --no-optional \
   && npm install pm2 -g \
   && npm install strongloop -g
 
-EXPOSE 8080
+EXPOSE 80
 
 COPY server.js /home/server.js
 # RUN chmod +x /home/server.js
