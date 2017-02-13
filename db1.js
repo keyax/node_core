@@ -18,8 +18,8 @@ MongoClient.connect(url, function (err, db) {
     // do some work here with the database.
 
     use kyx;
-    kyx.createCollection(datos);
-    
+    ky=db.kyx1.find();
+
 
 
     //Close connection

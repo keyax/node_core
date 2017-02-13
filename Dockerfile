@@ -1,11 +1,11 @@
 FROM keyax/ubuntu_core
 
-LABEL maintainer "yones.lebady AT gmail.com" \
-      keyax.os "ubuntu core" \
-      keyax.os.ver "16.10 yaketty" \
-      keyax.vendor "Keyax" \
-      keyax.app "Nodejs 7.4.0" \
-      keyax.app.ver "2.1"
+LABEL maintainer "yones.lebady AT gmail.com"
+LABEL keyax.os "ubuntu core"
+LABEL keyax.os.ver "16.10 yaketty"
+LABEL keyax.vendor "Keyax"
+LABEL keyax.app "Nodejs 7.4.0"
+LABEL keyax.app.ver "2.1"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
