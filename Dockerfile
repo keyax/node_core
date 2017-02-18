@@ -65,7 +65,9 @@ RUN npm install -g nodemon \
  && npm install -g https \
  && npm install -g jquery \
  && npm install -g express \
- && npm install -g ottoman
+ && npm i couchbase-promises
+# && npm install -g ottoman
+
 # && npm install -g node-gyp \
 # && npm install -g couchbase@2.3.0 \
 # npm install prebuild
