@@ -56,21 +56,21 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 WORKDIR /home/node
 
-RUN su node \
-  && cd /home/node \
-  && npm init --yes
+# RUN su node \
+#  && cd /home/node \
+#  && npm init --yes
 
-RUN npm install nodemon \
- && npm install http \
- && npm install https \
- && npm install jquery \
- && npm install express \
- && npm install node-gyp \
- && npm install couchbase@2.2.5 \
+RUN npm install -g nodemon \
+ && npm install -g http \
+ && npm install -g https \
+ && npm install -g jquery \
+ && npm install -g express \
+ && npm install -g node-gyp \
+ && npm install -g couchbase@2.2.5 \
 # && npm install mongodb -g \
 # && npm install mongoose -g \
- && mpn install leaflet \
- && npm install --no-optional pm2
+# && mpn install -g leaflet \
+# && npm install -g --no-optional pm2
 #  && npm install strongloop -g
 
 COPY index.js /home/node/index.js
