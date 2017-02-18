@@ -65,7 +65,8 @@ RUN npm install -g nodemon \
  && npm install -g https \
  && npm install -g jquery \
  && npm install -g express \
- && npm i couchbase-promises
+npm install "git+https://github.com/couchbase/couchnode.git#master"
+# && npm i couchbase-promises
 # && npm install -g ottoman
 
 # && npm install -g node-gyp \
