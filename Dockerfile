@@ -60,12 +60,12 @@ WORKDIR /home/node
 #  && cd /home/node \
 #  && npm init --yes
 
-RUN npm install -g nodemon \
- && npm install -g http \
- && npm install -g https \
- && npm install -g jquery \
- && npm install -g express \
-npm install "git+https://github.com/couchbase/couchnode.git#master"
+RUN npm install -g nodemon
+RUN npm install -g http
+RUN npm install -g https
+RUN npm install -g jquery
+RUN npm install -g express
+RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm i couchbase-promises
 # && npm install -g ottoman
 
