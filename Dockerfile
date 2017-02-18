@@ -66,7 +66,7 @@ RUN npm install nodemon \
  && npm install jquery \
  && npm install express \
  && npm install node-gyp \
- && npm install couchbase \
+ && npm install couchbase@2.3.0 \
 # && npm install mongodb -g \
 # && npm install mongoose -g \
  && mpn install leaflet \
