@@ -65,13 +65,16 @@ RUN npm install -g nodemon \
  && npm install -g https \
  && npm install -g jquery \
  && npm install -g express \
- && npm install -g node-gyp \
- && npm install -g couchbase@2.3.0
+ && npm install -g ottoman
+# && npm install -g node-gyp \
+# && npm install -g couchbase@2.3.0 \
+# npm install prebuild
+# npm install couchbase --no-bin-links
 # && npm install mongodb -g \
 # && npm install mongoose -g \
 # && mpn install -g leaflet \
 # && npm install -g --no-optional pm2
-#  && npm install strongloop -g
+# && npm install strongloop -g
 
 COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
