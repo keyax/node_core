@@ -56,21 +56,21 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 WORKDIR /home/node
 
-# RUN su node \
-#  && cd /home/node \
-#  && npm init --yes
+RUN su node \
+ && cd /home/node \
+ && npm init --yes
 
-RUN npm install -g nodemon
-RUN npm install -g http
-RUN npm install -g https
-RUN npm install -g jquery
-RUN npm install -g express
-RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
+RUN npm install nodemon
+RUN npm install http
+RUN npm install https
+RUN npm install jquery
+RUN npm install express
+# RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm i couchbase-promises
 # && npm install -g ottoman
 
 # && npm install -g node-gyp \
-# && npm install -g couchbase@2.3.0 \
+RUN npm install couchbase
 # npm install prebuild
 # npm install couchbase --no-bin-links
 # && npm install mongodb -g \
@@ -89,4 +89,4 @@ CMD [ "pm2-docker", "index.js"]
 # CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
 
-VOLUME /home/node
+# VOLUME /home/node
