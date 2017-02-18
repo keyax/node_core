@@ -60,15 +60,17 @@ RUN su node \
   && cd /home/node \
   && npm init --yes
 
-RUN  npm install couchbase -g \
-  && npm install express -g \
-  && npm install http -g \
-  && npm install https -g \
-  && npm install jquery -g \
-  && npm install nodemon -g \
-#  && npm install mongodb -g \
-#  && npm install mongoose -g \
-  && npm install pm2 --no-optional -g
+RUN npm install -g nodemon \
+ && npm install -g http \
+ && npm install -g https \
+ && npm install -g jquery \
+ && npm install -g express \
+ && npm install -g node-gyp \
+ && npm install -g couchbase \
+# && npm install mongodb -g \
+# && npm install mongoose -g \
+ && mpn install -g leaflet \
+ && npm install -g --no-optional pm2
 #  && npm install strongloop -g
 
 COPY index.js /home/node/index.js
