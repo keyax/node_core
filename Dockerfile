@@ -55,17 +55,19 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # RUN ["/bin/bash", "-c", "rm node-v$NODE_VERSION-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt"]
 # RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
 WORKDIR /home/node
-VOLUME /home/node
+
 RUN su node \
   && cd /home/node \
   && npm init --yes
 
-RUN npm install express -g \
+RUN  npm install couchbase -g \
+  && npm install express -g \
   && npm install http -g \
   && npm install https -g \
   && npm install jquery -g \
-  && npm install mongodb -g \
-  && npm install mongoose -g \
+  && npm install nodemon -g \
+#  && npm install mongodb -g \
+#  && npm install mongoose -g \
   && npm install pm2 --no-optional -g
 #  && npm install strongloop -g
 
@@ -78,3 +80,5 @@ CMD [ "pm2-docker", "index.js"]
 # ENTRYPOINT ["cd /home"]
 # CMD [ "slc start" ]
 # CMD [ "pm2 start server.js" ]
+
+VOLUME /home/node
