@@ -58,17 +58,17 @@ RUN su node \
  && cd /home/node \
  && npm init --yes
 
-RUN npm install nodemon
-RUN npm install http
-RUN npm install https
-RUN npm install jquery
-RUN npm install express
+RUN npm install -g nodemon
+RUN npm install -g http
+RUN npm install -g https
+RUN npm install -g jquery
+RUN npm install -g express
 # RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm i couchbase-promises
 # && npm install -g ottoman
 
 # && npm install -g node-gyp \
-RUN npm install couchbase
+RUN npm install -g couchbase
 # npm install prebuild
 # npm install couchbase --no-bin-links
 # && npm install mongodb -g \
