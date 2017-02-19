@@ -11,9 +11,6 @@ LABEL keyax.app.ver "2.1"
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
-RUN apt-get update && apt-get install build-essential make
-# dirmngr
-
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
   gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
