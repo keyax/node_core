@@ -62,7 +62,6 @@ RUN npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 # && npm install strongloop -g
     su node
-
 # RUN su node \
 #  && cd /home/node \
 #  && npm init --yes
@@ -70,7 +69,7 @@ RUN npm install -g nodemon && \
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-CMD [ "pm2-docker", "index.js"]
 WORKDIR /home/node
 VOLUME /home/node
 EXPOSE 80
+CMD [ "pm2-docker", "index.js"]
