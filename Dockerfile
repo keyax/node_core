@@ -1,4 +1,4 @@
-FROM keyax/ubuntu_core
+FROM keyax/ubuntu_lts
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
