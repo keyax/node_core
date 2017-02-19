@@ -1,11 +1,11 @@
-FROM keyax/ubuntu_lts
+FROM keyax/ubuntu_core
 
-LABEL maintainer "yones.lebady AT gmail.com"
-LABEL keyax.os "ubuntu core"
-LABEL keyax.os.ver "16.10 yaketty"
-LABEL keyax.vendor "Keyax"
-LABEL keyax.app "Nodejs 7.4.0"
-LABEL keyax.app.ver "2.1"
+LABEL maintainer="yones.lebady AT gmail.com" \
+      keyax.os="ubuntu core" \
+      keyax.os.ver="16.10 yaketty" \
+      keyax.vendor="Keyax" \
+      keyax.app="Nodejs 7.4.0" \
+      keyax.app.ver="2.1"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
@@ -45,46 +45,32 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-# RUN ["/bin/bash", "-c", "curl -SLO https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz; \
-#   curl -SLO https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc; \
-#   gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc"]
-# RUN ["/bin/bash", "-c", "grep \\ node-v$NODE_VERSION-linux-x64.tar.xz\\$ SHASUMS256.txt | sha256sum -c -"]
-# RUN ["/bin/bash", "-c", "tar -xJf node-v$NODE_VERSION-linux-x64.tar.xz -C /usr/local --strip-components=1"]
-# RUN ["/bin/bash", "-c", "rm node-v$NODE_VERSION-linux-x64.tar.xz SHASUMS256.txt.asc SHASUMS256.txt"]
-# RUN ["/bin/bash", "-c", "ln -s /usr/local/bin/node /usr/local/bin/nodejs"]
-WORKDIR /home/node
-
-RUN su node \
- && cd /home/node \
- && npm init --yes
-
-RUN npm install -g nodemon
-RUN npm install -g http
-RUN npm install -g https
-RUN npm install -g jquery
-RUN npm install -g express
-# RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
-# && npm i couchbase-promises
-# && npm install -g ottoman
-
-# && npm install -g node-gyp \
-RUN npm install -g couchbase
-# npm install prebuild
+RUN npm install -g nodemon && \
+    npm install -g http && \
+    npm install -g https && \
+    npm install -g jquery && \
+    npm install -g express && \
+    npm install -g couchbase && \
 # npm install couchbase --no-bin-links
+# RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
+# && npm install -g ottoman
+# && npm i couchbase-promises
+# npm install prebuild
 # && npm install mongodb -g \
 # && npm install mongoose -g \
-# && mpn install -g leaflet \
-# && npm install -g --no-optional pm2
+    npm install -g leaflet && \
+    npm install -g --no-optional pm2 && \
 # && npm install strongloop -g
+    su node
 
-COPY index.js /home/node/index.js
+# RUN su node \
+#  && cd /home/node \
+#  && npm init --yes
+
+# COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-EXPOSE 80
-
 CMD [ "pm2-docker", "index.js"]
-# ENTRYPOINT ["cd /home"]
-# CMD [ "slc start" ]
-# CMD [ "pm2 start server.js" ]
-
-# VOLUME /home/node
+WORKDIR /home/node
+VOLUME /home/node
+EXPOSE 80
