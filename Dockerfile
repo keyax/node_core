@@ -72,4 +72,5 @@ RUN npm install -g nodemon && \
 WORKDIR /home/node
 VOLUME /home/node
 EXPOSE 80
-CMD [ "pm2-docker", "index.js"]
+# CMD [ "pm2-docker", "index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "index.js"]
