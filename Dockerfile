@@ -35,7 +35,7 @@ RUN ["/bin/bash", "-c",  "set -ex; \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 7.4.0
+ENV NODE_VERSION 7.5.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -51,6 +51,7 @@ RUN npm install -g nodemon && \
     npm install -g jquery && \
     npm install -g express && \
     npm install -g couchbase && \
+    npm install -g couchbase-promises && \
 # npm install couchbase --no-bin-links
 # RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm install -g ottoman
