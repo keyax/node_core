@@ -46,22 +46,21 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 RUN npm install -g nodemon && \
-    npm install -g http && \
-    npm install -g https && \
-    npm install -g jquery && \
-    npm install -g express && \
-    npm install -g couchbase && \
-    npm install -g couchbase-promises && \
+    npm install -g --no-optional pm2 && \
+#   npm install strongloop -g \
+    npm install http && \
+    npm install https && \
+    npm install jquery && \
+    npm install express && \
+    npm install couchbase && \
+    npm install leaflet && \
+    npm install couchbase-promises && \
 # npm install couchbase --no-bin-links
 # RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm install -g ottoman
-# && npm i couchbase-promises
 # npm install prebuild
 # && npm install mongodb -g \
 # && npm install mongoose -g \
-    npm install -g leaflet && \
-    npm install -g --no-optional pm2 && \
-# && npm install strongloop -g
     su node
 # RUN su node \
 #  && cd /home/node \
