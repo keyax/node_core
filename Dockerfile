@@ -66,7 +66,7 @@ RUN su node && \
     npm install --save couchbase && \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
-    npm install --save leaflet && \
+    npm install --save leaflet
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
 #   npm install prebuild &&  \
