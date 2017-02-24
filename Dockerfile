@@ -1,4 +1,4 @@
-FROM keyax/ubuntu_lts
+FROM keyax/ubuntu_core
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
@@ -45,16 +45,24 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
+  RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
+  # for building Couchbase Nodejs driver from source : manke gcc ...
+      build-essential \
+      && apt-get autoremove && apt-get clean \
+  # delete all the apt list files since they're big and get stale quickly
+    	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  # this forces "apt-get update" in dependent images, which is also good
+
 RUN npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 #   npm install strongloop -g \
-    npm install http && \
-    npm install https && \
-    npm install jquery && \
-    npm install express && \
-    npm install couchbase && \
-    npm install leaflet && \
-    npm install couchbase-promises && \
+    npm install --save http && \
+    npm install --save https && \
+    npm install --save jquery && \
+    npm install --save express && \
+    npm install --save couchbase && \
+    npm install --save leaflet && \
+    npm install --save couchbase-promises && \
 # npm install couchbase --no-bin-links
 # RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
 # && npm install -g ottoman

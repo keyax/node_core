@@ -68,13 +68,13 @@ const mime = {
 
 /* Creating file server */
 var filer = http.createServer(function (reqf, resf){
-  console.log(`${reqf.method} ${reqf.url}`);
+  console.log(`${reqf.method} ${reqf.url}`); // GET /pix/linux.jpg
   // parse URL
   const parsedUrl = url.parse(reqf.url);
-  console.log(`parsedUrl:${parsedUrl}`);
+//  console.log(`parsedUrl:${parsedUrl}`); // parsedUrl:[object Object]
   // extract URL path
   let pathname = `.${parsedUrl.pathname}`;
-  console.log(`pathname: ${pathname}`);
+  console.log(`pathname: ${pathname}`); // pathname: ./pix/linux.jpg
   // based on the URL path, extract the file extention. e.g. .js, .doc, ...
   const ext = path.parse(pathname).ext;
 //  var pathname = './linux.jpg';
@@ -100,9 +100,9 @@ var server = http.createServer(function (req, res) {
                  + '<link rel="icon" href="data:,">'
                  + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"}</script>'
                  + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
-                 + '<p id="kyx">Hello World Keyax planet!</p>'
+                 + '<p id="kyx" class="pipo">Hello World Keyax planet!</p>'
                  + '<img id="px1" src="pix/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />'
-                 + '<div id="div1"></div>'
+                 + '<div id="div1" class="div1"></div>'
      var htmlc = '</body>' + '</html>'
 
   // Website you wish to allow to connect
@@ -115,7 +115,7 @@ var server = http.createServer(function (req, res) {
   // to the API (e.g. in case you use sessions)
 //  res.setHeader('Access-Control-Allow-Credentials', true);
   let xbody= html1.concat(htmlc);
-  console.log(`body html... ${xbody}`);
+//  console.log(`body html... ${xbody}`);
   res.writeHead(200, {  //only one time per page
 //    "Access-Control-Allow-Origin": "*",
 //    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
@@ -130,7 +130,8 @@ var server = http.createServer(function (req, res) {
   res.write(`${htmlc}`);
   res.write('<img id="px2" src="pix/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />');
   res.write('<script>var xx = document.getElementById("div1")\;xx.innerHTML += "<u>Keyax Multilingual Computers:</u><br>";</script>');
-//  res.end();
+  res.write('<style>.pipo {color: orange; font-size: 5em;}</style>')
+  res.end();
 });
 
 /* var tlserver = https.createServer(options, function (req, res) {
