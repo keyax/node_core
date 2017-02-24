@@ -2,7 +2,7 @@ FROM keyax/ubuntu_core
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
-      keyax.os.ver="16.10 yaketty" \
+      keyax.os.ver="16.10 yakkety" \
       keyax.vendor="Keyax" \
       keyax.app="Nodejs 7.4.0" \
       keyax.app.ver="2.1"
