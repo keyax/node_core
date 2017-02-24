@@ -53,26 +53,25 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
     	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
   # this forces "apt-get update" in dependent images, which is also good
 
-RUN npm install -g nodemon && \
+RUN su node && \
+    cd /home/node && \
+    npm init --yes && \
+    npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
-#   npm install strongloop -g \
+#   npm install -g strongloop \
     npm install --save http && \
     npm install --save https && \
     npm install --save jquery && \
     npm install --save express && \
     npm install --save couchbase && \
+#   npm install --save couchbase-promises && \
+#   npm install --save ottoman && \
     npm install --save leaflet && \
-    npm install --save couchbase-promises && \
-# npm install couchbase --no-bin-links
-# RUN npm install "git+https://github.com/couchbase/couchnode.git#master"
-# && npm install -g ottoman
-# npm install prebuild
-# && npm install mongodb -g \
-# && npm install mongoose -g \
-    su node
-# RUN su node \
-#  && cd /home/node \
-#  && npm init --yes
+#   npm install --save couchbase --no-bin-links && \
+#   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
+#   npm install prebuild && \
+#   npm install --save mongodb && \
+#   npm install --save mongoose && \
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
