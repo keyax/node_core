@@ -45,17 +45,13 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-  RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
-  # for building Couchbase Nodejs driver from source : manke gcc ...
-      build-essential \
-      && apt-get autoremove && apt-get clean \
-  # delete all the apt list files since they're big and get stale quickly
-    	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-  # this forces "apt-get update" in dependent images, which is also good
 
 RUN su node && \
     cd /home/node && \
     npm init --yes && \
+    apt-get update && apt-get install --assume-yes --no-install-recommends \
+# for building Couchbase Nodejs driver from source : manke gcc ...
+    build-essential && \
     npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 #   npm install -g strongloop \
@@ -71,7 +67,13 @@ RUN su node && \
 #   npm install prebuild &&  \
     npm install --save mongodb && \
 #   npm install --save mongoose && \
-    npm install --save leaflet
+    npm install --save leaflet && \
+    apt-get remove build-essentials && \
+    apt-get autoremove && apt-get clean && \
+# delete all the apt list files since they're big and get stale quickly
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# this forces "apt-get update" in dependent images, which is also good
+
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
