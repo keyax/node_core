@@ -69,7 +69,7 @@ RUN su node && \
     npm install --save leaflet && \
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
-#   npm install prebuild && \
+#   npm install prebuild &&  \
 #   npm install --save mongodb && \
 #   npm install --save mongoose && \
 
