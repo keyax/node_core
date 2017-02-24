@@ -50,7 +50,7 @@ RUN su node && \
     cd /home/node && \
     npm init --yes && \
     apt-get update && apt-get install --assume-yes --no-install-recommends \
-# for building Couchbase Nodejs driver from source : manke gcc ...
+# for building Couchbase Nodejs driver from source : make gcc ...
     build-essential && \
     npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
@@ -68,7 +68,7 @@ RUN su node && \
     npm install --save mongodb && \
 #   npm install --save mongoose && \
     npm install --save leaflet && \
-    apt-get remove build-essentials && \
+    apt-get remove build-essentials && apt-get purge build-essentials && \
     apt-get autoremove && apt-get clean && \
 # delete all the apt list files since they're big and get stale quickly
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
