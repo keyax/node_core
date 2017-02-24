@@ -49,9 +49,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 RUN su node && \
     cd /home/node && \
     npm init --yes && \
-    apt-get update && apt-get install --assume-yes --no-install-recommends \
 # for building Couchbase Nodejs driver from source : make gcc ...
-    build-essential && \
+    apt-get update && apt-get install --assume-yes --no-install-recommends build-essential && \
     npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 #   npm install -g strongloop \
