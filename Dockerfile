@@ -63,12 +63,12 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends build
 #    apt-get autoremove build-essential --assume-yes && \
 #   remove dependent packages
 #    apt-get purge build-essential && \
-# remove packages that were installed by other packages and are no longer needed
-    apt-get autoremove --assume-yes && \
-#   remove the aptitude cache in /var/cache/apt/archives
-#    apt-get clean && \
+# remove packages installed by other packages and no longer needed purge configs
+    apt-get autoremove --purge --assume-yes && \
+#   remove the aptitude cache in /var/cache/apt/archives frees 0MB
+    apt-get clean && \
 # delete all the apt list files since they're big and get stale quickly
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN npm install -g nodemon && \
