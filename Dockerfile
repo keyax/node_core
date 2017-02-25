@@ -78,6 +78,7 @@ RUN npm install -g nodemon && \
     npm install --save https && \
     npm install --save jquery && \
     npm install --save express && \
+    npm install --save mysql && \
     npm install --save mongodb && \
 #   npm install --save mongoose && \
     npm install --save leaflet
