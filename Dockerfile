@@ -50,7 +50,7 @@ RUN su node && \
     cd /home/node && \
     npm init --yes && \
 # for building Couchbase Nodejs driver from source : make gcc ...
-#    apt-get update && apt-get install --assume-yes --no-install-recommends build-essential && \
+  apt-get update && apt-get install --assume-yes --no-install-recommends build-essential prebuild && \
     npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 #   npm install -g strongloop \
@@ -67,8 +67,8 @@ RUN su node && \
     npm install --save mongodb && \
 #   npm install --save mongoose && \
     npm install --save leaflet
-# && \
-#    apt-get remove build-essential --assume-yes && \
+#    && \
+#    apt-get remove build-essential prebuild --assume-yes && \
 #   remove dependencies
 #    apt-get autoremove build-essential && \
 #   remove dependent packages
