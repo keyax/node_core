@@ -48,26 +48,17 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 
 RUN su node && \
     cd /home/node && \
-    npm init --yes && \
+    npm init --yes
+# && \
 # for building Couchbase Nodejs driver from source : make gcc ...
-  apt-get update && apt-get install --assume-yes --no-install-recommends build-essential prebuild && \
-    npm install -g nodemon && \
-    npm install -g --no-optional pm2 && \
-#   npm install -g strongloop \
-    npm install --save http && \
-    npm install --save https && \
-    npm install --save jquery && \
-    npm install --save express && \
-    npm install --save couchbase && \
+RUN apt-get update && apt-get install --assume-yes --no-install-recommends build-essential prebuild && \
+    npm install --save couchbase
+# && \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
 #   npm install prebuild &&  \
-    npm install --save mongodb && \
-#   npm install --save mongoose && \
-    npm install --save leaflet
-#    && \
 #    apt-get remove build-essential prebuild --assume-yes && \
 #   remove dependencies
 #    apt-get autoremove build-essential && \
@@ -78,6 +69,17 @@ RUN su node && \
 #    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
+RUN npm install -g nodemon && \
+    npm install -g --no-optional pm2 && \
+#   npm install -g strongloop \
+    npm install --save http && \
+    npm install --save https && \
+    npm install --save jquery && \
+    npm install --save express && \
+    npm install --save mongodb && \
+#   npm install --save mongoose && \
+    npm install --save leaflet
+#    && \
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
