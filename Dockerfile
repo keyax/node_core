@@ -51,7 +51,7 @@ RUN su node && \
     npm init --yes
 # && \
 # for building Couchbase Nodejs driver from source : make gcc ...
-RUN apt-get update && apt-get install --assume-yes --no-install-recommends build-essential prebuild && \
+RUN apt-get update && apt-get install --assume-yes --no-install-recommends build-essential && \
     npm install --save couchbase
 # && \
 #   npm install --save couchbase-promises && \
