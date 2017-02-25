@@ -67,7 +67,8 @@ RUN su node && \
     npm install --save mongodb && \
 #   npm install --save mongoose && \
     npm install --save leaflet && \
-    apt-get remove build-essential && apt-get purge build-essential && \
+    apt-get remove build-essential --assume-yes && \
+    apt-get purge build-essential && \
     apt-get autoremove && apt-get clean && \
 # delete all the apt list files since they're big and get stale quickly
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
