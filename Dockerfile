@@ -66,7 +66,8 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends build
 # remove packages installed by other packages and no longer needed purge configs
     apt-get autoremove --purge --assume-yes && \
 #   remove the aptitude cache in /var/cache/apt/archives frees 0MB
-    apt-get clean && \
+    apt-get clean
+# && \
 # delete all the apt list files since they're big and get stale quickly
 #    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
