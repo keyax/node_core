@@ -52,21 +52,20 @@ RUN su node && \
 # && \
 # for building Couchbase Nodejs driver from source : make gcc ...
 RUN apt-get update && apt-get install --assume-yes --no-install-recommends build-essential && \
-    npm install --save couchbase
-# && \
+    npm install --save couchbase && \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
 #   npm install prebuild &&  \
-#    apt-get remove build-essential prebuild --assume-yes && \
+    apt-get remove build-essential --assume-yes && \
 #   remove dependencies
 #    apt-get autoremove build-essential && \
 #   remove dependent packages
 #    apt-get purge build-essential && \
-#    apt-get autoremove && apt-get clean && \
+    apt-get autoremove && apt-get clean && \
 # delete all the apt list files since they're big and get stale quickly
-#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN npm install -g nodemon && \
