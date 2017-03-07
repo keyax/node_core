@@ -12,12 +12,13 @@ var cluster = new couchbase.Cluster('couchbase://172.17.0.3/');
 var bucket = cluster.openBucket('default');
 var N1qlQuery = couchbase.N1qlQuery;
 
+
 bucket.manager().createPrimaryIndex(function() {
-  bucket.upsert('user:king_arthur', {
-    'email': 'kingarthur@couchbase.com', 'interests': ['Holy Grail', 'African Swallows']
+  bucket.upsert('user:king_arthur4', {
+    '@@email': 'kingarthur2@couchbase.com', 'interests': ['Holy Grail', 'African Swallows']
   },
   function (err, result) {
-    bucket.get('user:king_arthur', function (err, result) {
+    bucket.get('user:king_arthur4', function (err, result) {
       console.log('Got result: %j', result.value);
       bucket.query(
       N1qlQuery.fromString('SELECT * FROM default WHERE $1 in interests LIMIT 1'),
@@ -116,7 +117,7 @@ var server = http.createServer(function (req, res) {
 //     console.log(req.headers);  //   JSON.stringify(req.headers)
      var html1 = '<!DOCTYPE html>' + '<html>' + '<head>'
                  + '<title>Keyax Multilingual Webserver</title>'
-                 + `<base href="http://${req.headers['host']}:8000/" target="_self">`
+                 + `<base href="http://${req.headers['host']}:8000/"  target="_self">`
                  + '<link rel="icon" href="data:,">'
                  + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"}</script>'
                  + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
