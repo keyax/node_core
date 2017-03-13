@@ -8,7 +8,7 @@ var $ = require('jquery');
 // const dbase = require('couchbase');
 
 var couchbase = require('couchbase')
-var cluster = new couchbase.Cluster('couchbase://172.17.0.3/');
+var cluster = new couchbase.Cluster('couchbase://172.17.0.4/');
 var bucket = cluster.openBucket('default');
 var N1qlQuery = couchbase.N1qlQuery;
 
@@ -117,7 +117,7 @@ var server = http.createServer(function (req, res) {
 //     console.log(req.headers);  //   JSON.stringify(req.headers)
      var html1 = '<!DOCTYPE html>' + '<html>' + '<head>'
                  + '<title>Keyax Multilingual Webserver</title>'
-                 + `<base href="http://${req.headers['host']}:8000/"  target="_self">`
+                 + `<base href="http://${req.headers['host']}:8090/"  target="_self">`
                  + '<link rel="icon" href="data:,">'
                  + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"}</script>'
                  + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
@@ -161,6 +161,6 @@ var server = http.createServer(function (req, res) {
 });
 tlserver.listen(443);  */
 server.listen(parseInt(port));
-filer.listen(8080, function(){
-console.log(`Server is listening port ${port} & https 443 & fileserver 8080`);
+filer.listen(8090, function(){
+console.log(`Server is listening port ${port}   & fileserver 8090`);
 });
