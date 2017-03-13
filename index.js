@@ -44,7 +44,7 @@ require("jsdom").env("", function(err, window) {
 // var app = express();
 // app.use(express.static(path.join(__dirname)));
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-const port = process.argv[2] || 80
+const port = process.argv[2] || 8000
 
 /* var options = {
   key: fs.readFileSync('keys/kyx-key.pem'),
