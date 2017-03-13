@@ -74,13 +74,13 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends build
 RUN npm install -g nodemon && \
     npm install -g --no-optional pm2 && \
 #   npm install -g strongloop \
-    npm install -g phonegap@latest \
+#    npm install -g phonegap@latest \
     npm install --save http && \
     npm install --save https && \
     npm install --save jquery && \
     npm install --save express && \
-    npm install --save mysql && \
-    npm install --save mongodb && \
+#    npm install --save mysql && \
+#    npm install --save mongodb && \
 #   npm install --save mongoose && \
     npm install --save leaflet
 #    && \
