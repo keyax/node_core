@@ -44,7 +44,7 @@ require("jsdom").env("", function(err, window) {
 // var app = express();
 // app.use(express.static(path.join(__dirname)));
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-const port = process.argv[2] || 8000
+const port = process.argv[2] || 8080
 
 /* var options = {
   key: fs.readFileSync('keys/kyx-key.pem'),
@@ -161,6 +161,6 @@ var server = http.createServer(function (req, res) {
 });
 tlserver.listen(443);  */
 server.listen(parseInt(port));
-filer.listen(8000, function(){
-console.log(`Server is listening port ${port} & https 443 & fileserver 8000`);
+filer.listen(8080, function(){
+console.log(`Server is listening port ${port} & https 443 & fileserver 8080`);
 });
