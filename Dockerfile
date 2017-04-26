@@ -10,8 +10,6 @@ LABEL maintainer="yones.lebady AT gmail.com" \
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
   && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
-WORKDIR /home/node
-COPY /package.json .
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -47,8 +45,9 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-
-## RUN su node \
+WORKDIR /home/node
+COPY /package.json .
+# RUN su node \
 # && cd /home/node \
 # && npm init keyaxjs --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
@@ -91,8 +90,8 @@ RUN su node \
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-# WORKDIR /home/node
 # VOLUME /home/node
+RUN mkdir /home/nodev
 VOLUME /home/nodev
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
