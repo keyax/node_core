@@ -91,11 +91,12 @@ RUN cd /home/node \
 # VOLUME /home/node/index.js
 
 # empty directory not allowed throws error:  no such file or directory
-COPY app/index.js /home/node/
-COPY app/js /home/node/js
-COPY app/css /home/node/css
-COPY app/fonts /home/node/fonts
-COPY app/pix /home/node/pix
+# ADD 1 layer,untar,url~; COPY 3 layers
+ADD app/index.js /home/node/
+ADD app/js /home/node/js
+ADD app/css /home/node/css
+ADD app/fonts /home/node/fonts
+ADD app/pix /home/node/pix
 
 WORKDIR /home/node
 
