@@ -46,29 +46,28 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 
-RUN su node && \
-    cd /home/node && \
-    npm init --yes
-# && \
+RUN su node \
+ && cd /home/node \
+ && npm init --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
-RUN apt-get update && apt-get install --assume-yes --no-install-recommends build-essential && \
-    npm install --save couchbase && \
+ && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
+ && npm install --save couchbase \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
 #   npm install prebuild &&  \
-    apt-get remove build-essential --assume-yes && \
+ && apt-get remove build-essential --assume-yes \
 #   remove dependencies
 #    apt-get autoremove build-essential --assume-yes && \
 #   remove dependent packages
 #    apt-get purge build-essential && \
 # remove packages installed by other packages and no longer needed purge configs
-    apt-get autoremove --purge --assume-yes && \
+ && apt-get autoremove --purge --assume-yes \
 #   remove the aptitude cache in /var/cache/apt/archives frees 0MB
-    apt-get clean && \
+ && apt-get clean \
 # delete 27MB all the apt list files since they're big and get stale quickly
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN npm install -g nodemon && \
