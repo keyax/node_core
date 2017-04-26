@@ -87,7 +87,7 @@ RUN npm install -g nodemon && \
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-WORKDIR /home/node
+# WORKDIR /home/node
 VOLUME /home/node
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
