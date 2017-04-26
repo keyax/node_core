@@ -74,7 +74,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN su node \
- && mkdir /home/node
 COPY package.json /home/node/
 RUN cd /home/node \
  && npm init --yes \
