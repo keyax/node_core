@@ -48,7 +48,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 
-RUN su node 
+RUN su node \
 # && cd /home/node \
 # && npm init keyaxjs --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
