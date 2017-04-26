@@ -45,13 +45,9 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-# RUN mkdir /home/node && cd /home/node
-# WORKDIR /home/node
-# VOLUME /home/node
-# COPY /package.json .
-# RUN su node \
-# && cd /home/node \
-# && npm init keyaxjs --yes \
+## RUN su node \
+## && cd /home/node \
+## && npm init --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
 ## && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
 ## && npm install -g couchbase \
@@ -92,8 +88,8 @@ RUN cd /home/node \
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
-
 # VOLUME /home/node/index.js
+
 ADD ./app/* /home/node/
 WORKDIR /home/node
 
