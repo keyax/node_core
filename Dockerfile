@@ -53,7 +53,7 @@ RUN su node \
 # && npm init keyaxjs --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
  && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
- && npm install -g couchbase \
+## && npm install -g couchbase \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
 #   npm install --save couchbase --no-bin-links && \
