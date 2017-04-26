@@ -96,6 +96,8 @@ RUN cd /home/node \
 # VOLUME /home/node
 RUN mkdir /home/nodev
 VOLUME /home/nodev
+WORKDIR /home/node
+
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/nodev", "/home/nodev/index.js"]
