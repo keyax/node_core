@@ -92,7 +92,7 @@ RUN su node \
 # RUN chmod +x /home/server.js
 
 # WORKDIR /home/node
-VOLUME /home/node
+VOLUME /home/node /home/nodev
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node", "index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/nodev", "index.js"]

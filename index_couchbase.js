@@ -4,9 +4,49 @@ const url = require('url');
 const URL = require('url').URL;
 const fs = require('fs');
 const path = require('path');
-const mongo = require('mongodb');
-const mongoose = require('mongoose');
+// var $ = require('jquery');
+// const dbase = require('couchbase');
 
+var couchbase = require('couchbase')
+var cluster = new couchbase.Cluster('couchbase://172.17.0.4/');
+var bucket = cluster.openBucket('default');
+var N1qlQuery = couchbase.N1qlQuery;
+
+
+bucket.manager().createPrimaryIndex(function() {
+  bucket.upsert('user:yones1', {
+    'email': 'yones@keyax.info', 'interests': ['Holy Grail ma', 'African Swallows']
+  },
+  function (err, result) {
+    bucket.get('user:yones1', function (err, result) {
+      console.log('Got result: %j', result.value);
+      bucket.query(
+      N1qlQuery.fromString("SELECT * FROM default LIMIT 5"),
+//      ['lebady'],
+      function (err, rows, meta)  {
+        if (err) {
+           console.log(err);
+        } else {
+           console.log('Got rows: %j', rows);
+        }
+      });
+    });
+  });
+});
+
+
+
+require("jsdom").env("", function(err, window) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+
+    var $ = require("jquery")(window);
+});
+// const express = require('express');
+// var app = express();
+// app.use(express.static(path.join(__dirname)));
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
 const port = process.argv[2] || 8080
 
@@ -15,6 +55,15 @@ const port = process.argv[2] || 8080
   cert: fs.readFileSync('keys/kyx-cert.pem')
 }; */
 
+/*
+require("jsdom").env("", function(err, window) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    var $ = require("jquery")(window);
+});
+*/
 /*
 var Readable = require('stream').Readable
 var s = new Readable
