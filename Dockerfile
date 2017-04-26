@@ -94,6 +94,7 @@ RUN cd /home/node \
 # RUN chmod +x /home/server.js
 
 # VOLUME /home/node/index.js
+ADD ./app/* /home/node/
 WORKDIR /home/node
 
 EXPOSE 8080 8090
