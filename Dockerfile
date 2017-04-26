@@ -48,43 +48,45 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 
-RUN su node \
+## RUN su node \
 # && cd /home/node \
 # && npm init keyaxjs --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
- && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
+## && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
 ## && npm install -g couchbase \
 #   npm install --save couchbase-promises && \
 #   npm install --save ottoman && \
 #   npm install --save couchbase --no-bin-links && \
 #   npm install "git+https://github.com/couchbase/couchnode.git#master" && \
 #   npm install prebuild &&  \
- && apt-get remove build-essential --assume-yes \
+## && apt-get remove build-essential --assume-yes \
 #   remove dependencies
 #    apt-get autoremove build-essential --assume-yes && \
 #   remove dependent packages
 #    apt-get purge build-essential && \
 # remove packages installed by other packages and no longer needed purge configs
- && apt-get autoremove --purge --assume-yes \
+## && apt-get autoremove --purge --assume-yes \
 #   remove the aptitude cache in /var/cache/apt/archives frees 0MB
- && apt-get clean \
+## && apt-get clean \
 # delete 27MB all the apt list files since they're big and get stale quickly
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN npm install -g nodemon && \
-    npm install -g --no-optional pm2 && \
-#   npm install -g strongloop \
-#    npm install -g phonegap@latest \
-    npm install --save http && \
-    npm install --save https && \
-#    npm install --save jquery && \
-    npm install --save express && \
-#    npm install --save mysql && \
-   npm install --save mongodb && \
-   npm install --save mongoose && \
-   npm install --save leaflet
-#    && \
+RUN su node \
+ && cd /home/node \
+ && npm init --yes \
+ && npm install -g nodemon \
+ && npm install -g --no-optional pm2 \
+# && npm install -g strongloop \
+# && npm install -g phonegap@latest \
+ && npm install --save http \
+ && npm install --save https \
+# && npm install --save jquery \
+ && npm install --save express \
+# && npm install --save mysql \
+ && npm install --save mongodb \
+ && npm install --save mongoose \
+ && npm install --save leaflet
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
