@@ -90,11 +90,12 @@ RUN cd /home/node \
 # RUN chmod +x /home/server.js
 # VOLUME /home/node/index.js
 
-ADD app/index.js /home/node/
-ADD app/js /home/node/js
-ADD app/css /home/node/css
-ADD app/fonts /home/node/fonts
-ADD app/pix /home/node/pix
+# empty directory not allowed throws error
+COPY app/index.js /home/node/
+COPY app/js /home/node/js
+COPY app/css /home/node/css
+COPY app/fonts /home/node/fonts
+COPY app/pix /home/node/pix
 
 WORKDIR /home/node
 
