@@ -95,4 +95,4 @@ RUN mkdir /home/nodev
 VOLUME /home/nodev
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/nodev", "indexx.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/nodev", "/home/nodev/index.js"]
