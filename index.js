@@ -14,17 +14,21 @@ var N1qlQuery = couchbase.N1qlQuery;
 
 
 bucket.manager().createPrimaryIndex(function() {
-  bucket.upsert('user:king_arthur4', {
-    '@@email': 'kingarthur2@couchbase.com', 'interests': ['Holy Grail', 'African Swallows']
+  bucket.upsert('user:yones1', {
+    'email': 'yones@keyax.info', 'interests': ['Holy Grail ma', 'African Swallows']
   },
   function (err, result) {
-    bucket.get('user:king_arthur4', function (err, result) {
+    bucket.get('user:yones1', function (err, result) {
       console.log('Got result: %j', result.value);
       bucket.query(
-      N1qlQuery.fromString('SELECT * FROM default WHERE $1 in interests LIMIT 1'),
-      ['African Swallows'],
-      function (err, rows) {
-        console.log("Got rows: %j", rows);
+      N1qlQuery.fromString("SELECT * FROM default LIMIT 5"),
+//      ['lebady'],
+      function (err, rows, meta)  {
+        if (err) {
+           console.log(err);
+        } else {
+           console.log('Got rows: %j', rows);
+        }
       });
     });
   });
@@ -114,10 +118,12 @@ var filer = http.createServer(function (reqf, resf){
 
 var server = http.createServer(function (req, res) {
 // The headers are stored in a JavaScript object, with the header strings as object keys.
-//     console.log(req.headers);  //   JSON.stringify(req.headers)
+     console.log(req.headers);  //   JSON.stringify(req.headers)
      var html1 = '<!DOCTYPE html>' + '<html>' + '<head>'
                  + '<title>Keyax Multilingual Webserver</title>'
-                 + `<base href="http://${req.headers['host']}:8090/"  target="_self">`
+//                 + `<base href="http://${req.headers['host'].replace(':8080','')}:8090/"  target="_self">`
+                 + `<base href="http://${req.headers['host']}/"  target="_self">`
+
                  + '<link rel="icon" href="data:,">'
                  + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"}</script>'
                  + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
@@ -138,9 +144,9 @@ var server = http.createServer(function (req, res) {
   let xbody= html1.concat(htmlc);
 //  console.log(`body html... ${xbody}`);
   res.writeHead(200, {  //only one time per page
-//    "Access-Control-Allow-Origin": "*",
-//    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-//    'Access-Control-Allow-Headers': 'X-Requested-With,content-type',
+    "Access-Control-Allow-Origin": "*",
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS,',
+    'Access-Control-Allow-Headers': 'X-Requested-With,content-type',
 //    "Content-Length": xbody.length,
 //    "Set-Cookie": "type=ninja",
 //    "X-Content-Type-Options": "nosniff",   // blocks style not text/css

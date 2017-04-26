@@ -2,10 +2,10 @@ FROM keyax/ubuntu_core
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
-      keyax.os.ver="16.10 yakkety" \
+      keyax.os.ver="17.04 zesty" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 7.4.0" \
-      keyax.app.ver="2.1"
+      keyax.app="Nodejs 7.5.0" \
+      keyax.app.ver="2.2"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
@@ -35,7 +35,7 @@ RUN ["/bin/bash", "-c",  "set -ex; \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 7.5.0
+ENV NODE_VERSION 7.9.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -77,12 +77,12 @@ RUN npm install -g nodemon && \
 #    npm install -g phonegap@latest \
     npm install --save http && \
     npm install --save https && \
-    npm install --save jquery && \
+#    npm install --save jquery && \
     npm install --save express && \
 #    npm install --save mysql && \
-#    npm install --save mongodb && \
-#   npm install --save mongoose && \
-    npm install --save leaflet
+   npm install --save mongodb && \
+   npm install --save mongoose && \
+   npm install --save leaflet
 #    && \
 
 # COPY index.js /home/node/index.js
