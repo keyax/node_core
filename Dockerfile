@@ -93,9 +93,9 @@ RUN cd /home/node \
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-# VOLUME /home/node
 RUN mkdir /home/nodev
 VOLUME /home/nodev
+VOLUME /home/node
 WORKDIR /home/node
 
 EXPOSE 8080 8090
