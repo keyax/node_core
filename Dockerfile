@@ -45,8 +45,10 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-WORKDIR /home/node
-COPY /package.json .
+# RUN mkdir /home/node && cd /home/node
+# WORKDIR /home/node
+# VOLUME /home/node
+# COPY /package.json .
 # RUN su node \
 # && cd /home/node \
 # && npm init keyaxjs --yes \
@@ -72,7 +74,9 @@ COPY /package.json .
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN su node \
- && cd /home/node \
+ && mkdir /home/node
+COPY package.json /home/node/
+RUN cd /home/node \
  && npm init --yes \
  && npm install -g nodemon \
  && npm install -g --no-optional pm2 \
