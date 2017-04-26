@@ -93,11 +93,11 @@ RUN cd /home/node \
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 
-RUN mkdir /home/nodev
-VOLUME /home/nodev
-VOLUME /home/node
+# RUN mkdir /home/node/app
+# VOLUME /home/node/app
+# VOLUME /home/node
 WORKDIR /home/node
 
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/nodev", "/home/nodev/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "app/index.js"]
