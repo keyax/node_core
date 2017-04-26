@@ -90,7 +90,7 @@ RUN cd /home/node \
 # RUN chmod +x /home/server.js
 # VOLUME /home/node/index.js
 
-# empty directory not allowed throws error
+# empty directory not allowed throws error:  no such file or directory
 COPY app/index.js /home/node/
 COPY app/js /home/node/js
 COPY app/css /home/node/css
