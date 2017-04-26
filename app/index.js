@@ -72,7 +72,7 @@ var server = http.createServer(function (req, res) {
      console.log(req.headers);  //   JSON.stringify(req.headers)
      var html1 = '<!DOCTYPE html>' + '<html>' + '<head>'
                  + '<title>Keyax Multilingual Webserver</title>'
-                 + `<base href="http://${req.headers['host'].replace(':8080','')}:8090/app/"  target="_self">`
+                 + `<base href="http://${req.headers['host'].replace(':8080','')}:8090"  target="_self">`
 //                 + `<base href="http://${req.headers['host']}/"  target="_self">`
 
                  + '<link rel="icon" href="data:,">'
