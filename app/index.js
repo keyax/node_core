@@ -73,13 +73,13 @@ var server = http.createServer(function (req, res) {
      var html1 = '<!DOCTYPE html>' + '<html>' + '<head>'
                  + '<title>Keyax Multilingual Webserver</title>'
 //  Nodejs static server on port 8090 needs specify src="pix/linux.jpg"/
-//                 + `<base href="http://${req.headers['host'].replace(':8080','')}:8090"  target="_self">`
-                 + `<base href="http://${req.headers['host']}/"  target="_self">`
+                 + `<base href="http://${req.headers['host'].replace(':8080','')}:8090"  target="_self">`
+//                 + `<base href="http://${req.headers['host']}/"  target="_self">`
 //                 + '<link rel="icon" href="data:,">'
                  + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"}</script>'
                  + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
                  + '<p id="kyx" class="pipo">Hello World Keyax planet!</p>'
-                 + '<img id="px1" src="linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />'
+                 + '<img id="px1" src="img/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />'
                  + '<div id="div1" class="div1"></div>'
      var htmlc = '</body>' + '</html>'
 
@@ -106,7 +106,7 @@ var server = http.createServer(function (req, res) {
 
   res.write(`${html1}`);
   res.write(`${htmlc}`);
-  res.write('<img id="px2" src="linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />');
+  res.write('<img id="px2" src="img/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />');
   res.write('<script>var xx = document.getElementById("div1")\;xx.innerHTML += "<u>Keyax Multilingual Computers:</u><br>";</script>');
   res.write('<style>.pipo {color: orange; font-size: 5em;}</style>')
   res.end();

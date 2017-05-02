@@ -94,9 +94,9 @@ RUN cd /home/node \
 # ADD 1 layer,untar,url~; COPY 3 layers
 ADD app/index.js /home/node/
 ADD app/js /home/node/js
+ADD app/img /home/node/img
 ADD app/css /home/node/css
 ADD app/fonts /home/node/fonts
-ADD app/pix /home/node/pix
 
 WORKDIR /home/node
 
