@@ -42,6 +42,20 @@ const mime = {
 //'form' : 'multipart/form-data',
 };
 
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+var dburl = 'mongodb://172.17.0.4:27017/tree';
+// Use connect method to connect to the Server
+MongoClient.connect(dburl, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to mongodb server");
+
+  db.close();
+});
+
+
 /* Creating file server */
 var filer = http.createServer(function (reqf, resf){
   console.log(`${reqf.method} ${reqf.url}`); // GET /pix/linux.jpg
