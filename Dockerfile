@@ -81,6 +81,7 @@ RUN cd /home/node \
  && npm install --save https \
 # && npm install --save jquery \
  && npm install --save express \
+ && npm install --save bluebird \
 # && npm install --save mysql \
  && npm install --save mongodb \
  && npm install --save mongoose \

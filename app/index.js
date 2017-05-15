@@ -1,14 +1,21 @@
-const http = require('http');
-const https = require('https');
-const url = require('url');
-const URL = require('url').URL;
-const fs = require('fs');
-const path = require('path');
-const mongo = require('mongodb');
-const mongoose = require('mongoose');
+var http = require('http');
+var https = require('https');
+var url = require('url');
+var URL = require('url').URL;
+var fs = require('fs');
+var path = require('path');
+var express = require('express')
+var bluebird = require('bluebird');
+var mongo = require('mongodb');
+var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 
+var app = express();
+var db;
+
+//
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-const port = process.argv[2] || 8080
+var port = process.argv[2] || 8080
 
 /* var options = {
   key: fs.readFileSync('keys/kyx-key.pem'),
@@ -46,11 +53,14 @@ var MongoClient = require('mongodb').MongoClient
   , assert = require('assert');
 
 // Connection URL
-var dburl = 'mongodb://172.17.0.4:27017/tree';
+var dburl = 'mongodb://user:555777@mongo.kyx:27017/kyxtree';
 // Use connect method to connect to the Server
 MongoClient.connect(dburl, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to mongodb server");
+
+
+
 
   db.close();
 });
