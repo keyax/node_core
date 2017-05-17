@@ -77,12 +77,14 @@ RUN cd /home/node \
  && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
 # && npm install -g phonegap@latest \
- && npm install --save http \
- && npm install --save https \
+## && npm install --save http \
+## && npm install --save https \
+## && npm install --save fs \
+## && npm install --save assert \
 # && npm install --save jquery \
  && npm install --save express \
  && npm install --save bluebird \
-# && npm install --save mysql \
+ && npm install --save mysql \
  && npm install --save mongodb \
  && npm install --save mongoose \
  && npm install --save leaflet
@@ -93,14 +95,14 @@ RUN cd /home/node \
 
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
-ADD app/index.js /home/node/
-ADD app/js /home/node/js
-ADD app/img /home/node/img
-ADD app/css /home/node/css
-ADD app/fonts /home/node/fonts
-
+# ADD www/index.js /home/node/
+ADD www/js /home/node/js
+ADD www/img /home/node/img
+ADD www/css /home/node/css
+ADD www/fonts /home/node/fonts
+ADD www/data /home/node/data
 WORKDIR /home/node
 
 EXPOSE 8080 8090
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node/js", "index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]

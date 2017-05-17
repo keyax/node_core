@@ -4,12 +4,12 @@ var url = require('url');
 var URL = require('url').URL;
 var fs = require('fs');
 var path = require('path');
+var assert = require('assert');
 var express = require('express')
 var Promise = require('bluebird');
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
-//var assert = require('assert');
 var app = express();
 
 
