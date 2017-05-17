@@ -5,13 +5,13 @@ var URL = require('url').URL;
 var fs = require('fs');
 var path = require('path');
 var express = require('express')
-var bluebird = require('bluebird');
+var Promise = require('bluebird');
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
-
+//var assert = require('assert');
 var app = express();
-var db;
+
 
 //
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
@@ -48,10 +48,7 @@ const mime = {
   '.doc':  'application/msword',
 //'form' : 'multipart/form-data',
 };
-
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
+/*
 // Connection URL
 var dburl = 'mongodb://user:555777@mongo.kyx:27017/kyxtree';
 // Use connect method to connect to the Server
@@ -59,18 +56,72 @@ MongoClient.connect(dburl, function(err, db) {
   assert.equal(null, err);
   console.log("Connected correctly to mongodb server");
 
-
-
-
   db.close();
 });
+*/
+/////var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+/*
+var option = {
+    db: { authSource: "kyxtree",
+      native_parser: false
+      },
+    server: {
+      poolSize: 10,
+      socketOptions: {
+        connectTimeoutMS: 500
+        }
+        },
+    replSet: {},
+    mongos: {}
+  };*/
+
+const dbconn = require('./js/dbconnect');
+//import ('./js/dbconnect.js');
+/*  Mongoclient undefined
+// runs in boot.js or what ever file your application starts with
+dbconn.connect()
+    .then(() => console.log('database connected'))
+    .then(() => yapp())
+    .catch((e) => {
+        console.error(e);
+        // Always hard exit on a database connection error
+        process.exit(1);
+    });
+*/
 
 
+/*
+// Initialize connection once
+MongoClient.connect("mongodb://user:555777@mongo.kyx:27017/kyxtree", function(err, database) {
+//  if(err) throw err;
+
+  db = database;
+
+  // Start the application after the database connection is ready
+    app.listen(3000);
+   console.log("Listening on port 3000");
+});
+*/
+/*
+// Reuse database object in request handlers
+app.get("/g", function(req, res) {
+  db.collection("geo").find({}, function(err, docs)  {
+    docs.each(function(err, doc) {
+      if(doc) {
+        console.log(doc);
+      }
+      else {
+        res.end();
+      }
+    });
+  });
+});
+*/
 /* Creating file server */
 var filer = http.createServer(function (reqf, resf){
   console.log(`${reqf.method} ${reqf.url}`); // GET /pix/linux.jpg
   // parse URL
-  const parsedUrl = url.parse(reqf.url);
+  var parsedUrl = url.parse(reqf.url);
 //  console.log(`parsedUrl:${parsedUrl}`); // parsedUrl:[object Object]
   // extract URL path
   let pathname = `.${parsedUrl.pathname}`;
@@ -127,6 +178,39 @@ var server = http.createServer(function (req, res) {
 //    "X-Content-Type-Options": "nosniff",   // blocks style not text/css
     "Content-Type": "text/html; charset=utf-8"
   });
+
+  dbconn.connect()
+      .then(() => console.log('database connected'))
+//      .then(() => appm())
+      .catch((e) => {
+          console.error(e);
+          // Always hard exit on a database connection error
+//          process.exit(1);
+      });
+
+console.log("MONGODBpre");
+// Reuse database object in request handlers
+app.get("/", function(req, res) {
+//  const dbconn = require('./js/dbconnect.js');
+  dbconn.get().find({}, function(err,docs) { // I have excluded code here to keep the example  simple
+///    dbconn.collection("geo").find({}, function(err, docs)  {
+      docs.each(function(err, doc) {
+        if(doc) {
+          console.log("MONGODB");
+          console.log(doc.yo);
+          }
+        else {
+          console.log("MONGODBniet");
+//              res.end();
+          }
+       });
+    });
+});
+
+console.log("MONGODBpost");
+
+
+
 
   res.write(`${html1}`);
   res.write(`${htmlc}`);

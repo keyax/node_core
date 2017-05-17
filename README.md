@@ -1,4 +1,7 @@
-# Ubuntu Core Zesty 17.04 for Docker images bases
+# Keyax Framework: Nginx + Nodejs + MongoDB on Docker Swarm cluster.
+# Nodejs version 7.10.0 on Ubuntu Core 16.04 LTS xenial for Docker image.
+
+
 What is Node.js  ?
 
 Node.js is a platform built on Chrome's V8 JavaScript runtime for easily building fast, scalable network applications. Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.
