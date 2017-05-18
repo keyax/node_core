@@ -77,6 +77,7 @@ RUN cd /home/node \
  && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
 # && npm install -g phonegap@latest \
+&& npm install --save builtin-modules \
 ## && npm install --save http \
 ## && npm install --save https \
 ## && npm install --save fs \
