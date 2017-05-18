@@ -38,9 +38,10 @@ const mime = {
 //'form' : 'multipart/form-data',
 };
 
+console.log(modul);
 
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-var port = process.argv[2] || 8080
+var port = process.argv[2] || 8080;
 
 /* var options = {
   key: fs.readFileSync('keys/kyx-key.pem'),
@@ -57,7 +58,7 @@ s.push(null)      // indicates end-of-file basically - the end of the stream
 
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 //var dbconn = require('./dbconnect.js');
-
+/*
 servers.listen(config.port, function() {
     console.log('Https App started');
 });
@@ -65,7 +66,7 @@ servers.listen(config.port, function() {
 sio.sockets.on('connection', function (socket) {
     console.log('socket.io connected');
 });
-
+*/
 
 
 /*
