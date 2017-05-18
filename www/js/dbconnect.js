@@ -1,7 +1,10 @@
 // dbconnect.js   myAwesomeDbModule.js
+var mongo = require('mongodb');
+var MongoClient = require('mongodb').MongoClient;
+var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree";
 
 let connection = null;
-var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 /*
 var option = {
     db: { authSource: "kyxtree",
@@ -19,9 +22,9 @@ var option = {
 */
 //console.log(url);
 module.exports.connect = () => new Promise((resolve, reject) => {
-  var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-  var mongo = require('mongodb');
-  var MongoClient = require('mongodb').MongoClient;
+//  var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+//  var mongo = require('mongodb');
+//  var MongoClient = require('mongodb').MongoClient;
   MongoClient.connect(dburl, function(err, dbs) {
         if (err) { reject(err); return; };
         resolve(dbs);

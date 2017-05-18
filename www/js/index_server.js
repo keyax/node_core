@@ -1,21 +1,35 @@
-var assert = require('assert');
-var fs = require('fs');
-var path = require('path');
+var http = require('http');
+var https = require('https');
 var url = require('url');
 var URL = require('url').URL;
-var express = require('express');
-var app = express();
-var http = require('http');
-var server  = http.createServer(app);
-var https = require('https');
-var servers  = https.createServer(app);
-var socketio = require('socket.io');
-var sio = socketio.listen(server);
-var sios = socketio.listen(servers);
+var fs = require('fs');
+var path = require('path');
+var assert = require('assert');
+var express = require('express')
 var Promise = require('bluebird');
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
+var app = express();
+
+//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+var dbconn = require('./dbconnect.js');
+
+
+// you can pass the parameter in the command line. e.g. node static_server.js 3000
+var port = process.argv[2] || 8080
+
+/* var options = {
+  key: fs.readFileSync('keys/kyx-key.pem'),
+  cert: fs.readFileSync('keys/kyx-cert.pem')
+}; */
+
+/*
+var Readable = require('stream').Readable
+var s = new Readable
+s.push('beep')    // the string you want
+s.push(null)      // indicates end-of-file basically - the end of the stream
+*/
 
 // maps file extention to MIME typere
 //let mimeType = {
@@ -36,37 +50,6 @@ const mime = {
   '.doc':  'application/msword',
 //'form' : 'multipart/form-data',
 };
-
-
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-var port = process.argv[2] || 8080
-
-/* var options = {
-  key: fs.readFileSync('keys/kyx-key.pem'),
-  cert: fs.readFileSync('keys/kyx-cert.pem')
-}; */
-
-/*
-var Readable = require('stream').Readable
-var s = new Readable
-s.push('beep')    // the string you want
-s.push(null)      // indicates end-of-file basically - the end of the stream
-*/
-
-
-//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//var dbconn = require('./dbconnect.js');
-
-servers.listen(config.port, function() {
-    console.log('Https App started');
-});
-
-sio.sockets.on('connection', function (socket) {
-    console.log('socket.io connected');
-});
-
-
-
 /*
 // Connection URL
 var dburl = 'mongodb://user:555777@mongo.kyx:27017/kyxtree';
@@ -196,17 +179,6 @@ var server = http.createServer(function (req, res) {
     "Content-Type": "text/html; charset=utf-8"
   });
 
-  res.write(`${html1}`);
-  res.write(`${htmlc}`);
-  res.write('<img id="px2" src="img/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />');
-  res.write('<script>var xx = document.getElementById("div1")\;xx.innerHTML += "<u>Keyax Multilingual Computers:</u><br>";</script>');
-  res.write('<style>.pipo {color: orange; font-size: 5em;}</style>');
-  res.end();
-});
-
-
-app.
-
 
 console.log("MONGODBpre");
 
@@ -247,10 +219,13 @@ console.log("MONGODBpost");
 
 
 
-
-
-
-
+  res.write(`${html1}`);
+  res.write(`${htmlc}`);
+  res.write('<img id="px2" src="img/linux.jpg" alt="Tuxy" width="42" height="42" enctype="image/jpg" />');
+  res.write('<script>var xx = document.getElementById("div1")\;xx.innerHTML += "<u>Keyax Multilingual Computers:</u><br>";</script>');
+  res.write('<style>.pipo {color: orange; font-size: 5em;}</style>');
+//  res.end();
+});
 
 /* var tlserver = https.createServer(options, function (req, res) {
   res.writeHead(200);
