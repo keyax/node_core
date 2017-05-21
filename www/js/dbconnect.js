@@ -1,10 +1,9 @@
 // dbconnect.js   myAwesomeDbModule.js
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
-var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree";
-
-let connection = null;
+var dburl = "mongodb://user:555777@172.17.0.4:27017/kyxtree";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+var conexion = null;
 /*
 var option = {
     db: { authSource: "kyxtree",
@@ -21,33 +20,17 @@ var option = {
     };
 */
 //console.log(url);
-module.exports.connect = () => new Promise((resolve, reject) => {
-//  var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//  var mongo = require('mongodb');
-//  var MongoClient = require('mongodb').MongoClient;
-  MongoClient.connect(dburl, function(err, dbs) {
+module.exports.conect = () => new Promise((resolve, reject) => {
+  MongoClient.connect(dburl,  {native_parser:true}, function(err, dbs) {
         if (err) { reject(err); return; };
         resolve(dbs);
-        connection = dbs;
+        conexion = dbs;
     });
 });
-
 module.exports.get = () => {
-    if(!connection) {
-        throw new Error('Call connect first!');
+    if(!conexion) {
+        throw new Error('Call connect first....!');
     }
-    return connection;
+    console.log(`db conexion: ${conexion}`);
+    return conexion;
 }
-/*
-module.exports.myapp = () => {
-    if(!connection) {
-        throw new Error('Call connect first!');
-    }
-var data = {};
-//    const db = require('./myAwesomeDbModule');
-data = db.get().find(...)... // I have excluded code here to keep the example  simple
-
-
-    return data;
-}
-*/
