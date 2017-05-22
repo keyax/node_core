@@ -103,6 +103,7 @@ RUN cd /home/node \
  && npm install --save mongoose \
  && npm install --save leaflet \
  && npm install --save d3
+ && npm init --yes
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
