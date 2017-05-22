@@ -96,6 +96,7 @@ RUN cd /home/node \
  && npm install --save socket.io \
  && npm install --save ws \
  && npm install --save express \
+ && npm install --save formidable \
  && npm install --save bluebird \
  && npm install --save mysql \
  && npm install --save mongodb \
