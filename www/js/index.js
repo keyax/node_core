@@ -294,7 +294,10 @@ console.log(`2 db conexion: ${conexion}`);
     filer.listen(8090, function(){
     console.log(`Server is listening port ${port}   & fileserver 8090`);
     });
-
+/*  app.listen = function() {
+    var server = http.createServer(this);
+    return server.listen.apply(server, arguments);
+  };  */
 /* var tlserver = https.createServer(options, function (req, res) {
    res.writeHead(200);
   res.end("https secure server: Hello world  \n");
