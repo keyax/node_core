@@ -4,7 +4,7 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
       keyax.os.ver="16.04 xenial" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 7.5.0" \
+      keyax.app="Nodejs 7.10.0" \
       keyax.app.ver="2.2"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
@@ -119,6 +119,6 @@ ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
 WORKDIR /home/node
 
-EXPOSE 8080 8090
+EXPOSE 8080 8090 443
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]

@@ -1,27 +1,28 @@
 // dbconnect.js   myAwesomeDbModule.js
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
-var dburl = "mongodb://user:555777@172.17.0.4:27017/kyxtree";
+var dburl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 var conexion = null;
-/*
+
 var option = {
-    db: { authSource: "kyxtree",
-//      native_parser: false
-      },
-    server: {
+//    db: {
+      authSource: "kyxtree",
+      native_parser: true,
+//      },
+//    server: {
       poolSize: 10,
       socketOptions: {
         connectTimeoutMS: 500
         }
-        },
+//        }
 //    replSet: {},
 //    mongos: {}
     };
-*/
+
 //console.log(url);
 module.exports.conect = () => new Promise((resolve, reject) => {
-  MongoClient.connect(dburl,  {native_parser:true}, function(err, dbs) {
+  MongoClient.connect(dburl,  option, function(err, dbs) {
         if (err) { reject(err); return; };
         resolve(dbs);
         conexion = dbs;
@@ -34,3 +35,54 @@ module.exports.get = () => {
     console.log(`db conexion: ${conexion}`);
     return conexion;
 }
+
+/*
+var dburl = "mongodb://user:555777@mongo.kyx";
+var dbport = 27017;
+var dbmongo = new MongoClient(new Serverdb(dburl, dbport));
+dbmongo.open(function(err, dbmongo) {
+  if (!dbmongo) {
+      console.error("Error! Exiting... Must start MongoDB first");
+      process.exit(1);
+  }
+  var db = dbmongo.db("kyxtree");
+//  fileDriver = new FileDriver(db); //<--
+//  collectionDriver = new CollectionDriver(db);
+});
+*/
+
+/*
+// Connection URL
+//var dburl = 'mongodb://user:555777@mongo.kyx:27017/kyxtree?';
+// Use connect method to connect to the Server
+MongoClient.connect(dburl, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to mongodb server");
+  db.close();
+});
+*/
+/*
+// runs in boot.js or what ever file your application starts with
+dbconn.connect()
+    .then(() => console.log('database connected'))
+    .then(() => app())
+    .catch((e) => {
+        console.error(e);
+        // Always hard exit on a database connection error
+        process.exit(1);
+    });
+/*
+// Reuse database object in request handlers
+app.get("/g", function(req, res) {
+  db.collection("geo").find({}, function(err, docs)  {
+    docs.each(function(err, doc) {
+      if(doc) {
+        console.log(doc);
+      }
+      else {
+        res.end();
+      }
+    });
+  });
+});
+*/
