@@ -8,54 +8,99 @@ var path = require('path');
 var url = require('url');
 var URL = require('url').URL;
 var util = require('util');
-var http = require('http');
-//var serverh  = http.createServer(handler);
+var https = require('https');
 var express = require('express');
 var app = express();
+//var app = require('express')();
+var http = require('http');
 var server  = http.createServer(app);
+//var serverh  = http.createServer(handler);
+var socketio = require('socket.io');
+var sio = socketio(server);
+//var sio = require('socket.io')(server);
+var sio = require('socket.io')(app);
+//var sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
+//var sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
+///var sio = socketio.listen(server);
+///var sios = socketio(servers);
+
 // 1*) get an instance of router
 var router = express.Router();
-//var server = app.listen(8080);
-var socketio = require('socket.io');
-//var sio = socketio(server);
-//var sio = socketio(server,  {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
-//var sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
 
-//var sio = require('socket.io')(server);
-var sio = socketio.listen(server);
-
-var https = require('https');
-/* var options = {
-   key: fs.readFileSync('keys/kyx-key.pem'),
-   cert: fs.readFileSync('keys/kyx-cert.pem')
-   };
-   var servers  = https.createServer(options, app);  */
-///var servers  = https.createServer(app);
-///var sios = socketio(servers);
 var Promise = require('bluebird');
 //var mongo = require('mongodb');
 //var MongoClient = require('mongodb').MongoClient;
 //var Serverdb = require('mongodb').Server;
 var mongoose = require('mongoose');
 var dbconn = require('./dbconnect.js');
+var conexion = null;
+
+// runs in boot.js or what ever file your application starts with
+dbconn.conect()
+    .then(() =>  {conexion = dbconn.get();
+                  console.log(`1 db conexion: ${conexion}`);})
+// 4*) apply the routes to our application  app.use('/', router);
+    .then(() => app.use('/', router))
+    .catch((e) => {
+        console.error(e);
+        // Always hard exit on a database connection error
+//        process.exit(1);
+    });
+console.log(`2 db conexion: ${conexion}`);
+
+sio.on('connection', function (socket){
+    socket.emit('news', { hello: 'world' });
+    socket.on('myevent', function (data) {
+    console.log(data);
+    console.log(`connected socket news!${data}`);
+  });
+////      socket.disconnect();
+//    socket.disconnect('unauthorized');
+//    socket.close();
+});
+
 
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-var port = process.argv[2] || 8090;
-/*
-function handler(req, res) {
-    res.writeHead(200);
-    res.end('Hello Http handler');
-}
-*/
+var port = process.argv[2] || 9000;
+
+// Start the application after the database connection is ready
+  server.listen(parseInt(`${port}}`), function(){
+  console.log(`Server is listening port ${port}`);
+  });
+//  app.listen(parseInt(`${port}}`), function(){
+//  console.log(`Server is listening on port ${port}`);
+//  });
+/* app.listen = function() {
+   var server = http.createServer(this);
+   return server.listen.apply(server, arguments);
+   };  */
+//var server = app.listen(9000);
+
+/* var options = {
+   key: fs.readFileSync('keys/kyx-key.pem'),
+   cert: fs.readFileSync('keys/kyx-cert.pem')
+   };
+   var sserver = https.createServer(options, app);  */
+/* var sserver = https.createServer(options, function (req, res) {
+     res.writeHead(200);
+     res.end("https secure server: Hello world  \n");
+   });
+   sserver.listen(443);  */
+// var sserver = https.createServer(app);
+/* sserver.listen(config.port, function() {console.log('Https App started'); }); */
+
+/* //same as above with express
+var sserver = https.createServer(options, app).listen(config.port, function() {
+    console.log('Https App started');
+}); */
+// app.listen(443);
+
 /*
 var Readable = require('stream').Readable
 var s = new Readable
 s.push('beep')    // the string you want
 s.push(null)      // indicates end-of-file basically - the end of the stream
 */
-
-var conexion = null;
-
 
 // maps file extention to MIME typere
 //let mimeType = {
@@ -105,59 +150,10 @@ let pathname = `.${parsedUrl.pathname}`;
        }
      });
 })
-
-filer.listen(8090, function(){
-console.log(`File Server is listening on port 8090`);
+filer.listen(9100, function(){
+console.log(`File Server is listening on port 9100`);
 });
 */
-
-// Start the application after the database connection is ready
-//  app.listen(443);
-  server.listen(parseInt(8090}), function(){
-  console.log(`Server is listening port ${port}`);
-  });
-
-/*  app.listen = function() {
-  var server = http.createServer(this);
-  return server.listen.apply(server, arguments);
-};  */
-/* var tlserver = https.createServer(options, function (req, res) {
- res.writeHead(200);
-res.end("https secure server: Hello world  \n");
-});
-tlserver.listen(443);  */
-/* servers.listen(config.port, function() {
-   console.log('Https App started');
-}); */
-/* //same as above with express
-var sslserver = https.createServer(options, app).listen(config.port, function() {
-    console.log('Https App started');
-}); */
-
-
-// runs in boot.js or what ever file your application starts with
-dbconn.conect()
-    .then(() =>  {conexion = dbconn.get();
-                  console.log(`1 db conexion: ${conexion}`);})
-    .then(() => app.use('/', router))
-    .catch((e) => {
-        console.error(e);
-        // Always hard exit on a database connection error
-//        process.exit(1);
-    });
-
-console.log(`2 db conexion: ${conexion}`);
-
-sio.on('connection', function (socket){
-    socket.emit('news', { hello: 'world' });
-    socket.on('myevent', function (data) {
-    console.log(data);
-    console.log(`connected socket news!${data}`);
-  });
-////      socket.disconnect();
-//    socket.disconnect('unauthorized');
-//    socket.close();
-});
 
 // 2*) route middleware that will happen on every request
 router.use(function(req, res, next) {
@@ -189,7 +185,8 @@ var html = '<!DOCTYPE html>' + '<html>' + '<head>'
 //       + `<base href="http://${req.headers['host'].replace(':8080','')}:8090"  target="_self">`
          + '<script type= "application/javascript" src="socket.io.js"></script>'
 //         + `<script>var lh = "ws://"+window.location.host+":8080"; var sockt = io.connect(lh, {transports: ['websocket', 'polling', 'flashsocket']}); sockt.on('news', function (datos) {console.log(datos); sockt.emit('myevent', { my: 'data variables' }); });</script>`
-         + `<script>var sockt = io.connect("ws://${req.headers['host']}:8090"); sockt.on('news', function (datos) {console.log(datos); sockt.emit('myevent', { my: 'data variables' }); });</script>`
+//         + `<script>var sockt = io.connect("ws://${req.headers['host']}:${port}"); sockt.on('news', function (datos) {console.log(datos); sockt.emit('myevent', { my: 'data variables' }); });</script>`
+         + `<script>var sockt = io.connect(); sockt.on('news', function (datos) {console.log(datos); sockt.emit('myevent', { my: 'data variables' }); });</script>`
 //       + 'var socket = io("ws://localhost:3000" {transports: ['websocket']});'
          + '<script>function viewsize(){document.getElementById("kyx").innerHTML = "Keyax Multilingual Insert DOM"};</script>'
          + '</head>' + '<body onload="viewsize()" onresize="viewsize()">'
@@ -268,6 +265,3 @@ sqlcon.end();
 res.end();
 
 });
-
-// 4*) apply the routes to our application
-//app.use('/', router);

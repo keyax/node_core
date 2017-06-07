@@ -119,6 +119,6 @@ ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
 WORKDIR /home/node
 
-EXPOSE 8080 8090 443
+EXPOSE 443 9000 9100 
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
