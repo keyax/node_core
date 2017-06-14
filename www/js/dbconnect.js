@@ -5,29 +5,50 @@ var dburl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 var conexion = null;
 
-var option = {
+/*
+the server/replset/mongos options are deprecated,
+all their options are supported at the top level of the options object
+[poolSize,ssl,sslValidate,sslCA,sslCert,sslKey,sslPass,autoReconnect,noDelay,keepAlive,
+connectTimeoutMS,socketTimeoutMS,reconnectTries,reconnectInterval,ha,haInterval,replicaSet,
+secondaryAcceptableLatencyMS,acceptableLatencyMS,connectWithNoPrimary,authSource,w,wtimeout,j,
+forceServerObjectId,serializeFunctions,ignoreUndefined,raw,promoteLongs,bufferMaxEntries,
+readPreference,pkFactory,promiseLibrary,readConcern,maxStalenessSeconds,loggerLevel,logger,
+promoteValues,promoteBuffers,promoteLongs,domainsEnabled,keepAliveInitialDelay,checkServerIdentity,validateOptions]
+*/
+
+var options = {
 //    db: {
       authSource: "kyxtree",
       native_parser: true,
 //      },
 //    server: {
       poolSize: 10,
-      socketOptions: {
+///   socketOptions: {
         connectTimeoutMS: 500
-        }
+///   }
 //        }
 //    replSet: {},
 //    mongos: {}
     };
 
-//console.log(url);
 module.exports.conect = () => new Promise((resolve, reject) => {
-  MongoClient.connect(dburl,  option, function(err, dbs) {
+   MongoClient.connect(dburl, options)
+      .then(function (dbs) { // <- db as first argument
+        resolve(dbs);
+        conexion = dbs;
+    //    console.log(dbs)
+      })
+      .catch(function (err) {})
+   });
+//console.log(url);
+/*
+module.exports.conect = () => new Promise((resolve, reject) => {
+  MongoClient.connect(dburl,  options, function(err, dbs) {
         if (err) { reject(err); return; };
         resolve(dbs);
         conexion = dbs;
     });
-});
+});*/
 module.exports.get = () => {
     if(!conexion) {
         throw new Error('Call connect first....!');

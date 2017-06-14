@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Node Keyax Multilingual Website</title>
+<meta name="keywords" content="HTML, CSS, XML, XHTML, JavaScript">
+<meta name="description" content="Free Web tutorials on HTML and CSS">
+<meta name="author" content="Keyax 2016">
+<!--meta http-equiv="Access-Control-Allow-Origin" content="*"-->
+<!--meta http-equiv="Content-Type" content="text/html; charset=utf-8"/-->
+<!--meta http-equiv="refresh" content="30"--> <!--refresh doc. every 30 seconds-->
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">  <!--, user-scalable="yes"-->
+
+<!--base href="http://172.17.0.2/" target="_self"--> <!--_blank neWin, _self  sameWin,  _top fullBodyWin, _parent parentFrame, framename in frame -->
+<!--base href="http://kyx.dynu.com/" target="_self"--> <!--_blank neWin, _self  sameWin,  _top fullBodyWin, _parent parentFrame, framename in frame -->
+<!--link rel="shortcut icon" href="favicon.ico" /-->
+<link rel="stylesheet" type="text/css" href="noto2.css">
+<link rel="stylesheet" type="text/css" href="font-awesome.min.css">
+<!--link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"-->
+<link rel="stylesheet" type="text/css" href="jstree.min.css">
+<link rel="stylesheet" type="text/css" href="lazeemenu.css">
+<link rel="stylesheet" type="text/css" href="keyax.css">
+
+<script type= "application/javascript" src="jquery.min.js"></script>
+<script type= "application/javascript" src="jstree.min.js"></script>
+<script type= "application/javascript" src="lazeemenu-jquery.js"></script>
+<script type= "application/javascript" src="angular.min.js"></script>
+<script type= "application/javascript" src="keyax.js"></script>
+<script type= "application/javascript" src="socket.io.js"></script>
+
+
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script-->
+<!--script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery-ui.min.js"></script-->
+<!--link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"-->
+<!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script-->
+<!-- Awesome Font CSS File -->
+<!--link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"-->
+
+</head>
+
+<body onload="viewsize()" onresize="viewsize()">
+
+<div id="cortina" class="curtain">
+<div class="container" onclick="xToggle(this)">
+  <div class="bar1"></div>
+  <div class="bar2"></div>
+  <div class="bar3"></div>
+</div>
+<div class="keybar">
+<ol class="keybarol">
+  <li class="parent">
+       <a href="#"><i class="fa fa-home"></i><span>Home</span></a>
+    <ul class="sub-menu">
+	<!-- Trigger/Open The Modal -->
+	<!--li><i class="fa fa-user"></i><button id="BtnLogin">Login</button></li-->
+	<li><i class="fa fa-user"></i><a href="#Login">Login</a></li>
+	<li><i class="fa fa-user"></i><a href="#videos" onclick="logout()">Logout</a></li>
+   </ul>
+
+  </li>
+  <li class="parent">
+       <a href="#"><img src="world.png" alt="world" height=25 width="30"><span>Countries</span></a>
+    <ul class="sub-menu">
+       <li><a href="#"><img src="us.svg" alt="us" height=25 width="30" >U.S.A.</a></li>
+       <li><a href="#"><img src="ma.svg" alt="ma" height=25 width="30" >المغرب</a></li>
+       <li><a href="#"><img src="es.svg" alt="es" height=25 width="30" >España</a></li>
+    </ul>
+  </li>
+  <li class="parent">
+       <a href="#"><i class="fa fa-gears" aria-hidden="true"></i><span>Languages</span></a>
+  </li>
+  <li class="menu-right parent">
+        <a href="#"><i class="fa fa-phone"></i><span>Profiles</span></a>
+     <ul class="sub-menu">
+       <li><a href="#"><img src="us.svg" alt="us" height=25 width="30">English</a></li>
+       <li><a href="#">Submenu 2</a></li>
+       <li><a href="#">Submenu 3</a></li>
+     </ul>
+  </li>
+  <li class="menu-right parent">
+         <a href="#"><i class="fa fa-comment"></i><span>Applications</span></a>
+      <ul class="sub-menu">
+         <li><a href="#">Submenu 1</a></li>
+         <li><a href="#">Submenu 2</a></li>
+      </ul>
+   </li>
+</ol>
+</div>
+</div>
+
+
+<section>
+
+<div class="trees">
+<ul id="headeral" class="params" onmouseover=who()>
+	<li id="logo">KEYAX</li>
+        <li id="timel"></li>
+	<li id="paisl">country: <i id="pais"></i></li>
+	<li id="userl">user:<i id="usery"> x </i></li>
+        <li id="appl">app: <i id="appy"> y </i></li>
+        <li><div id="sizewin">~</div></li>
+</ul>
+
+<!-- Lazeemenu -->
+<ul id="menut">
+    <li>
+        <h3><a href="#">Website Info</a></h3>
+        <ul>
+            <li class="active"><a href="#"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="#"><i class="fa fa-envelope"></i> Contact</a></li>
+            <li><a href="#"><i class="fa fa-user"></i> About</a></li>
+        </ul>
+    </li>
+    <li>
+        <h3><a href="#">Query Plugins</a></h3>
+        <ul>
+            <li><a href="#"><i class="fa fa-cogs"></i> Slider</a></li>
+            <li><a href="#"><i class="fa fa-cogs"></i> Slideshow</a></li>
+            <li><a href="#"><i class="fa fa-cogs"></i> Modal</a></li>
+        </ul>
+    </li>
+    <li>
+        <h3><a href="#">Site Links</a></h3>
+        <ul>
+            <li><a href="#"><i class="fa fa-book"></i> Blog</a></li>
+            <li><a href="#"><i class="fa fa-map"></i> Sitemap</a></li>
+            <li><a href="#"><i class="fa fa-rss"></i> RSS Feed</a></li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div class="master">
+<div class="texts">
+<h3 id="masterx">Keyax Multilingual Computers adhoc:</h3>
+<div class="ajax">
+     Language: <input type="text" id="lang" name="lng" autocomplete="off" onkeyup="showHint(this.value)">
+     <p>Suggestions: <span id="langs"></span></p>
+</div>
+
+<p id="masterp"></p>
+
+<p><em>London</em> is the capital city of <b>England</b>. It is the most populous city in the United Kingdom,
+with a metropolitan area of over 13 million inhabitants.</p>
+<p>Standing on the River Thames, London has been a major settlement for two millennia,
+its history going back to its founding by the Romans, who named it Londinium.</p>
+</div><!--texts-->
+
+<div id="videos" class="videos">
+  <ol class="listub">
+    <li>
+      <div class="divtube">
+        <div class="utube">
+        <iframe src="https://youtube.com/embed/gj4Dk89_Zlw?showinfo=0&rel=0&modestbranding=0&disablekb=0&controls=2&start=30&end=45">
+        </iframe> <!--&iv_load_policy=3&cc_load_policy=0  ...controls=0=>modestbranding=1...-->
+        </div>
+      </div>
+    </li>
+    <li>
+       <div class="divtube">
+       <div class="utube">
+       <video id="vid1" class="vid" controls poster="globo.png">
+         <source src="videos/tenbed.mp4#t=30,45" type="video/mp4">
+         <source src="videos/tenbed.webm#t=30,45" type="video/webm">
+			<!--Ffox desktop loading, mob blnk-->
+	  I'm sorry; your browser doesn't support HTML5 video in WebM with VP8 or MP4 with H.264.
+	  <!--object><iframe src="videos/tenbed.mp4"></iframe></object-->
+	  <!-- You can embed a Flash player here, to play your mp4 video in older browsers -->
+        </video>
+        </div>
+        </div>
+     </li>
+  </ol>
+</div><!--videos-->
+
+</div><!--class="master"-->
+</section>
+
+<footer class="containers">
+<div   class="fut1" >
+Sectors
+</div>
+<div  class="fut2">
+Facebook, Twitter
+</div>
+<div class="fut3">
+References
+</div>
+</footer>
+
+<!--Top corner menu -->
+<div class="modalkey">
+<!--a href="#LoginModal">Open Modal</a-->
+  <div id="Login" class="modalDialog">
+     <div data-ng-app="ngapp">
+     <div data-ng-controller="ctrlr">
+		<a href="#cerrar" title="Close" class="cerrar">X</a>
+		<h3>Keyax Access</h3>
+	          <form id="form1" class="formc" name="formname"> <!-- onchange="frameload() action="m/login.php" method="POST" target="f3" -->
+	  <p><i class="fa fa-user"></i>User<br><input id="loginid" type="text" data-ng-model="user.login" required  placeholder="email@site.com"></p>
+	  <p><i class= "fa fa-key"></i>Password<br><input id="pwdid" type="password" data-ng-model="user.pwd" required  placeholder="Password"></p>
+	<button ng-click="logings(user)" name="Submit">Login Keyax</button> <!--onclick="submit()"-->
+	<!--button onclick="logout()" name="Submi">Logout Keyax</button-->
+	<p id="logs"></p> <!--Login to deploy the Multilingual Profiles.-->
+
+        <div id="divpost" ><p>HOLA!{{user.login + ":" + user.pwd}}</p></div>
+
+        <div id="message" ><p>MSG:2017-04-28 01:15:43</p>
+        <!--?php echo "hello";
+           if (isset($_POST['login']) && isset($_POST['pwd'])){
+           echo "DIVFORM:" . $_POST['login'];
+           };
+        ?-->
+        </div>
+	</form><!--/form-->
+<div>
+<p>Name: <input type="text" ng-model="name"></p>
+<p>You wrote: {{ name }}</p>
+</div>
+    <pre id='usera' >user = {{user | json}}</pre>
+    <pre>master = {{master | json}}</pre>
+   </div></div>
+
+
+
+  </div><!--class=modalDialog-->
+</div><!--class=modalkey-->
+<!--script type="text/javascript">
+$.getJSON("http://ipinfo.io/json", function(data) {
+    $("#pais").append(data.country);});
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#menut').lazeemenu();
+    });
+</script-->
+
+<!--script>
+document.getElementById("header").onmouseover = function() {who()};
+</script-->
+
+</body>
+
+</html>

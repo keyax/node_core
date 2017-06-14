@@ -87,16 +87,26 @@ RUN cd /home/node \
  && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
 # && npm install -g phonegap@latest \
-&& npm install --save builtin-modules \
+ && npm install --save builtin-modules \
 ## && npm install --save http \
 ## && npm install --save https \
-## && npm install --save fs \
 ## && npm install --save assert \
+## && npm install --save fs \
+&& npm install --save body-parser \
 # && npm install --save jquery \
+# && npm install --save ws \
  && npm install --save socket.io \
- && npm install --save ws \
  && npm install --save express \
+ && npm install --save express-session \
  && npm install --save formidable \
+ && npm install --save koa \
+ && npm install --save koa-router \
+ && npm install --save koa-route \
+ && npm install --save koa-multer \
+ && npm install --save koa-logger \
+ && npm install --save koa.session \
+ && npm install --save koa-static \
+ && npm install --save koa-formidable \
  && npm install --save bluebird \
  && npm install --save mysql \
  && npm install --save mongodb \
@@ -119,6 +129,6 @@ ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
 WORKDIR /home/node
 
-EXPOSE 443 9000 9100 
+EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
