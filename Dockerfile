@@ -93,6 +93,7 @@ RUN cd /home/node \
 ## && npm install --save assert \
 ## && npm install --save fs \
 && npm install --save body-parser \
+&& npm install --save xhr2 \
 # && npm install --save jquery \
 # && npm install --save ws \
  && npm install --save socket.io \
@@ -100,6 +101,8 @@ RUN cd /home/node \
  && npm install --save express-session \
  && npm install --save formidable \
  && npm install --save koa \
+ && npm install --save koa-bodyparser \
+ && npm install --save koa-validate \
  && npm install --save koa-router \
  && npm install --save koa-route \
  && npm install --save koa-multer \

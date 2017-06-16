@@ -9,6 +9,7 @@ var url = require('url');
 var URL = require('url').URL;
 var util = require('util');
 var https = require('https');
+var xhr = require('xhr2');
 var express = require('express');
 var app = express();
 //var app = require('express')();
@@ -32,6 +33,7 @@ var Promise = require('bluebird');
 //var MongoClient = require('mongodb').MongoClient;
 //var Serverdb = require('mongodb').Server;
 //var mongoose = require('mongoose');
+var formidable = require('formidable');
 
 var htmls = require('./htmls.js');
 
@@ -187,6 +189,7 @@ router.use(function(req, res, next) {
     // continue doing what we were doing and go to the route
     next();
 });       */
+
 router.use('/htm', htmls);
 //router.use('/', './index.html');
 /*router.get('/htx', function (req, res, next) {
@@ -204,6 +207,33 @@ next();
 });*/
 // 3*) home page route (http://localhost:8080)
 //router.get('/', function (req, res, next) {....});
+router.post('/xform', function (req, res, next) {
+//  function processAllFieldsOfTheForm(req, res) {
+      var form = new formidable.IncomingForm();
+
+     form.parse(req, function (err, fields, files) {
+      //Store the data from the fields in your data store.
+     //The data store could be a file or database or any other store based
+     //on your application.
+        res.writeHead(201, {'content-type': 'text/plain'} );
+        res.write('received the data:\n\n');
+        res.end(util.inspect({ fields: fields, files: files
+        }));
+      });
+//  }
+});
+router.post('/xfield', function (req, res, next) {
+    var xhrUpload = XMLHttpRequest.XMLHttpRequestUpload;
+  //   form.parse(req, function (err, fields, files) {
+      //Store the data from the fields in your data store.
+     //The data store could be a file or database or any other store based
+     //on your application.
+//        res.writeHead(201, {'content-type': 'text/plain'} );
+//        res.write('received the data:\n\n');
+//        res.end(util.inspect(xhrUpload));
+     return res;
+//      });
+});
 
 //console.log(`req.headers>>>${JSON.stringify(req.headers, null, 2)}<<<`);
 /*
