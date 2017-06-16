@@ -4,7 +4,7 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
       keyax.os.ver="16.04 xenial" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 7.10.0" \
+      keyax.app="Nodejs 8.1.2" \
       keyax.app.ver="2.2"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
@@ -45,7 +45,7 @@ RUN ["/bin/bash", "-c",  "set -ex; \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 7.10.0
+ENV NODE_VERSION 8.1.2
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \

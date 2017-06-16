@@ -24,8 +24,8 @@ module.exports.get = () => {
     return sqlcon;
 };
 
-module.exports.query = () => {
-  var lngs = "";
+module.exports.query = (lngs) => {
+//  var lngs = "spa";
   var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${lngs}%'`;
   sqlcon.query(ask, function (err, results, fields) {
   //  if (err)  throw err;

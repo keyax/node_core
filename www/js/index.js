@@ -55,7 +55,6 @@ dbconn.conect()
 //        process.exit(1);
     });
 console.log(`2 db conexion: ${conexion}`);
-
 /*
 var sqlconex = null;
 var sqlconn = require('./sqlconnect.js');
@@ -222,8 +221,18 @@ router.post('/xform', function (req, res, next) {
       });
 //  }
 });
-router.post('/xfield', function (req, res, next) {
-    var xhrUpload = XMLHttpRequest.XMLHttpRequestUpload;
+router.post('/xfield/:lang', function (req, res, next) {
+    var lang=req.params.lang;
+   console.log("mysql lang " + lang + "::");
+    var sqlconex = null;
+    var sqlconn = require('./sqlconnect.js');
+    sqlconn.conect();
+    sqlconex = sqlconn.get();
+    var resu = sqlconn.query(lang);
+//    sqlconn.end();
+    return resu;
+
+///    var xhrUpload = XMLHttpRequest.XMLHttpRequestUpload;
   //   form.parse(req, function (err, fields, files) {
       //Store the data from the fields in your data store.
      //The data store could be a file or database or any other store based
@@ -231,7 +240,7 @@ router.post('/xfield', function (req, res, next) {
 //        res.writeHead(201, {'content-type': 'text/plain'} );
 //        res.write('received the data:\n\n');
 //        res.end(util.inspect(xhrUpload));
-     return res;
+//     return res;
 //      });
 });
 
