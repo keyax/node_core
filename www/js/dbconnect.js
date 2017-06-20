@@ -18,19 +18,19 @@ promoteValues,promoteBuffers,promoteLongs,domainsEnabled,keepAliveInitialDelay,c
 
 var options = {
 //    db: {
-      authSource: "kyxtree",
-      native_parser: true,
+      authSource: "kyxtree" //,
+//>>      native_parser: true,
 //      },
 //    server: {
-      poolSize: 10,
+//>>      poolSize: 10,
 ///   socketOptions: {
-        connectTimeoutMS: 500
+//>>        connectTimeoutMS: 500
 ///   }
 //        }
 //    replSet: {},
 //    mongos: {}
     };
-
+/*
 module.exports.conect = () => new Promise((resolve, reject) => {
    MongoClient.connect(dburl, options)
       .then(function (dbs) { // <- db as first argument
@@ -40,15 +40,17 @@ module.exports.conect = () => new Promise((resolve, reject) => {
       })
       .catch(function (err) {})
    });
+*/
 //console.log(url);
-/*
+
 module.exports.conect = () => new Promise((resolve, reject) => {
   MongoClient.connect(dburl,  options, function(err, dbs) {
-        if (err) { reject(err); return; };
+        if (err) { console.log("error mongopen:" + err); reject(err); return; };
         resolve(dbs);
         conexion = dbs;
     });
-});*/
+});
+
 module.exports.get = () => {
     if(!conexion) {
         throw new Error('Call connect first....!');
