@@ -191,37 +191,13 @@ console.log("MONGODBpost");
 };
 
 
-////var sqlconnect = require('./sqlconnect.js');
+var sqlconnect = require('./sqlconnect.js');
 //var sqlconex = sqlconnect.conect();
 // sqlconex = sqlconnect.get();
-///////var lings = "";
+var lings = "";
 //sqlconn.qwry("spa");
-/*
-router.post('/login',function(req,res){
-    var query = require('../modules/database');
-    query("select * from managers where ManagerID =10001",function(err,vals,fields){
-        var temp=JSON.stringify(vals);
 
-        var manager = JSON.parse(temp)[0];
-
-        if(req.body.password===manager.password){
-           req.session.manager = manager;
-
-
-           //You are redirecting user to home
-           res.redirect('/home');
-
-           //You should add 'return'
-           return;
-        }
-
-        //This will only accessible if password is not match
-        res.send('ID or password wrong!');
-    });
-});
-*/
-
-router.post("/sqldb/::langs", function(req, res) {
+router.post("/sqldb/::langs", function(req, res, next) {
 //  res.header("Access-Control-Allow-Origin", "*");
 //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //  res.setHeader("Access-Control-Allow-Headers", "*");
@@ -230,23 +206,12 @@ router.post("/sqldb/::langs", function(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Content-Type", "application/json");
 //  res.setHeader("Content-Type", "text/html");
-var query = require('./sqlconnect.js');
-ling=req.params.langs;
-var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-
+    ling=req.params.langs;
     console.log("sp?" + req.params.langs);
-
-    query(ask,function(err,vals,fields){
-        var temp=JSON.stringify(vals);
-  
-        var manager = JSON.parse(temp)[0];
-       res.send(manager);
-     });
-});
-////////    var sqlconex = sqlconnect.get();
+    var sqlconex = sqlconnect.get();
 //    console.log("language:" + ling +":"+ Object.prototype.toString.call(sqlconex));
-/////////    sqlconex.query(ling);
-/////////    res.send("res");
+    sqlconex.query(ling);
+    res.send("res");
 //    console.log("xhr:" + res.xhr);
 /*  if (req.xhr) {  // || req.headers.accept.indexOf('json') > -1) -c
     // send your xhr response here
@@ -258,8 +223,8 @@ var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND V
     sqlconn.query(lang);
     console.log("normal");
   }*/
-/////////  next();
-///});
+  next();
+});
 
 
 

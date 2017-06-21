@@ -1,38 +1,12 @@
 var mysql = require('mysql');
-var env_sql = {
-    options: {
-      host: "23.229.191.137",
-      database: "lebady_kyx",
-      user: "yones_kyx",
-      password: "Euro5577"
-      },
-    port: 80
-};
-// Create connection pool
-env_sql.pool = mysql.createPool(env_sql.options);
-
-var query=function(sql,callback){
-    env_sql.pool.getConnection(function(err,conn){
-        if(err) console.log("POOL ==> " + err);//POOL ==> Error: connect ETIMEDOUT
-        else{
-            conn.query(sql,function(qerr,vals,fields){
-                //release connection
-                conn.release();
-                callback(qerr,vals,fields);
-
-            });
-        }
-    });
-};
-
-module.exports=query;
-
-/*
-
+var options = {
+  host: "23.229.191.137",
+  database: "lebady_kyx",
+  user: "yones_kyx",
+  password: "Euro5577"
+  };
+var sqlcon = mysql.createConnection(options);
 var ling = "spa";
-
-
-
 module.exports.conect = function() {
    sqlcon.connect(function(err){
       if(err){ // throw err
@@ -47,13 +21,12 @@ module.exports.conect = function() {
   });
 };
 module.exports.get = function() {
-    if(!sqlcon) {conect();
+    if(!sqlcon) {
         throw new Error('Call connect first....!');
     }
     console.log(`db conexion get: ${sqlcon}`);
     return sqlcon;
 };
-*/
 /*
 function insertData(name,id) {
   connection.query('INSERT INTO members (name, id) VALUES (?, ?)', [name,id], function(err,result) {
@@ -61,32 +34,13 @@ function insertData(name,id) {
   });
 }
 */
-/*
-var query=function(sql,callback){
-    pool.getConnection(function(err,conn){
-        if(err) console.log("POOL ==> " + err);
-        else{
-            conn.query(sql,function(qerr,vals,fields){
-                //release connection
-                conn.release();
-                callback(qerr,vals,fields);
-
-            });
-        }
-    });
-};
-
-module.exports=query;
-*/
-/*
-module.exports.query = function(sql, callback) {
+module.exports.query = function(ling) {
 
  ling = "sp";
 //  sqlcons = sqlconnect.get();
  var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE "%${ling}%"`;
 //   var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%sp%'`;
-  sqlcon.
-  sqlcon.query(sql, function (err, row, fields) {
+  sqlcon.query(ask, function (err, row, fields) {
     //   if (err) throw err;
       for (var i in row) {
             console.log('ROW: ', row[i]);
@@ -115,7 +69,6 @@ module.exports.end = function() {
      sqlcon.end();
      return;
 };
-*/
 /*
 sqlcon.on('error', function(err) {
   console.log(err.code); // 'ER_BAD_DB_ERROR'
