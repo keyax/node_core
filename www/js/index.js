@@ -230,17 +230,22 @@ router.post("/sqldb/::langs", function(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Content-Type", "application/json");
 //  res.setHeader("Content-Type", "text/html");
-var query = require('./sqlconnect.js');
+var query = require('./sqlconnect.js');  // pool
+//var sqlc = require('./sqlconnect.js'); //s
 ling=req.params.langs;
 var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
 
     console.log("sp?" + req.params.langs);
 
-    query(ask,function(err,vals,fields){
-        var temp=JSON.stringify(vals);
-  
+    query(ask,function(err, rows, fields){
+
+
+
+        var temp=JSON.stringify(rows);
+
         var manager = JSON.parse(temp)[0];
-       res.send(manager);
+
+       res.send(rows);
      });
 });
 ////////    var sqlconex = sqlconnect.get();
