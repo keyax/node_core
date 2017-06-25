@@ -1,12 +1,14 @@
+//  var modul = require('builtin-modules');
+//  console.log(modul); // => []
 //[ 'assert','buffer','child_process','cluster','console','constants','crypto','dgram','dns','domain','events',
 //  'fs','http','https','module','net','os','path','process','punycode','querystring','readline','repl',
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
-//  var modul = require('builtin-modules');
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
 var URL = require('url').URL;
+// const myUrl = new URL('/a/path', 'https://example.org/');
 var util = require('util');
 var https = require('https');
 var xhr2 = require('xhr2');
@@ -222,6 +224,13 @@ router.post('/login',function(req,res){
 */
 
 router.post("/sqldb/::langs", function(req, res) {
+/*
+  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+  // send your xhr response here
+} else {
+  // send your normal response here
+}
+*/
 //  res.header("Access-Control-Allow-Origin", "*");
 //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //  res.setHeader("Access-Control-Allow-Headers", "*");
@@ -230,23 +239,15 @@ router.post("/sqldb/::langs", function(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.setHeader("Content-Type", "application/json");
 //  res.setHeader("Content-Type", "text/html");
-var query = require('./sqlconnect.js');  // pool
-//var sqlc = require('./sqlconnect.js'); //s
+var sqlconnect = require('./sqlconnect.js');  // pool or single
 ling=req.params.langs;
 var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-
     console.log("sp?" + req.params.langs);
-
-    query(ask,function(err, rows, fields){
-
-
-
-        var temp=JSON.stringify(rows);
-
-        var manager = JSON.parse(temp)[0];
-
-       res.send(rows);
-     });
+    sqlconnect.queryp(ask,function(err, rows, fields){
+    var temp=JSON.stringify(rows);
+    var manager = JSON.parse(temp)[0];
+   res.send(rows);
+   });
 });
 ////////    var sqlconex = sqlconnect.get();
 //    console.log("language:" + ling +":"+ Object.prototype.toString.call(sqlconex));
