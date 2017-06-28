@@ -103,6 +103,9 @@ RUN cd /home/node \
  && npm install --save multer \
  && npm install --save bluebird \
  && npm install --save koa \
+ && npm install --save koa.io \
+ && npm install --save koa-socket \
+ && npm install --save koa-socket.io \
  && npm install --save koa2-cors \
  && npm install --save koa-router \
  && npm install --save koa-route \

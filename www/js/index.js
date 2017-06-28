@@ -13,14 +13,17 @@ var util = require('util');
 var parser = require('body-parser');
 var https = require('https');
 var xhr2 = require('xhr2');
-var express = require('express');
-var app = express();
+///var express = require('express');
+///var appx = express();
 //var app = require('express')();
 var http = require('http');
-var server  = http.createServer(app);
+///var server  = http.createServer(appx);
 //var serverh  = http.createServer(handler);
+// 1*) get an instance of router
+///var routerx = express.Router();
+
 var socketio = require('socket.io');
-var sio = socketio(server);
+///var sio = socketio(server);
 //var sio = require('socket.io')(server);
 //var sio = require('socket.io')(app);
 //var sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
@@ -28,10 +31,7 @@ var sio = socketio(server);
 ///var sio = socketio.listen(server);
 ///var sios = socketio(servers);
 
-// 1*) get an instance of router
-var router = express.Router();
-
-var Promise = require('bluebird');
+///var Promise = require('bluebird');
 //var mongo = require('mongodb');
 //var MongoClient = require('mongodb').MongoClient;
 //var Serverdb = require('mongodb').Server;
@@ -40,7 +40,7 @@ var formidable = require('formidable');
 
 var Koa = require('koa');
 var Cors = require('koa2-cors');
-var Router = require('koa-router');
+var Routerk = require('koa-router');
 var Mount = require('koa-mount');
 var Static = require('koa-static');
 var Parser = require('koa-bodyparser');
@@ -50,49 +50,85 @@ var Multer = require('koa-multer');
 var Session = require('koa.session');
 var Logger = require('koa-logger');
 
-var app = new Koa();  // var app = Koa();
-app.use(Cors());
-var router = new Router();
+var appk = new Koa();  // var app = Koa();
+var routerk = new Routerk(); // new
+var httpk = require('http');
+//var serverk = httpk.createServer(appk.callback());
+//var siok = require('socket.io').listen(serverk);
 
-router.get('/', function (ctx, next) {
+appk.use(Parser());
+//appk
+//  .use(routerk.routes())
+//  .use(routerk.allowedMethods());
+appk.use((ctx, next) => {
+    const start = new Date();
+    return next().then(() => {
+      const ms = new Date() - start;
+      console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+    });
+  });
+
+appk.use(Cors({
+          origin: function(ctx) {console.log("ctx.url:" +ctx.url);
+                    if (ctx.url === '^/socket.io/') {console.log("ctx.url2:" +ctx.url);return '*';}
+                    return '*';
+                    },
+          exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+          maxAge: 5,
+          credentials: true,
+          allowMethods: ['GET', 'POST', 'DELETE'],
+          allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+          }));
+
+routerk.get('/', function (ctx, next) {
   // ctx.router available
 });
+routerk.post("/sqldb/::langs", function(ctxq, next) {
+/*
+  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+  // send your xhr response here
+} else {
+  // send your normal response here
+}
+*/
 
-app
-  .use(router.routes())
-  .use(router.allowedMethods());
 
-// maps file extention to MIME typere
-//let mimeType = {
-const mime = {
-  '.html': 'text/html',
-  '.css':  'text/css',
-//'.js':   'text/javascript',  // obsolete
-  '.js':   'application/javascript',
-  '.json': 'application/json',  // utf-8 for API
-  '.svg':  'image/svg+xml',
-  '.eot':  'appliaction/vnd.ms-fontobject',
-  '.ttf':  'aplication/font-sfnt',
-  '.jpg':  'image/jpeg',
-  '.png':  'image/png',
-  '.ico':  'image/x-icon',
-  '.mp3':  'audio/mpeg',
-  '.wav':  'audio/wav',
-  '.pdf':  'application/pdf',
-  '.doc':  'application/msword',
-// form containing non-Ascii data, binary data, files...
-  'form' : 'multipart/form-data',
-// furl is inefficient for sending large quantities of binary data or text containing non-ASCII characters
-  'furl' : 'application/x-www-form-urlencoded'
-};
+// hello
 
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-var port = process.argv[2] || 9000;
+const a = new Koa();
+
+a.use(async function (ctx, next){
+  await next();
+  ctx.body = 'Hello';
+});
+//  res.header("Access-Control-Allow-Origin", "*");
+//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//  res.setHeader("Access-Control-Allow-Headers", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Content-Type", "application/json");
+//  res.setHeader("Content-Type", "text/html");
+var sqlconnect = require('./sqlconnect.js');  // pool or single
+// ling='%'+req.params.langs+'%';
+// var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
+var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+                'values' :  ['%'+req.params.langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
+// var params = [req.params.langs];
+  console.log("sp?" + req.params.langs);
+    sqlconnect.querys(sqlopts, function(err, rows, fields){
+    var temp=JSON.stringify(rows);
+    var manager = JSON.parse(temp)[0];
+   res.send(manager);
+   });
+});
+
+
 
 // Start the application after the database connection is ready
-  server.listen(parseInt(`${port}}`), function(){
+/*>>>>>  server.listen(parseInt(`${port}}`), function(){
   console.log(`Server is listening port ${port}`);
-  });
+});  <<<<< */
 //  app.listen(parseInt(`${port}}`), function(){
 //  console.log(`Server is listening on port ${port}`);
 //  });
@@ -120,6 +156,42 @@ var sserver = https.createServer(options, app).listen(config.port, function() {
     console.log('Https App started');
 }); */
 // app.listen(443);
+
+
+
+/*
+router.get('/', function (ctx, next) {
+  // ctx.router available
+});
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+*/
+// maps file extention to MIME typere
+//let mimeType = {
+const mime = {
+  '.html': 'text/html',
+  '.css':  'text/css',
+//'.js':   'text/javascript',  // obsolete
+  '.js':   'application/javascript',
+  '.json': 'application/json',  // utf-8 for API
+  '.svg':  'image/svg+xml',
+  '.eot':  'appliaction/vnd.ms-fontobject',
+  '.ttf':  'aplication/font-sfnt',
+  '.jpg':  'image/jpeg',
+  '.png':  'image/png',
+  '.ico':  'image/x-icon',
+  '.mp3':  'audio/mpeg',
+  '.wav':  'audio/wav',
+  '.pdf':  'application/pdf',
+  '.doc':  'application/msword',
+// form containing non-Ascii data, binary data, files...
+  'form' : 'multipart/form-data',
+// furl is inefficient for sending large quantities of binary data or text containing non-ASCII characters
+  'furl' : 'application/x-www-form-urlencoded'
+};
+
 
 /*
 //Creating file server
@@ -158,19 +230,7 @@ s.push('beep')    // the string you want
 s.push(null)      // indicates end-of-file basically - the end of the stream
 */
 
-sio.on('connection', function (socket){
-    socket.emit('news', { hello: 'world baby' });
-    socket.on('myevent', function (data) {
-       console.log(data);
-       console.log(`connected socket news FF!${JSON.stringify(data)}`);
-    });
-  });
-////      socket.disconnect();
-//    socket.disconnect('unauthorized');
-//    socket.close();
-
-
-app.use("/", router);
+/////                    apx.use("/", routerx);
 
 // var htmls = require('./htmls.js');
 
@@ -187,7 +247,7 @@ dbconn.test();
 dbconn.conect()
     .then(() =>  {conexion = dbconn.get();
                   console.log(`mongodb conexion: ${conexion}`);})
-    .then(() => router.get('/mongo', mongoquery))
+    .then(() => routerk.get('/mongo', mongoquery))
     .catch((e) => {
         console.error(e);
         // Always hard exit on a database connection error
@@ -249,8 +309,8 @@ router.post('/login',function(req,res){
     });
 });
 */
-router.use(parser.json());
-router.post("/sqldb/::langs", function(req, res) {
+
+///routerx.post("/sqldb/::langs", function(req, res) {
 /*
   if (req.xhr || req.headers.accept.indexOf('json') > -1) {
   // send your xhr response here
@@ -258,6 +318,7 @@ router.post("/sqldb/::langs", function(req, res) {
   // send your normal response here
 }
 */
+/* ***********************
 //  res.header("Access-Control-Allow-Origin", "*");
 //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //  res.setHeader("Access-Control-Allow-Headers", "*");
@@ -279,6 +340,7 @@ var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LAN
    res.send(manager);
    });
 });
+*************************  */
 ////////    var sqlconex = sqlconnect.get();
 //    console.log("language:" + ling +":"+ Object.prototype.toString.call(sqlconex));
 /////////    sqlconex.query(ling);
@@ -327,7 +389,7 @@ next();
 });*/
 // 3*) home page route (http://localhost:8080)
 //router.get('/', function (req, res, next) {....});
-router.post('/xform', function (req, res, next) {
+routerk.post('/xform', function (req, res, next) {
 //  function processAllFieldsOfTheForm(req, res) {
       var form = new formidable.IncomingForm();
 
@@ -446,3 +508,25 @@ sqlcon.query(ask, function (err, results, fields) {
 sqlcon.end();
 */
 //});
+
+
+
+
+siok.on('connection', function (socket){
+    socket.emit('news', { hello: 'world baby' });
+    socket.on('myevent', function (data) {
+       console.log(data);
+       console.log(`connected socket news FF!${JSON.stringify(data)}`);
+    });
+  });
+////      socket.disconnect();
+//    socket.disconnect('unauthorized');
+//    socket.close();
+// you can pass the parameter in the command line. e.g. node static_server.js 3000
+var port = process.argv[2] || 9000;
+appk.listen(parseInt(`${port}`), function(){
+console.log(`Server is listening port ${port}`);
+});
+
+var serverk = require('http').createServer(koa.callback()).listen(9000);
+var siok = require('socket.io')(serverk);
