@@ -101,18 +101,19 @@ RUN cd /home/node \
  && npm install --save express-session \
  && npm install --save formidable \
  && npm install --save multer \
+ && npm install --save bluebird \
  && npm install --save koa \
+ && npm install --save koa2-cors \
  && npm install --save koa-router \
  && npm install --save koa-route \
  && npm install --save koa-mount \
- && npm install --save koa.session \
- && npm install --save koa-logger \
  && npm install --save koa-static \
- && npm install --save koa-multer \
- && npm install --save koa-formidable \
  && npm install --save koa-bodyparser \
  && npm install --save koa-validate \
- && npm install --save bluebird \
+ && npm install --save koa-formidable \
+ && npm install --save koa-multer \
+ && npm install --save koa.session \
+ && npm install --save koa-logger \
  && npm install --save mysql \
  && npm install --save mongodb \
  && npm install --save mongoose \

@@ -1,10 +1,11 @@
 // dbconnect.js   myAwesomeDbModule.js
+// import { MongoClient } from 'mongodb';  //.mjs
 var mongo = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var dburl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 var conexion = null;
-  
+
 /*
 the server/replset/mongos options are deprecated,
 all their options are supported at the top level of the options object
@@ -30,6 +31,11 @@ var options = {
 //    replSet: {},
 //    mongos: {}
     };
+
+exports.test = async function () {
+      return await MongoClient.connect(dburl, options);
+    }
+
 /*
 module.exports.conect = () => new Promise((resolve, reject) => {
    MongoClient.connect(dburl, options)

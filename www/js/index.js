@@ -10,6 +10,7 @@ var url = require('url');
 var URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 var util = require('util');
+var parser = require('body-parser');
 var https = require('https');
 var xhr2 = require('xhr2');
 var express = require('express');
@@ -36,6 +37,30 @@ var Promise = require('bluebird');
 //var Serverdb = require('mongodb').Server;
 //var mongoose = require('mongoose');
 var formidable = require('formidable');
+
+var Koa = require('koa');
+var Cors = require('koa2-cors');
+var Router = require('koa-router');
+var Mount = require('koa-mount');
+var Static = require('koa-static');
+var Parser = require('koa-bodyparser');
+var Valid = require('koa-validate');
+var Formis = require('koa-formidable');
+var Multer = require('koa-multer');
+var Session = require('koa.session');
+var Logger = require('koa-logger');
+
+var app = new Koa();  // var app = Koa();
+app.use(Cors());
+var router = new Router();
+
+router.get('/', function (ctx, next) {
+  // ctx.router available
+});
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
 
 // maps file extention to MIME typere
 //let mimeType = {
@@ -157,6 +182,8 @@ var conexion = null;
 //      res.status(err.status || 500);
 //});
 
+dbconn.test();
+
 dbconn.conect()
     .then(() =>  {conexion = dbconn.get();
                   console.log(`mongodb conexion: ${conexion}`);})
@@ -222,7 +249,7 @@ router.post('/login',function(req,res){
     });
 });
 */
-
+router.use(parser.json());
 router.post("/sqldb/::langs", function(req, res) {
 /*
   if (req.xhr || req.headers.accept.indexOf('json') > -1) {
@@ -240,13 +267,16 @@ router.post("/sqldb/::langs", function(req, res) {
     res.setHeader("Content-Type", "application/json");
 //  res.setHeader("Content-Type", "text/html");
 var sqlconnect = require('./sqlconnect.js');  // pool or single
-ling=req.params.langs;
-var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-    console.log("sp?" + req.params.langs);
-    sqlconnect.queryp(ask,function(err, rows, fields){
+// ling='%'+req.params.langs+'%';
+// var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
+var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+                'values' :  ['%'+req.params.langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
+// var params = [req.params.langs];
+  console.log("sp?" + req.params.langs);
+    sqlconnect.querys(sqlopts, function(err, rows, fields){
     var temp=JSON.stringify(rows);
     var manager = JSON.parse(temp)[0];
-   res.send(rows);
+   res.send(manager);
    });
 });
 ////////    var sqlconex = sqlconnect.get();
