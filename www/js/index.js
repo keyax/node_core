@@ -11,7 +11,7 @@ var URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 var util = require('util');
 var parser = require('body-parser');
-var https = require('https');
+//var https = require('https');
 var xhr2 = require('xhr2');
 var express = require('express');
 var appx = express();
@@ -19,13 +19,12 @@ var http = require('http');
 var serverx  = http.createServer(appx);
 
 var socketio = require('socket.io');
-var siox = socketio(serverx);
+var siox = socketio.listen(serverx);
+//var siox = socketio(serverx);
 //var sio = require('socket.io')(server);
 //var sio = require('socket.io')(app);
 //var sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
 //var sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
-///var siox = socketio.listen(server);
-///var sios = socketio(servers);
 
 // 1*) get an instance of router
 var routerx = express.Router();
@@ -44,15 +43,12 @@ appx.use(function(err, req, res, next) {
 
 // 2*) route middleware that will happen on every request
 routerx.use(function(req, res, next) {
-    // log each request to the console
-    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Headers", "Origin, Methods, X-Requested-With, Content-Type, Accept");
-//    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-//    res.setHeader("Content-Type", "application/json");
-    // res.setHeader("Content-Type", "text/html; charset=utf-8");
-
-  console.log(req.method, req.url);
-    // continue doing what we were doing and go to the route
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Content-Type", "application/json");
+//  res.setHeader("Content-Type", "text/html; charset=utf-8");
+    console.log("requs" + req.method + req.url);
     next();
 });
 
@@ -66,15 +62,6 @@ routerx.post("/sqldb/::langs", function(req, res, next) {
   // send your normal response here
 }
 */
-//res.setHeader("Access-Control-Allow-Origin", "*");
-//res.setHeader("Access-Control-Allow-Headers", "Origin, Methods, X-Requested-With, Content-Type, Accept");
-res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
-res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-res.setHeader("Content-Type", "application/json");
-//res.setHeader("Content-Type", "text/html; charset=utf-8");
-
-
 var sqlconnect = require('./sqlconnect.js');  // pool or single
 // ling='%'+req.params.langs+'%';
 // var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
@@ -86,25 +73,7 @@ var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LAN
     var temp=JSON.stringify(rows);
     var manager = JSON.parse(temp)[0];
     res.send(rows);
-//    next();
-//  res.header("Access-Control-Allow-Origin", "*");
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//no    res.setHeader("Access-Control-Allow-Headers", "*");
-//  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, Origin, Accept, Content-Type");
-//  res.setHeader("Access-Control-Allow-Origin", "*");
-//    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-//    res.setHeader("Content-Type", "application/json");
-//    res.setHeader("Content-Type", "text/html");
-/*let status = 200; //OK
-let headers = {'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Content-Length', // , Authorization
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', //  , PUT, DELETE, PATCH
-    'Content-Type': 'application/json',
-//  'Content-Type': 'text/html; charset=utf-8',
-//    'Set-Cookie': 'session=yones.lebady@gmail.com, user=kyxuser',
-    'Content-Length': 'xbody.length'};
-//  "X-Content-Type-Options": "nosniff",   // blocks style not text/css
-    res.writeHead(status, headers);*/
+    next();
    });
 });
 /*
