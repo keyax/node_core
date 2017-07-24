@@ -106,7 +106,7 @@ RUN cd /home/node \
 # && npm install --save ws \
  && npm install --save socket.io \
  && npm install --save jsonwebtoken \
- && npm install --save x509 \
+# && npm install --save x509 \
  && npm install --save koa \
 # && npm install --save koa.io \
 # && npm install --save koa-socket \
