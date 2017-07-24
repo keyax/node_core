@@ -1,83 +1,315 @@
-//  var modul = require('builtin-modules');
+//  const modul = require('builtin-modules');
 //  console.log(modul); // => []
 //[ 'assert','buffer','child_process','cluster','console','constants','crypto','dgram','dns','domain','events',
 //  'fs','http','https','module','net','os','path','process','punycode','querystring','readline','repl',
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
-var assert = require('assert');
-var fs = require('fs');
-var path = require('path');
-var url = require('url');
-var URL = require('url').URL;
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
+const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
-var util = require('util');
-var parser = require('body-parser');
-//var https = require('https');
-var xhr2 = require('xhr2');
-var express = require('express');
-var appx = express();
-var http = require('http');
-var serverx  = http.createServer(appx);
+const util = require('util');
+//const parser = require('body-parser');
+const https = require('https');
+const xhr2 = require('xhr2');
 
-var socketio = require('socket.io');
-var siox = socketio.listen(serverx);
-//var siox = socketio(serverx);
-//var sio = require('socket.io')(server);
-//var sio = require('socket.io')(app);
-//var sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
-//var sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
+const sqlconnect = require('./sqlconnect.js');   // pool or single
 
+///const express = require('express');
+///const appx = express();
+//const app = require('express')();
+const http = require('http');
+///const server  = http.createServer(appx);
+//const serverh  = http.createServer(handler);
 // 1*) get an instance of router
-var routerx = express.Router();
-///var Promise = require('bluebird');
-//var mongo = require('mongodb');
-//var MongoClient = require('mongodb').MongoClient;
-//var Serverdb = require('mongodb').Server;
-//var mongoose = require('mongoose');
-var formidable = require('formidable');
+///const routerx = express.Router();
+
+const Koa = require('koa');
+const Routerk = require('koa-route');
+const Mount = require('koa-mount');
+const Static = require('koa-static');
+//const Cors = require('koa2-cors');
+const Parser = require('koa-body');
+const Valid = require('koa-validate');
+const Formis = require('koa-formidable');
+const Multer = require('koa-multer');
+//const Session = require('koa.session');
+const Logger = require('koa-logger');
+
+var appk = new Koa();  // const app = Koa();
+var routerk = new Routerk(); // new{prefix: '/'}
+var serverhk  = http.createServer(appk.callback());
+
+const socketio = require('socket.io');
+///const sio = socketio(server);
+//const sio = require('socket.io')(server);
+//const sio = require('socket.io')(app);
+//const sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
+//const sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
+///const sio = socketio.listen(server);
+///const sios = socketio(servers);
+
+///const Promise = require('bluebird');
+//const mongo = require('mongodb');
+//const MongoClient = require('mongodb').MongoClient;
+//const Serverdb = require('mongodb').Server;
+//const mongoose = require('mongoose');
+//const formidable = require('formidable');
+
+//var fetch = require('node-fetch');
+var jwt = require('jsonwebtoken');
 
 /*
-appx.use(function(err, req, res, next) {
-      res.status(err.status || 500);
+const appi = new Koa();  // const app = Koa();
+const a = new Koa();
+a.use(async function (ctx, next){
+  await next();
+  ctx.response.body = 'Hello';
+});
+appk.use(Mount('/helo', a));
+routerk.get('/hi', function (ctx) {
+// hello
+  // ctx.router available
+//const res = await ctx.response;
+  console.log("ctx.params:"+ctx.response);
 });
 */
+var dbconn = require('./dbconnect.js');
+//var conexion = null;
+var resultado = "";
 
-// 2*) route middleware that will happen on every request
-routerx.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Headers", "Origin, Methods, X-Requested-With, Content-Type, Accept");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Content-Type", "application/json");
-//  res.setHeader("Content-Type", "text/html; charset=utf-8");
-    console.log("requs" + req.method + req.url);
+
+
+routerk.use((ctx,next) => {
+  ctx.body = {"respuesta":"Hola amigos de Keyax router use"};  // second step
     next();
 });
 
-//routerx.get('/db', function (req, res, next) {});
+routerk.get('/mongo', Parser, async function (ctx, next){
+//  ctx.flushHeaders();
+ ctx.body = {"respuesta":"Hola amigos de Keyax router get"};
 
-routerx.post("/sqldb/::langs", function(req, res, next) {
+
+  //                                    ctx.response.type = 'xml';
+  //                                    ctx.response.body = ctx.body;
+                                      next();});
+//(ctx => { ctx.body =  'Hello world Keyax';});
+
+
 /*
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-  // send your xhr response here
-} else {
-  // send your normal response here
+dbconn.conect()
+    .then(() =>  {conexion = dbconn.get();
+                  console.log(`mongodb conexion: ${conexion}`);})
+//    .then(() => routerk.get('/mong', mongoquery))
+    .catch((e) => {
+        console.error(e);
+        // Always hard exit on a database connection error
+//        process.exit(1);
+    });
+console.log(`mongodb2 conexion: ${conexion}`);
+//dbconn.test();
+*/
+
+/*
+// uses async arrow functions
+app.use(async (ctx, next) => {
+  try {
+    await next() // next is now a function
+  } catch (err) {
+    ctx.body = { message: err.message }
+    ctx.status = err.status || 500
+  }
+})
+*/
+
+routerk.post("/mongo", async (ctx, next) => {
+//   (function(){  //scoping fn
+//   })();  // end scoping fn
+
+//try {
+       ctx.body = {"respuesta mongo":"Hola amigos de Keyax "};  /// first step  >> who
+/*       const start = new Date();
+       return next().then(() => {const ms = new Date() - start;
+                      console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+                      console.log(`hi${JSON.stringify(ctx.response.body)}`);
+        });
+*/
+
+function list(ctx, next) {
+    let database = null;
+//    yield next;
+     dbconn.open()
+    .then((db)=>{
+        database = db;
+        return db.collection('users')
+    })
+    .then((users)=>{
+        return users.findOne({age: {$eq: 22}})
+//        return users.find({}).toArray(function(err, results){console.log(results);return results;}); // output all records
+    })
+    .then((resul)=>{//return result;
+        resujs = JSON.stringify(resul);
+  //      ctx.body = resujs;
+//        console.log("then:"+JSON.stringify(result));
+//      setTimeout(function () {
+        console.log("xqr"+resujs+"xqr");
+//      }, 500)
+        database.close();
+        ctx.state.resul = resujs;
+//        resultado = resul;
+      return resujs;
+      })
+    .catch((err)=>{
+        console.error(err);
+    })
+}; // end list()
+ctx.state.resul = await list(ctx, next);
+console.log("state:"+ctx.state.resul);
+  //    next();
+  //    ctx.body = result;
+/*          } catch (err) {
+      ctx.body = { message: err.message }
+      ctx.status = err.status || 500
+    }*/
+
+// runs in boot.js or what ever file your application starts with
+// 4*) apply the routes to our application  app.use('/', router);
+//    app.use(function(err, req, res, next) {
+//      res.status(err.status || 500);
+//});
+
+function insert(object){
+    let database = null;
+    dbconn.open()
+    .then((db)=>{
+        database = db;
+        return db.collection('users')
+    })
+    .then((users)=>{
+        return users.insert(object)
+    })
+    .then((result)=>{
+        console.log(result);
+        database.close();
+    })
+    .catch((err)=>{
+        console.error(err)
+    })
+};
+//insert({name: 'Gary Oblanka', age: 22});
+
+/*
+try {xqr = list(ctx, next);
+     console.log("xqr1"+xqr);
+     ctx.body = xqr;
+     await next() // next is now a function
+} catch (err) {
+  ctx.body = { message: err.message }
+  ctx.status = err.status || 500
 }
 */
-var sqlconnect = require('./sqlconnect.js');  // pool or single
+
+//while (xqr == null){ctx.body =JSON.stringify(result);};
+///setTimeout(function () {
+console.log("xqr2"+result+"xqr");
+//  ctx.body=result;
+//  ctx.res.end();
+///}, 5000)
+///var end = Date.now() + 5000
+///while (Date.now() < end) ;
+//console.log('imma let you finish but blocking the event loop is the best bug of all TIME')
+/*
+var conexion = dbconn.conect().then(cnx => {resolve(cnx);})
+                     .catch((err) => {console.error(err);});
+ctx.body = dbconn.finds(conexion).then((rest) => {console.log("rest"+JSON.stringify(rest));return rest;})
+                //                  .then((rx) => {console.log("resix"+resix);})
+                            //      .then((resix) => {ctx.body = JSON.stringify(resix);console.log('resx'+ctx.body);})
+                                  .catch((err) => {console.error(err);});
+console.log(`routed db connexion: ${conexion}`);
+//console.log("MONGODBpost");})
+*/
+//next();
+//};
+});
+
+routerk.post("/sqldb/:langs", async function(ctx, next) {
+
+
+/////         console.log("ctx.response"+ JSON.stringify(ctx.response));
+/*       ctx.status = 200;
+         ctx.set("Access-Control-Allow-Origin", "*");
+         ctx.set("Access-Control-Allow-Credentials", "true");
+         ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+         ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+//       ctx.set("Content-Type", "application/json");
+         ctx.type="application/json";
+         ctx.flushHeaders();*/
+  ///////       ctx.body = {"respuesta":"Hola amigos de Keyax router post!!!"};  // third step
+  //            const res = await ctx.routerk.body;   // ctx.routerk.body
+/////              console.log("ctx.params:" + JSON.stringify(ctx.response));
+
 // ling='%'+req.params.langs+'%';
 // var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
 var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
-                'values' :  ['%'+req.params.langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
+                'values' :  ['%'+ctx.params.langs.substring(1)+'%'], 'timeout' : 40000 }; // '%_%'   40s
+   console.log("sp?" + ctx.params.langs);
 // var params = [req.params.langs];
-  console.log("sp?" + req.params.langs);
-    sqlconnect.queryp(sqlopts, function(err, rows, fields){
+//  console.log("sp?" + req.params.langs);
+// const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
+
+  //             await next();
+      sqlconnect.querypr(sqlopts)
+            .then(rows => {console.log("rowssqlpre:"+JSON.stringify(ctx.body));
+      //              ctx.flushHeaders();
+              //      appk.context.db = rows;
+              //      ctx.send(rows);
+                    console.log("rowssql:"+JSON.stringify(ctx.body));
+              ctx.body = {"respuesta":"Hola amigos de Keyax nnnnxxxxxnnn"};  /// first step  >> who
+
+          /*          // temporary data holder
+                    const body = [];
+                    // on every content chunk, push it to the data array
+                    response.on('data', (chunk) => body.push(chunk));
+                    // we are done, resolve promise with those joined chunks
+                    response.on('end', () => resolve(body.join('')));
+     */
+              return rows;
+      //        next();
+            })
+             .then((rows) => {ctx.body = rows;})
+//                    console.log("rows:"+JSON.stringify(rows[0]));})
+//     .then(JSON.stringify)
+///     .then(console.log("rows*sql:"+ctx.body))
+     .catch(err => function (err) {console.log("Promise Rejected");});
+///console.log("rows******sql:"+JSON.stringify(ctx.body));
+///////ctx.body = {"respuesta":"Hola amigos de Keyax nnnnxxxxxnnn"};  /// first step  >> who
+
+/*    sqlconnect.queryp(sqlopts, function(err, rows, fields){
     var temp=JSON.stringify(rows);
     var manager = JSON.parse(temp)[0];
-    res.send(rows);
-    next();
-   });
+    console.log(rows);
+    ctx.body = temp;
+//   res.send(manager);
+   });*/
+   next();
 });
 /*
-routerx.post('/xform', function (req, res, next) {
+// uses async arrow functions
+app.use(async (ctx, next) => {
+  try {
+    await next() // next is now a function
+  } catch (err) {
+    ctx.body = { message: err.message }
+    ctx.status = err.status || 500
+  }
+})
+*/
+
+// 3*) home page route (http://localhost:8080)
+//router.get('/', function (req, res, next) {....});
+/*
+routerk.post('/xform', function (req, res, next) {
 //  function processAllFieldsOfTheForm(req, res) {
       var form = new formidable.IncomingForm();
 
@@ -93,152 +325,105 @@ routerx.post('/xform', function (req, res, next) {
 //  }
 });
 */
-
-// runs in boot.js or what ever file your application starts with
-// 4*) apply the routes to our application  app.use('/', router);
-appx.use('/', routerx);
-
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-var port = process.argv[2] || 9000;
-serverx.listen(parseInt(`${port}`), function(){
-console.log(`Server is listening port ${port}`);
+appk.use((ctx, next) => {
+  try {
+       ctx.status = 200;
+       ctx.set("Access-Control-Allow-Origin", "*");
+       ctx.set("Access-Control-Allow-Credentials", "true");
+       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+//     ctx.set("Content-Type", "application/json");
+       ctx.type="application/json";
+//       ctx.flushHeaders();
+     ctx.body = {"respuesta":"Hola amigos de Keyax"};  /// first step  >> who
+  /*       const start = new Date();
+         return next().then(() => {const ms = new Date() - start;
+                        console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+                        console.log(`hi${JSON.stringify(ctx.response.body)}`);
+          });
+*/
+//        await next();
+//      ctx.state.rec = list(ctx, next);
+      } catch (err) {
+        ctx.body = { message: err.message }
+        ctx.status = err.status || 500
+      }
 });
-siox.on('connection', function (socketo){
-    socketo.emit('news', { hello: 'world baby' });
-    socketo.on('myevent', function (data) {
-       console.log(data);
-       console.log(`connected socket news FF!${JSON.stringify(data)}`);
-    });
-  });
-////      socket.disconnect();
-//    socket.disconnect('unauthorized');
-//    socket.close();
+// response
+appk.use((ctx) => {
+  //ctx.body = ctx.db;
+console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
+});
+appk.use(routerk.routes());
+appk.use(routerk.allowedMethods());
+//appk
+//  .use(routerk.routes())
+//  .use(routerk.allowedMethods());
+
+
+// Response
+/////////////appk.use(ctx => { ctx.body =  'Hello world Keyax';});
+/*    //  ctx.body.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers'); //Methods, Origin, Accept, Content-Type');
+    //  ctx.body.set('Access-Control-Allow-Origin', '*');
+    //     ctx.body = "Helloo!!!"; //"set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');";*/
+/*
+appk.use(Cors({
+           allowHeaders: ['Headears', 'Origin', 'Methods', 'Content-Type', 'Accept'], //'Authorization'
+           origin: '*',
+           allowMethods: ['GET', 'POST', 'OPTIONS']
+             /*function(ctx) {console.log("ctx.req.body:" +ctx.request.body);
+                //      if (ctx.url === '^/socket.io/') {console.log("ctx.url2:" +ctx.url);return '*';}
+                      return '*';
+                    },*/
+//            exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+//            maxAge: 5,
+//            credentials: false,
+  //        }));
+
+
+// Start the application after the database connection is ready
+/*>>>>>  server.listen(parseInt(`${port}}`), function(){
+  console.log(`Server is listening port ${port}`);
+});  <<<<< */
+//  app.listen(parseInt(`${port}}`), function(){
+//  console.log(`Server is listening on port ${port}`);
+//  });
+/* app.listen = function() {
+   var server = http.createServer(this);
+   return server.listen.apply(server, arguments);
+   };  */
+//var server = app.listen(9000);
+
+/* var options = {
+   key: fs.readFileSync('keys/kyx-key.pem'),
+   cert: fs.readFileSync('keys/kyx-cert.pem')
+   };
+   var sserver = https.createServer(options, app);  */
+/* var sserver = https.createServer(options, function (req, res) {
+     res.writeHead(200);
+     res.end("https secure server: Hello world  \n");
+   });
+   sserver.listen(443);  */
+// var sserver = https.createServer(app);
+/* sserver.listen(config.port, function() {console.log('Https App started'); }); */
+
+/* //same as above with express
+var sserver = https.createServer(options, app).listen(config.port, function() {
+    console.log('Https App started');
+}); */
+// app.listen(443);
 
 
 
 /*
-// 2*) route middleware that will happen on every request
-routerx.use(function(req, res, next) {
-    // log each request to the console
-  console.log(req.method, req.url);
-    // continue doing what we were doing and go to the route
-    next();
+router.get('/', function (ctx, next) {
+  // ctx.router available
 });
+
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
 */
-/*
-router.post("/sqldb/::langs", function(req, res) {
-//  res.header("Access-Control-Allow-Origin", "*");
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//  res.setHeader("Access-Control-Allow-Headers", "*");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Content-Type", "application/json");
-//  res.setHeader("Content-Type", "text/html");
-var query = require('./sqlconnect.js');  // pool
-//var sqlc = require('./sqlconnect.js'); //s
-ling=req.params.langs;
-var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-
-    console.log("sp?" + req.params.langs);
-
-    query(ask,function(err, rows, fields){
-
-
-
-        var temp=JSON.stringify(rows);
-
-        var manager = JSON.parse(temp)[0];
-
-       res.send(rows);
-     });
-});
-*/
-/*
-var mysql = require('mysql');
-var sqlcon = mysql.createConnection({
-  host: "23.229.191.137",
-  database: "lebady_kyx",
-  user: "yones_kyx",
-  password: "Euro5577"
-  });
-sqlcon.connect(function(err){
-  if(err){
-    console.log('Error connecting to Mysql Godaddy');
-    return;
-    }
-    console.log('Connection established Mysql Godaddy');
-});
-var lngs = "";
-var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${lngs}%'`;
-sqlcon.query(ask, function (err, results, fields) {
-//  if (err)  throw err;
-  console.log('The solution is: ', results);
-});
-sqlcon.end();
-*/
-
-// 3*) home page route (http://localhost:8080)
-/////routerx.get('/db', function (req, res, next) {});
-///routerx.post("/sql/::langs", function(req, res) {
-/*
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-  // send your xhr response here
-} else {
-  // send your normal response here
-}
-*/
-//  res.header("Access-Control-Allow-Origin", "*");
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//  res.setHeader("Access-Control-Allow-Headers", "*");
-/* res.setHeader("Access-Control-Allow-Headers", "Methods, Origin, Accept, Content-Type");
-res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-res.setHeader("Content-Type", "application/json");
-*/
-/*
-var sqlconnect = require('./sqlconnect.js');  // pool or single
-// ling='%'+req.params.langs+'%';
-// var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
-                'values' :  ['%'+req.params.langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
-// var params = [req.params.langs];
-  console.log("sp?" + req.params.langs);
-    sqlconnect.querys(sqlopts, function(err, rows, fields){
-    var temp=JSON.stringify(rows);
-    var manager = JSON.parse(temp)[0];
-
-    res.setHeader("Access-Control-Allow-Headers", "Origin, Methods, X-Requested-With, Content-Type, Accept");
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-//    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.send("rows");
-
-
-    res.send(rows);
-*/
-//  res.header("Access-Control-Allow-Origin", "*");
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//no    res.setHeader("Access-Control-Allow-Headers", "*");
-//  res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, Origin, Accept, Content-Type");
-//  res.setHeader("Access-Control-Allow-Origin", "*");
-//    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-//    res.setHeader("Content-Type", "application/json");
-//    res.setHeader("Content-Type", "text/html");
-/*let status = 200; //OK
-let headers = {'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Content-Length', // , Authorization
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', //  , PUT, DELETE, PATCH
-    'Content-Type': 'application/json',
-//  'Content-Type': 'text/html; charset=utf-8',
-//    'Set-Cookie': 'session=yones.lebady@gmail.com, user=kyxuser',
-    'Content-Length': 'xbody.length'};
-//  "X-Content-Type-Options": "nosniff",   // blocks style not text/css
-    res.writeHead(status, headers);*/
-//   });
-// });
-
 // maps file extention to MIME typere
 //let mimeType = {
 const mime = {
@@ -293,184 +478,6 @@ console.log(`File Server is listening on port 9100`);
 });
 */
 
-
-/*
-var Koa = require('koa');
-var Routerk = require('koa-router');
-var Parser = require('koa-bodyparser');
-var Cors = require('koa2-cors');
-var Mount = require('koa-mount');
-var Static = require('koa-static');
-var Valid = require('koa-validate');
-var Formis = require('koa-formidable');
-var Multer = require('koa-multer');
-var Session = require('koa.session');
-var Logger = require('koa-logger');
-
-var appk = new Koa();  // var app = Koa();
-var routerk = new Routerk(); // new
-
-var appi = new Koa();  // var app = Koa();
-const a = new Koa();
-
-a.use(async function (ctx, next){
-  await next();
-  ctx.response.body = 'Hello';
-});
-
-appk.use(Mount('/helo', a));
-
-routerk.get('/hi', function (ctx) {
-// hello
-  // ctx.router available
-//const res = await ctx.response;
-  console.log("ctx.params:"+ctx.response);
-});
-
-routerk.get('/sqldb', function(ctx, next){ctx.body="Holitas del mar";
-                                      ctx.response.type = 'xml';
-                                      ctx.response.body = ctx.body;})
-       .post("/sqldb/:langs", async function(ctx) {
-const res = await ctx.routerk.body;
-console.log("ctx.params:" + res);
-/*
-let url = new URL('https://example.com?foo=1&bar=2');
-let params = new URLSearchParams(url.search.slice(1));
-
-//Add a second foo parameter.
-params.append('foo', 4);
-//Query string is now: 'foo=1&bar=2&foo=4'
-*/
-
-/*
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-  // send your xhr response here
-} else {
-  // send your normal response here
-}
-*/
-//  res.header("Access-Control-Allow-Origin", "*");
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//  res.setHeader("Access-Control-Allow-Headers", "*");
-///    res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
-///    res.setHeader("Access-Control-Allow-Origin", "*");
-///    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-///    res.setHeader("Content-Type", "application/json");*/
-//  res.setHeader("Content-Type", "text/html");
-/*  var sqlconnect = require('./sqlconnect.js');  // pool or single
-// ling='%'+req.params.langs+'%';
-// var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
-var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
-                'values' :  ['%'+'s'+'%'], 'timeout' : 40000 }; // '%_%'   40s
-// var params = [req.params.langs];
-//  console.log("sp?" + req.params.langs);
-    sqlconnect.querys(sqlopts, function(err, rows, fields){
-    var temp=JSON.stringify(rows);
-    var manager = JSON.parse(temp)[0];
-    console.log(manager);
-
-//   res.send(manager);
-   });
-});
-
-// Error 502 Bad Gateway appk.use before routerk
-appk.use(routerk.routes())
-    .use(routerk.allowedMethods());
-
-appk.use((ctx, next) => {
-       ctx.status = 200;
-       ctx.set("Access-Control-Allow-Origin", "*");
-       ctx.set("Access-Control-Allow-Credentials", "true");
-       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
-       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-       ctx.set("Content-Type", "application/json");
-       ctx.flushHeaders();
-       ctx.body = "Hola amigos de Keyax";
-         const start = new Date();
-         return next().then(() => {const ms = new Date() - start;
-                        console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
-                        console.log(`${ctx.response.body}`);
-
-          });
-});
-// Response
-appk.use(ctx => { ctx.body =  'Hello world Keyax';});
-/*    //  ctx.body.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers'); //Methods, Origin, Accept, Content-Type');
-    //  ctx.body.set('Access-Control-Allow-Origin', '*');
-    //     ctx.body = "Helloo!!!"; //"set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');";*/
-
-
-
-/*
-appk.use(Parser());
-/*appk.use(ctx => {
-  // the parsed body will store in this.request.body
-  // if nothing was parsed, body will be an empty object {}
-  ctx.body = ctx.request.body;
-});
-appk.use(Cors({
-           allowHeaders: ['Headears', 'Origin', 'Methods', 'Content-Type', 'Accept'], //'Authorization'
-           origin: '*',
-           allowMethods: ['GET', 'POST', 'OPTIONS']
-             /*function(ctx) {console.log("ctx.req.body:" +ctx.request.body);
-                //      if (ctx.url === '^/socket.io/') {console.log("ctx.url2:" +ctx.url);return '*';}
-                      return '*';
-                    },*/
-//            exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
-//            maxAge: 5,
-//            credentials: false,
-  //        }));
-
-
-//appk
-//  .use(routerk.routes())
-//  .use(routerk.allowedMethods());
-
-
-// Start the application after the database connection is ready
-/*>>>>>  server.listen(parseInt(`${port}}`), function(){
-  console.log(`Server is listening port ${port}`);
-});  <<<<< */
-//  app.listen(parseInt(`${port}}`), function(){
-//  console.log(`Server is listening on port ${port}`);
-//  });
-/* app.listen = function() {
-   var server = http.createServer(this);
-   return server.listen.apply(server, arguments);
-   };  */
-//var server = app.listen(9000);
-
-/* var options = {
-   key: fs.readFileSync('keys/kyx-key.pem'),
-   cert: fs.readFileSync('keys/kyx-cert.pem')
-   };
-   var sserver = https.createServer(options, app);  */
-/* var sserver = https.createServer(options, function (req, res) {
-     res.writeHead(200);
-     res.end("https secure server: Hello world  \n");
-   });
-   sserver.listen(443);  */
-// var sserver = https.createServer(app);
-/* sserver.listen(config.port, function() {console.log('Https App started'); }); */
-
-/* //same as above with express
-var sserver = https.createServer(options, app).listen(config.port, function() {
-    console.log('Https App started');
-}); */
-// app.listen(443);
-
-
-
-/*
-router.get('/', function (ctx, next) {
-  // ctx.router available
-});
-
-app
-  .use(router.routes())
-  .use(router.allowedMethods());
-*/
-
 /*
 var Readable = require('stream').Readable
 var s = new Readable
@@ -481,46 +488,6 @@ s.push(null)      // indicates end-of-file basically - the end of the stream
 /////                    apx.use("/", routerx);
 
 // var htmls = require('./htmls.js');
-
-var dbconn = require('./dbconnect.js');
-var conexion = null;
-
-dbconn.test();
-
-dbconn.conect()
-    .then(() =>  {conexion = dbconn.get();
-                  console.log(`mongodb conexion: ${conexion}`);})
-    .then(() => routerx.get('/mongo', mongoquery))
-    .catch((e) => {
-        console.error(e);
-        // Always hard exit on a database connection error
-//        process.exit(1);
-    });
-console.log(`mongodb2 conexion: ${conexion}`);
-
-function mongoquery(req, res, next) {
-  console.log("MONGODBpre");
-  var result = '{"matrix": [';
-//  conexion = dbconn.get();
-  conexion.collection("geo").find({}, function(err, docs)  {
-            docs.each(function(err, doc) {
-              if(doc) {
-                result = result.concat(JSON.stringify(doc));
-                }
-              else {
-                console.log("MONGODBniet");
-        //        res.end();
-                } //else
-             }); //each(function..
-             result = result + ' {"yo": "157"} ] }';
-  //           console.log(eval(result));
-             res.send(result);
-//           res.redirect('back');
-          })  //find
-console.log(`routed db connexion: ${conexion}`);
-console.log("MONGODBpost");
-//  next();
-};
 
 
 ////var sqlconnect = require('./sqlconnect.js');
@@ -553,6 +520,37 @@ router.post('/login',function(req,res){
 });
 */
 
+///routerx.post("/sqldb/::langs", function(req, res) {
+/*
+  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+  // send your xhr response here
+} else {
+  // send your normal response here
+}
+*/
+/* ***********************
+//  res.header("Access-Control-Allow-Origin", "*");
+//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//  res.setHeader("Access-Control-Allow-Headers", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, Accept, Content-Type");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Content-Type", "application/json");
+//  res.setHeader("Content-Type", "text/html");
+var sqlconnect = require('./sqlconnect.js');  // pool or single
+// ling='%'+req.params.langs+'%';
+// var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${ling}%'`;
+var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+                'values' :  ['%'+req.params.langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
+// var params = [req.params.langs];
+  console.log("sp?" + req.params.langs);
+    sqlconnect.querys(sqlopts, function(err, rows, fields){
+    var temp=JSON.stringify(rows);
+    var manager = JSON.parse(temp)[0];
+   res.send(manager);
+   });
+});
+*************************  */
 ////////    var sqlconex = sqlconnect.get();
 //    console.log("language:" + ling +":"+ Object.prototype.toString.call(sqlconex));
 /////////    sqlconex.query(ling);
@@ -574,6 +572,15 @@ router.post('/login',function(req,res){
 
 
 
+// app.use('/', router);
+/*
+// 2*) route middleware that will happen on every request
+router.use(function(req, res, next) {
+    // log each request to the console
+    console.log(req.method, req.url);
+    // continue doing what we were doing and go to the route
+    next();
+});       */
 
 ///router.use('/htm', htmls);
 //router.use('/', './index.html');
@@ -669,12 +676,43 @@ let headers = {'Access-Control-Allow-Origin': '*',
 console.log(`routed db connexion: ${conexion}`);
 console.log("MONGODBpost");
 });*/
+/*
+var mysql = require('mysql');
+var sqlcon = mysql.createConnection({
+  host: "23.229.191.137",
+  database: "lebady_kyx",
+  user: "yones_kyx",
+  password: "Euro5577"
+  });
+sqlcon.connect(function(err){
+  if(err){
+    console.log('Error connecting to Mysql Godaddy');
+    return;
+    }
+    console.log('Connection established Mysql Godaddy');
+});
+var lngs = "";
+var ask =`SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE '%${lngs}%'`;
+sqlcon.query(ask, function (err, results, fields) {
+//  if (err)  throw err;
+  console.log('The solution is: ', results);
+});
+
+sqlcon.end();
+*/
+//});
 
 /*
+// you can pass the parameter in the command line. e.g. node static_server.js 3000
+var port = process.argv[2] || 9000;
+appk.listen(parseInt(`${port}`), function(){
+console.log(`Server is listening port ${port}`);
+});
+*/
 //var httpk = require('http');
-//var serverk = httpk.createServer(appk.callback());
+//var serverhk = httpk.createServer(appk.callback());
 //var siok = require('socket.io').listen(serverk);
-var serverk = require('http').createServer(appk.callback()).listen(9500);
+var serverk = serverhk.listen(9000);
 var siok = require('socket.io')(serverk);
 siok.on('connection', function (socket){
     socket.emit('news', { hello: 'world baby' });
@@ -686,4 +724,3 @@ siok.on('connection', function (socket){
 ////      socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
-*/

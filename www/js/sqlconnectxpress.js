@@ -1,6 +1,4 @@
-const mysql = require('mysql');
-const util = require('util');
-// const mysql = require('mysql2/promise');
+var mysql = require('mysql');
 
 // Create connection pool
 var env_sql = {
@@ -23,16 +21,10 @@ var env_sql = {
       },
     port: 80
 };
-/*
-const sqlconn = await sqlconn.createConnection(env_sql.options);
-const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
-*/
-
-
 
 //env_sql.pool = mysql.createPool(env_sql.options);
 //console.log("env_sql.pool" + env_sql.pool);
-var queryp = function(sqlopt, callback){
+exports.queryp=function(sqlopt, callback){
    if(!env_sql.pool) {env_sql.pool = mysql.createPool(env_sql.options);
         //     if(err){throw new Error("Can't create connection!");return;};
               };
@@ -41,24 +33,14 @@ var queryp = function(sqlopt, callback){
       //POOL ==> Error: connect ETIMEDOUT  in Nodejs Net
         if(err) {console.log("Error POOL connecting to Mysql Godaddy: " + err);return;}
   //      else{
-                conn.query(sqlopt, function(qerr,rows,fields){
+            conn.query(sqlopt, function(qerr,rows,fields){
                 console.log('Pool Connection established Mysql Godaddy');
                 conn.release();  //release connection
                 callback(qerr,rows,fields);
-                return JSON.stringify(rows[0]);
             });
     //    }
     });
 };
-
-querypr = util.promisify(queryp);
-async function querypro(ctx, next) {
-    rows = await querypr;
-    ctx.body = rows;
-}
-
-//exports.queryp;
-//exports.querypr;
 
 // Create single connection
 var options = {

@@ -92,35 +92,42 @@ RUN cd /home/node \
 ## && npm install --save https \
 ## && npm install --save assert \
 ## && npm install --save fs \
-&& npm install --save xhr2 \
 # && npm install --save jquery \
  && npm install --save express \
 # && npm install --save express-session \
 # && npm install --save express-jwt \
-&& npm install --save body-parser \
-&& npm install --save formidable \
-&& npm install --save multer \
+ && npm install --save body-parser \
+ && npm install --save formidable \
+ && npm install --save multer \
+ && npm install --save jsonlint \
+ && npm install --save bluebird \
+ && npm install --save node-fetch \
+ && npm install --save xhr2 \
 # && npm install --save ws \
  && npm install --save socket.io \
  && npm install --save jsonwebtoken \
+ && npm install --save x509 \
  && npm install --save koa \
 # && npm install --save koa.io \
 # && npm install --save koa-socket \
 # && npm install --save koa-socket.io \
 # && npm install --save koa2-cors \
  && npm install --save koa-router \
-# && npm install --save koa-route \
+ && npm install --save koa-route \
  && npm install --save koa-mount \
+ && npm install --save koa-respond \
  && npm install --save koa-static \
 # && npm install --save koa-bodyparser \
  && npm install --save koa-body \
  && npm install --save koa-validate \
- && npm install --save koa-multer \
+ && npm install --save koa-better-body \
+ && npm install --save koa-validation \
  && npm install --save koa-formidable \
+ && npm install --save koa-multer \
  && npm install --save koa-logger \
 # && npm install --save koa.session \
- && npm install --save bluebird \
  && npm install --save mysql \
+ && npm install --save mysql2 \
  && npm install --save mongodb \
  && npm install --save mongoose \
  && npm install --save socket.io-mongodb \
