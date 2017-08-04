@@ -27,12 +27,10 @@ var env_sql = {
 const sqlconn = await sqlconn.createConnection(env_sql.options);
 const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
 */
-
-
-
 //env_sql.pool = mysql.createPool(env_sql.options);
 //console.log("env_sql.pool" + env_sql.pool);
-var queryp = function(sqlopt, callback){
+
+function queryp(sqlopt, callback){
    if(!env_sql.pool) {env_sql.pool = mysql.createPool(env_sql.options);
         //     if(err){throw new Error("Can't create connection!");return;};
               };
@@ -45,18 +43,53 @@ var queryp = function(sqlopt, callback){
                 console.log('Pool Connection established Mysql Godaddy');
                 conn.release();  //release connection
                 callback(qerr,rows,fields);
-                return JSON.stringify(rows[0]);
+          //      return rows;
+
+              //  return JSON.stringify(rows[0]);
             });
     //    }
     });
 };
-
 querypr = util.promisify(queryp);
-async function querypro(ctx, next) {
-    rows = await querypr;
-    ctx.body = rows;
+
+function open(){
+    // Connection URL. This is where your mongodb server is running.
+    let url = dburl; //constants.MONGODB_URI;
+    return new Promise((resolve, reject)=>{
+        // Use connect method to connect to the Server
+        mongoClient.connect(url, (err, db) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(db);
+            }
+        });
+    });
 }
 
+function close(db){
+    //Close connection
+    if(db){
+        db.close();
+    }
+}
+
+let db = {
+    querypr : querypr,
+    close: close
+}
+module.exports = db;
+
+//exports.queryp;
+exports.querypr = util.promisify(queryp);
+/*
+exports.querypro = async function (ctx, next) {
+    await querypr(ctx.state.sqlopts)
+           .then((rows) => {return ruws;});
+           await next();ctx.body = rows;
+console.log("rows:"+ rows);
+    }
+*/
 //exports.queryp;
 //exports.querypr;
 

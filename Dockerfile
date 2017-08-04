@@ -115,6 +115,7 @@ RUN cd /home/node \
  && npm install --save koa-router \
  && npm install --save koa-route \
  && npm install --save koa-mount \
+ && npm install --save koa-rest-router \
  && npm install --save koa-respond \
  && npm install --save koa-static \
 # && npm install --save koa-bodyparser \
