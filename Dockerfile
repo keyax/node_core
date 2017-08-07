@@ -130,7 +130,7 @@ RUN cd /home/node \
  && npm install --save koa-formidable \
  && npm install --save koa-multer \
  && npm install --save koa-logger \
-# && npm install --save koa.session \
+# && npm install --save koa.session \ 
  && npm install --save mysql \
  && npm install --save mysql2 \
  && npm install --save mongodb \
