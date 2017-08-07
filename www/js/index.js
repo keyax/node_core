@@ -30,7 +30,7 @@ const appk = new Koa();  // const app = Koa();
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 //const serverhk  = http.createServer(appk.callback());
-
+const convert = require('koa-convert');
 const app = new Koa();  // const app = Koa();
 const routek = require('koa-route');
 
@@ -441,8 +441,10 @@ appk.use((ctx) => {
 console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
 });*/
 appk.use(Parser())
-.use(Formis())
-.use(async function (ctx) {ctx.body = await ctx.request.body;})
+.use(convert(Formis))
+.use(async function (ctx) {//let {body, files} = await ctx.request;
+                          ctx.body = await ctx.request.body;
+                          })
 .use(routerk.routes())
 .use(routerk.allowedMethods());
 //appk
