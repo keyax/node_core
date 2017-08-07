@@ -23,8 +23,9 @@ RUN ["/bin/bash", "-c",  "set -ex; \
     9554F04D7259F04124DE6B476D5A82AC7E37093B \
     FD3A5288F042B6850C66B31F09FE44734EB7990E \
     56730D5401028683275BD23C23EFEFE93C4CFFFE \
-  ; do gpg --keyserver hkp://p80.pool.sks-keyservers.net --recv-keys $key ; done"]
-
+  ; do gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys $key ; done"]
+# ; do gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $key ; done"]
+# ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done"]
 #    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
 #    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
