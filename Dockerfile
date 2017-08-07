@@ -121,12 +121,12 @@ RUN cd /home/node \
  && npm install --save koa-rest-router \
  && npm install --save koa-respond \
  && npm install --save koa-static \
+ && npm install --save async-busboy \
 # && npm install --save koa-bodyparser \
  && npm install --save koa-body \
  && npm install --save koa-validate \
 #?? && npm install --save koa-better-body \
  && npm install --save koa-validation \
- && npm install --save async-busboy \
  && npm install --save koa-formidable \
  && npm install --save koa-multer \
  && npm install --save koa-logger \
