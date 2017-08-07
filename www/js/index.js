@@ -14,7 +14,7 @@ const util = require('util');
 const https = require('https');
 const xhr2 = require('xhr2');
 
-const sqlconnect = require('./sqlconnect.js');   // pool or single
+// const sqlconnect = require('./sqlconnect.js');   // pool or single
 
 ///const express = require('express');
 ///const appx = express();
@@ -182,7 +182,8 @@ sqlang: async function (ctx, langs, next) {
 
 console.log("ctx.response"+ JSON.stringify(ctx.request.url));
 //ctx.body = {"respuesta sqlang":"Hola amigos de Keyax"};  /// first step  >> who
-  var dbconn = require('./dbconnect.js');
+const sqlconnect = require('./sqlconnect.js');   // pool or single
+//  var dbconn = require('./dbconnect.js');
 var ling = ctx.request.url.slice(ctx.request.url.lastIndexOf('/')+1);
 console.log('%'+ling+'%');
   var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
@@ -224,12 +225,14 @@ ctx.body = await sqlconnect.querypr(sqlopts)
   }  // end sqlang()
 };  // end pets
 
+var uploadm = Multer({dest: '/img'});
 app.use(Mount('/pets/hi', pets.hi));
 app.use(routek.get('/pets/hello', pets.hi));
 app.use(routek.get('/pets/pets', pets.list));
 app.use(routek.get('/pets/pets/:name', pets.show));
 app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
+app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
 
 app.listen(9100);
 console.log('listening on port 9100');
@@ -240,8 +243,56 @@ routerk.use((ctx,next) => {
 });
 */
 
+routerk.post("/uploads", async function (ctx, next) {
+  try {
+       ctx.status = 200;
+       ctx.set("Access-Control-Allow-Origin", "*");
+       ctx.set("Access-Control-Allow-Credentials", "true");
+       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+//     ctx.set("Content-Type", "application/json");
+       ctx.type="multipart/form-data";
+//       ctx.flushHeaders();
+var Formiso = require('koa-formidable');
+var form = Formiso.IncomingForm();  //
+/*form.parse(request, function(error, fields, files) {
+    console.log("parsing done");
+});*/
+//var form = Formis.IncomingForm();  // not a function
+form.on('progress', function(bytesReceived, bytesExpected) {
+      console.log(bytesReceived, bytesExpected)
+});
+form.on('file', function(name, file){console.log(file+'-'+name);});
+//await next();
 
-routerk.get("/sqldb/:langs", async function (ctx, langs, next) {
+var result = await form.parse(opts, ctx);
+ctx.body = await ctx.request.files;
+console.log('form:'+result);
+
+//             .then((ctx) => {ctx.body = rows;})
+//       .then(JSON.stringify)
+//       .then(rowx => function (rowx) {ctx.body = rowx; console.log("rows*sql:"+ctx.body);})
+////////////////.catch(err => function (err) {console.log("Promise Rejected");});
+/*    sqlconnect.queryp(sqlopts, function(err, rows, fields){
+var temp=JSON.stringify(rows);
+var manager = JSON.parse(temp)[0];
+console.log(rows);
+ctx.body = temp;
+//   res.send(manager);
+});*/
+// await next();
+
+} catch (err) {
+ctx.body = { message: err.message }
+ctx.status = err.status || 500
+};
+
+
+});
+
+
+
+routerk.get("/sqldb/:langs", async function (ctx, next) {
   try {
        ctx.status = 200;
        ctx.set("Access-Control-Allow-Origin", "*");
@@ -251,12 +302,11 @@ routerk.get("/sqldb/:langs", async function (ctx, langs, next) {
 //     ctx.set("Content-Type", "application/json");
        ctx.type="application/json";
        ctx.flushHeaders();
-
-//ctx.body = {"respuesta sqlang":"Hola amigos de Keyax"};  /// first step  >> who
-  var dbconn = require('./dbconnect.js');
-  var ling = ctx.params.langs;
-//  var ling = ctx.request.url.slice(ctx.request.url.lastIndexOf('/')+1);
-  console.log('%'+ling+'%');
+       var ling = ctx.params.langs;
+//     var ling = ctx.request.url.slice(ctx.request.url.lastIndexOf('/')+1);
+       console.log('%'+ling+'%');
+//  var dbconn = require('./dbconnect.js');
+  const sqlconnect = require('./sqlconnect.js');   // pool or single
   var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
                  'values' :  ['%'+ling+'%'], 'timeout' : 40000 }; // '%_%'   40s
                   console.log("ctx.response"+ JSON.stringify(ctx.request.url));
@@ -390,8 +440,11 @@ appk.use((ctx) => {
   //ctx.body = ctx.db;
 console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
 });*/
-appk.use(routerk.routes());
-appk.use(routerk.allowedMethods());
+appk.use(Parser())
+.use(Formis())
+.use(async function (ctx) {ctx.body = await ctx.request.body;})
+.use(routerk.routes())
+.use(routerk.allowedMethods());
 //appk
 //  .use(routerk.routes())
 //  .use(routerk.allowedMethods());
@@ -436,12 +489,30 @@ var serverkio = serverk.listen(parseInt(`${port}`), (err) => {
 
 var siok = require('socket.io')(serverkio);
 siok.on('connection', function (socket){
-    socket.emit('news', { hello: 'world baby' });
+    socket.emit('news', { hello: 'world baby'+socket.id });
     socket.on('myevent', function (data) {
        console.log('data:'+data);
        console.log(`connected socket news FF!${JSON.stringify(data)}`);
     });
+     socket.emit('news',socket.id);
   });
 ////      socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
+
+/*
+async function myAsyncFunction() {
+  try {
+    // both lines execute right away
+    let dataP1 = myAPICall('https://jsonplaceholder.typicode.com/posts/1');
+    let dataP2 = myAPICall('https://jsonplaceholder.typicode.com/posts/2')
+
+    // await results here
+    let [data1, data2] = await Promise.all([dataP1, dataP2]);
+
+    // use data1 and data2
+  }catch (ex){
+    return ex;
+  }
+}
+*/

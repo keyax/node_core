@@ -115,6 +115,9 @@ RUN cd /home/node \
  && npm install --save koa-router \
  && npm install --save koa-route \
  && npm install --save koa-mount \
+ && npm install --save axios \
+ && npm install --save qs \
+ && npm install --save querystring \
  && npm install --save koa-rest-router \
  && npm install --save koa-respond \
  && npm install --save koa-static \
@@ -123,6 +126,7 @@ RUN cd /home/node \
  && npm install --save koa-validate \
 #?? && npm install --save koa-better-body \
  && npm install --save koa-validation \
+ && npm install --save async-busboy \
  && npm install --save koa-formidable \
  && npm install --save koa-multer \
  && npm install --save koa-logger \
