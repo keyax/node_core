@@ -117,6 +117,7 @@ RUN cd /home/node \
  && npm install --save koa-respond \
  && npm install --save koa-static \
  && npm install --save async-busboy \
+ && npm install --save progress-stream \
 # && npm install --save koa-bodyparser \
  && npm install --save koa-body \
  && npm install --save koa-validate \

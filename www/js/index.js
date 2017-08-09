@@ -25,15 +25,21 @@ const http = require('http');
 // 1*) get an instance of router
 ///const routerx = express.Router();
 
+
 const Koa = require('koa');
 const appk = new Koa();  // const app = Koa();
+const convert = require('koa-convert');
+// ---------- override app.use method ----------
+const _use = appk.use
+appk.use = x => _use.call(appk, convert(x))
+// ---------- end ----------
+
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 //const serverhk  = http.createServer(appk.callback());
-const convert = require('koa-convert');
+const abb = require('async-busboy');
 const app = new Koa();  // const app = Koa();
 const routek = require('koa-route');
-
 const Mount = require('koa-mount');
 const Static = require('koa-static');
 //const Cors = require('koa2-cors');
@@ -242,33 +248,84 @@ routerk.use((ctx,next) => {
     next();
 });
 */
-
+///routerk.use("/uploads", Formis());
 routerk.post("/uploads", async function (ctx, next) {
   try {
-       ctx.status = 200;
+    // Koa 2 middleware
+///////const {files, fields} = await abb(ctx.req);
+//ctx.body = util.inspect({files, fields});
+const {fields} = await abb(ctx.req, {
+    onFile: function(fieldname, file, filename, encoding, mimetype) {
+            //uploadFilesToS3(file);
+            console.log("abb:fieldname "+fieldname+" file "+JSON.stringify(file)+" filename "+filename+" encoding "+encoding+" mime "+mimetype);
+            fstream = fs.createWriteStream(`img/${filename}`);
+            file.pipe(fstream);
+            var upsize=0;
+            ctx.req.on('data', function(buffer){
+               var segmentlength = buffer.length;
+               upsize += segmentlength;
+               console.log('uploaded:'+upsize);
+//               fs.watchFile(`img/${filename}`, function(){fs.stat(`img/${filename}`,
+//                                                          function(err,stats){console.log("statsize:"+stats.size);});});
+               });
+          }  // onFile:  end
+  }); // await abb(ctx.req,
+  console.log(util.inspect({fields}));
+
+  ctx.body = {resp: "eureka!!"};
+//var busboy = new abb({ headers: ctx.req.headers });
+//const {files, fields} = await busboy(ctx.req);
+/*
+//var busboy = new abb();
+abb.on('file', function(fieldname, file, filename, encoding, mimetype) {
+ console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+ file.on('data', function(data) {
+   console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
+ });
+ file.on('end', function() {
+   console.log('File [' + fieldname + '] Finished');
+ });
+});
+abb.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+ console.log('Field [' + fieldname + ']: value: ' + inspect(val));
+});
+abb.on('finish', function() {
+ console.log('Done parsing form!');
+ ctx.res.writeHead(303, { Connection: 'close', Location: '/' });
+ ctx.res.end();
+});
+ctx.req.pipe(abb);
+*/
+//console.log(util.inspect({files, fields}));
+  /*     ctx.status = 200;
        ctx.set("Access-Control-Allow-Origin", "*");
        ctx.set("Access-Control-Allow-Credentials", "true");
        ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
        ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-//     ctx.set("Content-Type", "application/json");
-       ctx.type="multipart/form-data";
-//       ctx.flushHeaders();
-var Formiso = require('koa-formidable');
-var form = Formiso.IncomingForm();  //
-/*form.parse(request, function(error, fields, files) {
-    console.log("parsing done");
-});*/
-//var form = Formis.IncomingForm();  // not a function
+     ctx.set("Content-Type", "text/html");
+//       ctx.type="multipart/form-data";
+  //     ctx.flushHeaders();
+
+  ctx.res.write(`<img src="${files[0].path}" alt="foto">`);
+*/
+
+/*
+  var Formiso = require('koa-formidable');
+  var form = new Formis.IncomingForm();  //
+  //var form = Formis.IncomingForm();  // not a function
+
+
 form.on('progress', function(bytesReceived, bytesExpected) {
       console.log(bytesReceived, bytesExpected)
 });
 form.on('file', function(name, file){console.log(file+'-'+name);});
 //await next();
 
-var result = await form.parse(opts, ctx);
-ctx.body = await ctx.request.files;
-console.log('form:'+result);
+ctx.body = await Formiso.parse(form, ctx).then(ctx.body = ctx.request.body)
+       .catch(err => function (err) {console.log("Promise Rejected");});
 
+console.log('form:'+ctx.body);
+*/
 //             .then((ctx) => {ctx.body = rows;})
 //       .then(JSON.stringify)
 //       .then(rowx => function (rowx) {ctx.body = rowx; console.log("rows*sql:"+ctx.body);})
@@ -287,10 +344,7 @@ ctx.body = { message: err.message }
 ctx.status = err.status || 500
 };
 
-
 });
-
-
 
 routerk.get("/sqldb/:langs", async function (ctx, next) {
   try {
@@ -440,13 +494,11 @@ appk.use((ctx) => {
   //ctx.body = ctx.db;
 console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
 });*/
-appk.use(Parser())
-.use(convert(Formis))
-.use(async function (ctx) {//let {body, files} = await ctx.request;
-                          ctx.body = await ctx.request.body;
-                          })
-.use(routerk.routes())
-.use(routerk.allowedMethods());
+//appk.use(Parser());
+//appk.use(Formis());
+//appk.use(async function (ctx) {ctx.body = await ctx.request.body;});
+appk.use(routerk.routes());
+appk.use(routerk.allowedMethods());
 //appk
 //  .use(routerk.routes())
 //  .use(routerk.allowedMethods());
@@ -501,20 +553,3 @@ siok.on('connection', function (socket){
 ////      socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
-
-/*
-async function myAsyncFunction() {
-  try {
-    // both lines execute right away
-    let dataP1 = myAPICall('https://jsonplaceholder.typicode.com/posts/1');
-    let dataP2 = myAPICall('https://jsonplaceholder.typicode.com/posts/2')
-
-    // await results here
-    let [data1, data2] = await Promise.all([dataP1, dataP2]);
-
-    // use data1 and data2
-  }catch (ex){
-    return ex;
-  }
-}
-*/
