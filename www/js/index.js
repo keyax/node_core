@@ -38,6 +38,7 @@ const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 //const serverhk  = http.createServer(appk.callback());
 const abb = require('async-busboy');
+var progress = require('progress-stream');
 const app = new Koa();  // const app = Koa();
 const routek = require('koa-route');
 const Mount = require('koa-mount');
@@ -45,7 +46,7 @@ const Static = require('koa-static');
 //const Cors = require('koa2-cors');
 const Parser = require('koa-body');
 const Valid = require('koa-validate');
-const Formis = require('koa-formidable');
+var Formis = require('koa-formidable');
 const Multer = require('koa-multer');
 //const Session = require('koa.session');
 const Logger = require('koa-logger');
@@ -65,7 +66,7 @@ const socketio = require('socket.io');
 //const MongoClient = require('mongodb').MongoClient;
 //const Serverdb = require('mongodb').Server;
 //const mongoose = require('mongoose');
-//const formidable = require('formidable');
+const formidable = require('formidable');
 
 //var fetch = require('node-fetch');
 var jwt = require('jsonwebtoken');
@@ -249,95 +250,116 @@ routerk.use((ctx,next) => {
 });
 */
 ///routerk.use("/uploads", Formis());
+
+routerk.post("/uploadf", async function (ctx, next) {
+ try {
+  //  var form = await Formis.parse(this);
+   var form = new formidable.IncomingForm();
+
+const {fields, files} = form.parse(ctx.req, function(err, fields, files) {
+//      if (err) return done(err)
+//      done(null,
+        return { fields: fields, files: files }//)
+    });
+console.log('fields: '+fields);
+/*      form.addListener('progress', function(bytesReceived, bytesExpected){
+        //Socket.io interaction here??
+//        io.sockets.on('connection', function (socket) {
+          sockets.emit('uploadProgress', ((bytesReceived * 100)/bytesExpected));
+//         });
+
+
+      });*/
+      //form.uploadDir = __dirname + '/../img/';
+      form.uploadDir = path.join(__dirname,'/../img');
+      console.log("destinationDir: "+form);
+//      form.on('field', )
+      form.on('file', function(field, file) {
+         //rename the incoming file to the file's name
+         fs.rename(file.path, form.uploadDir + "/" + file.name);
+         console.log("destination: "+form.uploadDir + "/" + file.name);
+      });
+       form.on('progress' , function (bytesReceived , bytesExpected) {
+    console.log('received: ' + bytesReceived);
+/////  socket.emit('uploadProgress', (bytesReceived * 100) / bytesExpected);
+  //  io.sockets.in('sessionId').emit('uploadProgress', (bytesReceived * 100) / bytesExpected);
+
+  });
+
+var result = await Formis.parse(this);
+console.log('uploadf: '+result);
+
+  //socket.io code
+//  io.sockets.on('connection', function (socket) {
+/*      socket.on('upload', function (msg) {
+          socket.broadcast.emit('progress', bytesReceived);
+      });*/
+//    });
+
+//  console.log(fields.filelist.length);
+//  console.log(util.inspect({fields}));
+  ctx.body = {resp: "formidable!!"};
+
+} catch (err) {
+ctx.body = { message: err.message }
+ctx.status = err.status || 500
+};
+});
+
+
 routerk.post("/uploads", async function (ctx, next) {
-  try {
+ try {
     // Koa 2 middleware
 ///////const {files, fields} = await abb(ctx.req);
 //ctx.body = util.inspect({files, fields});
 const {fields} = await abb(ctx.req, {
     onFile: function(fieldname, file, filename, encoding, mimetype) {
             //uploadFilesToS3(file);
-            console.log("abb:fieldname "+fieldname+" file "+JSON.stringify(file)+" filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            fstream = fs.createWriteStream(`img/${filename}`);
-            file.pipe(fstream);
-            var upsize=0;
-            ctx.req.on('data', function(buffer){
-               var segmentlength = buffer.length;
-               upsize += segmentlength;
-               console.log('uploaded:'+upsize);
-//               fs.watchFile(`img/${filename}`, function(){fs.stat(`img/${filename}`,
-//                                                          function(err,stats){console.log("statsize:"+stats.size);});});
-               });
+          //  console.log("ctx.req:"+ctx.request.get);
+      ///      console.log("filesinctx:"+ctx.req.files);
+            console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
+            var upfile = `img/${filename}`;
+            fs.closeSync(fs.openSync(upfile, 'w'));
+
+/*            fs.open(upfile,'w', function(err,fd){
+                  if(err)console.log('cant open: '+upfile+err);//handle error
+                      console.log('open: '+upfile);
+                  fs.close(fd, function(err){
+                    if(err)console.log('cant close: '+upfile+err);//handle error
+                      console.log('close: '+upfile);
+
+              });
+            });*/
+      //      var stat = fs.statSync(upfile);
+            var strm = progress({
+                length: filesize, //stat.size,
+                time: 1 /* ms */
+            });
+            fstream = fs.createWriteStream(upfile);
+            file.pipe(strm).pipe(fstream);
+
+            strm.on('progress', function(progress) {
+                console.log('progreso:',progress);
+                /*
+                {
+                    percentage: 9.05,
+                    transferred: 949624,
+                    length: 10485760,
+                    remaining: 9536136,
+                    eta: 42,
+                    runtime: 3,
+                    delta: 295396,
+                    speed: 949624
+                }
+                */
+            });
+
           }  // onFile:  end
   }); // await abb(ctx.req,
-  console.log(util.inspect({fields}));
 
+  console.log(fields.filelist);
+//  console.log(util.inspect({fields}));
   ctx.body = {resp: "eureka!!"};
-//var busboy = new abb({ headers: ctx.req.headers });
-//const {files, fields} = await busboy(ctx.req);
-/*
-//var busboy = new abb();
-abb.on('file', function(fieldname, file, filename, encoding, mimetype) {
- console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
- file.on('data', function(data) {
-   console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
- });
- file.on('end', function() {
-   console.log('File [' + fieldname + '] Finished');
- });
-});
-abb.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
- console.log('Field [' + fieldname + ']: value: ' + inspect(val));
-});
-abb.on('finish', function() {
- console.log('Done parsing form!');
- ctx.res.writeHead(303, { Connection: 'close', Location: '/' });
- ctx.res.end();
-});
-ctx.req.pipe(abb);
-*/
-//console.log(util.inspect({files, fields}));
-  /*     ctx.status = 200;
-       ctx.set("Access-Control-Allow-Origin", "*");
-       ctx.set("Access-Control-Allow-Credentials", "true");
-       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
-       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-     ctx.set("Content-Type", "text/html");
-//       ctx.type="multipart/form-data";
-  //     ctx.flushHeaders();
-
-  ctx.res.write(`<img src="${files[0].path}" alt="foto">`);
-*/
-
-/*
-  var Formiso = require('koa-formidable');
-  var form = new Formis.IncomingForm();  //
-  //var form = Formis.IncomingForm();  // not a function
-
-
-form.on('progress', function(bytesReceived, bytesExpected) {
-      console.log(bytesReceived, bytesExpected)
-});
-form.on('file', function(name, file){console.log(file+'-'+name);});
-//await next();
-
-ctx.body = await Formiso.parse(form, ctx).then(ctx.body = ctx.request.body)
-       .catch(err => function (err) {console.log("Promise Rejected");});
-
-console.log('form:'+ctx.body);
-*/
-//             .then((ctx) => {ctx.body = rows;})
-//       .then(JSON.stringify)
-//       .then(rowx => function (rowx) {ctx.body = rowx; console.log("rows*sql:"+ctx.body);})
-////////////////.catch(err => function (err) {console.log("Promise Rejected");});
-/*    sqlconnect.queryp(sqlopts, function(err, rows, fields){
-var temp=JSON.stringify(rows);
-var manager = JSON.parse(temp)[0];
-console.log(rows);
-ctx.body = temp;
-//   res.send(manager);
-});*/
-// await next();
 
 } catch (err) {
 ctx.body = { message: err.message }
@@ -536,6 +558,7 @@ var serverk = http.createServer(appk.callback());// callback for http.createServ
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
 // var port = process.argv[2] || 9000;
 var port = 9000;
+var filesize = 0;
 var serverkio = serverk.listen(parseInt(`${port}`), (err) => {
   if (err) {return console.log('something bad happened', err)}
   console.log(`server is listening on port: ${port}`)
@@ -549,6 +572,10 @@ siok.on('connection', function (socket){
        console.log(`connected socket news FF!${JSON.stringify(data)}`);
     });
      socket.emit('news',socket.id);
+     socket.on('upload', function (msg) {filesize=msg; console.log(msg);
+//         socket.broadcast.emit('progress', bytesReceived);
+     });
+
   });
 ////      socket.disconnect();
 //    socket.disconnect('unauthorized');
