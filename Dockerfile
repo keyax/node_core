@@ -106,8 +106,9 @@ RUN cd /home/node \
 # && npm install --save koa-socket.io \
 # && npm install --save koa.io \
  && npm install --save jsonwebtoken \
-#?? && npm install --save x509 \
+ && npm install --save x509 \
  && npm install --save koa \
+ && npm install --save koa-jwt \
  && npm install --save koa-convert \
  && npm install --save koa-router \
  && npm install --save koa-route \
@@ -121,7 +122,7 @@ RUN cd /home/node \
  && npm install --save async-busboy \
  && npm install --save progress-stream \
 # && npm install --save koa-bodyparser \
-# && npm install --save koa-better-body \ needs git ??
+# && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
  && npm install --save koa-body \
  && npm install --save koa-validate \
 # && npm install --save koa-validation \
