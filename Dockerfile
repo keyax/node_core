@@ -106,7 +106,7 @@ RUN cd /home/node \
 # && npm install --save koa-socket.io \
 # && npm install --save koa.io \
  && npm install --save jsonwebtoken \
- && npm install --save x509 \
+# && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
  && npm install --save koa \
  && npm install --save koa-jwt \
  && npm install --save koa-convert \
