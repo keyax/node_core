@@ -101,24 +101,32 @@ RUN cd /home/node \
  && npm install --save xhr2 \
 # && npm install --save koa2-cors \
 # && npm install --save ws \
+ && npm install --save jsonwebtoken \
+# && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
+ && npm install --save mongodb \
+ && npm install --save mongoose \
  && npm install --save socket.io \
  && npm install --save koa-socket \
 # && npm install --save koa-socket.io \
 # && npm install --save koa.io \
- && npm install --save jsonwebtoken \
-# && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
+ && npm install --save socket.io-mongodb \
+ && npm install --save mubsub \
  && npm install --save koa \
  && npm install --save koa-jwt \
+ && npm install --save koa-session \
+ && npm install --save koa-session-store \
+ && npm install --save koa-session-mongo \
+ && npm install --save koa-session-mongoose \
  && npm install --save koa-convert \
  && npm install --save koa-router \
  && npm install --save koa-route \
  && npm install --save koa-mount \
- && npm install --save qs \
  && npm install --save querystring \
+ && npm install --save qs \
  && npm install --save koa-rest-router \
  && npm install --save koa-respond \
- && npm install --save koa-static \
  && npm install --save koa-send \
+ && npm install --save koa-static \
  && npm install --save async-busboy \
  && npm install --save progress-stream \
 # && npm install --save koa-bodyparser \
@@ -129,13 +137,8 @@ RUN cd /home/node \
  && npm install --save koa-formidable \
  && npm install --save koa-multer \
  && npm install --save koa-logger \
-# && npm install --save koa.session \
  && npm install --save mysql \
  && npm install --save mysql2 \
- && npm install --save mongodb \
- && npm install --save mongoose \
- && npm install --save socket.io-mongodb \
- && npm install --save mubsub \
  && npm install --save d3 \
  && npm install --save leaflet \
  && npm init --yes

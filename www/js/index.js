@@ -310,9 +310,6 @@ ctx.status = err.status || 500
 
 routerk.post("/uploads", async function (ctx, next) {
  try {
-    // Koa 2 middleware
-///////const {files, fields} = await abb(ctx.req);
-//ctx.body = util.inspect({files, fields});
 const {fields} = await abb(ctx.req, {
     onFile: function(fieldname, file, filename, encoding, mimetype) {
             //uploadFilesToS3(file);
@@ -321,23 +318,21 @@ const {fields} = await abb(ctx.req, {
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
             var upfile = `img/${filename}`;
             fs.closeSync(fs.openSync(upfile, 'w'));
-
 /*            fs.open(upfile,'w', function(err,fd){
                   if(err)console.log('cant open: '+upfile+err);//handle error
                       console.log('open: '+upfile);
                   fs.close(fd, function(err){
                     if(err)console.log('cant close: '+upfile+err);//handle error
                       console.log('close: '+upfile);
-
               });
             });*/
-      //      var stat = fs.statSync(upfile);
-            var strm = progress({
-                length: filesize, //stat.size,
-                time: 1 /* ms */
+//        var stat = fs.statSync(upfile);
+          var strm = progress({
+                  length: filesize, //stat.size,
+                  time: 1 // ms
             });
-            fstream = fs.createWriteStream(upfile);
-            file.pipe(strm).pipe(fstream);
+            wstream = fs.createWriteStream(upfile);
+            file.pipe(strm).pipe(wstream);
 
             strm.on('progress', function(progress) {
                 console.log('progreso:',progress);
@@ -354,12 +349,23 @@ const {fields} = await abb(ctx.req, {
                 }
                 */
             });
-
           }  // onFile:  end
-  }); // await abb(ctx.req,
+    }); // await abb(ctx.req,
+/*
+function checkFile(files) {var filename = files[0].filename;
+           console.log("filename+check:"+filename);
+           if(path.extname(filename) !== 'jpg'){
+          var err = new Error('not jpg image');
+          err.status = 400;
+          return err;
+          }
+        }; // end checkFile()
+const {files, fields} = await abb(ctx.req, {});
+checkFile(files);
+console.log(util.inspect({files, fields}));
+*/
 
-  console.log(fields.filelist);
-//  console.log(util.inspect({fields}));
+//  console.log("filelist:"+fields.filelist);
   ctx.body = {resp: "eureka!!"};
 
 } catch (err) {
@@ -573,7 +579,7 @@ siok.on('connection', function (socket){
        console.log(`connected socket news FF!${JSON.stringify(data)}`);
     });
      socket.emit('news',socket.id);
-     socket.on('upload', function (msg) {filesize=msg; console.log(msg);
+     socket.on('upload', function (msg) {filesize=msg; console.log("msg:",msg);
 //         socket.broadcast.emit('progress', bytesReceived);
      });
 
