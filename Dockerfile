@@ -107,16 +107,19 @@ RUN cd /home/node \
  && npm install --save mongoose \
  && npm install --save socket.io \
  && npm install --save koa-socket \
-# && npm install --save koa-socket.io \
 # && npm install --save koa.io \
- && npm install --save socket.io-mongodb \
- && npm install --save mubsub \
+
  && npm install --save koa \
- && npm install --save koa-cookie \
- && npm install --save koa-jwt \
- && npm install --save koa2-session \
  && npm install --save koa-session \
+ && npm install --save koa-socket-session \
+ && npm install --save koa-socket.io \
+
+ && npm install --save socket.io-mongodb \
+# && npm install --save mubsub \
+ && npm install --save koa-cookie \
  && npm install --save koa2-session-store \
+ && npm install --save koa-jwt \
+ && npm install --save koa-session2 \
  && npm install --save koa-session-store \
  && npm install --save koa-session-mongo \
  && npm install --save koa-session-mongoose \
