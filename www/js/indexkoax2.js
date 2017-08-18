@@ -265,40 +265,7 @@ app.use(routek.get('/pets/pets/:name', pets.show));
 app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
-/*
-app.keys = ["keyax57secretkey"];
-app.use(routek.post("/pets/login", async function (ctx, next) {
-  try {
 
- const {fields} = await abb(ctx.req, {
-     }); // await abb(ctx.req,
-   console.log("route:"+util.inspect({fields}));
-   ctx.body = {resp: "login eureka!!"};
-
-   await next();
-   sessionkstore(
-    {store: sessionkmongo.create({
-  //  db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
-     url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-  //   db: "kyxtree",  //pets.dbc,
-  //   collection: "sessions",
-  //   username: "yones",
-  //   password: "555777",
-     expires: 60*60*1})
-   }
-  // ,appk
-);
-//  await next();
-   ctx.cookies.set('sessiond', 123456);
-   ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
-  //appk.use(sessionk(appk));
-
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-}));
-*/
 app.listen(9100);
 console.log('listening on port 9100');
 /*
@@ -308,46 +275,6 @@ routerk.use((ctx,next) => {
 });
 */
 ///routerk.use("/uploads", Formis());
-/*
-routerk.use(//"/login",
-(ctx) => {
-      sessionkstore(
-    {store: sessionkmongo.create({
-  //  db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
-     url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-  //   db: "kyxtree",  //pets.dbc,
-  //   collection: "sessions",
-  //   username: "yones",
-  //   password: "555777",
-     expires: 10000*60*60*1})
-   }
-  // ,appk
-)
-//  await next();
-//ctx.cookies.set('sessiond', 123456);
-//ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
-//appk.use(sessionk(appk));
-}
-);
-
-routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
-*/
-
-routerk.post("/login", async function (ctx, next) {
- try {
-if (ctx.sessions){console.log("New session");}
-
-const {fields} = await abb(ctx.req, {});
-  console.log(util.inspect({fields}));
-  await next();
-  ctx.cookies.set("sesiones", "fantasticas");// = {resp: "login eureka!!"};
-
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-
-});
 
 routerk.post("/uploadf", async function (ctx, next) {
  try {
@@ -405,7 +332,6 @@ ctx.status = err.status || 500
 });
 
 
-
 routerk.post("/uploads", async function (ctx, next) {
  try {
 const {fields} = await abb(ctx.req, {
@@ -448,7 +374,7 @@ const {fields} = await abb(ctx.req, {
                 */
             });
           }  // onFile:  end
-    }); // await abb ctx.req,
+    }); // await abb(ctx.req,
 /*
 function checkFile(files) {var filename = files[0].filename;
            console.log("filename+check:"+filename);
@@ -624,44 +550,25 @@ console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
 //appk.use(Parser());
 //appk.use(Formis());
 //appk.use(async function (ctx) {ctx.body = await ctx.request.body;});
-
 appk.keys = ["keyax57secretkey"];
-appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
-app.use(async(ctx, next) => {
-    var n = ctx.session.views || 0;
-    ctx.session.views = ++n;
-    ctx.response.body = n + ' views';
-});
-//appk.use(sessionkstore());
 
-//xxxxxx{
-//    name:  'kyx.dynu.net'  //  cookie name
-//xxxxx    store: 'cookie'
-/*
-    store: sessionkmongo.create({
-            url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions",
-//          db: "kyxtree",  //pets.dbc,
-//          collection: "sessions",
-//          username: "yones",
-//          password: "555777",
-            expirationTime: 60*5}),*/
-/*    cookie: {
-        signed: true, // using KeyGrip
-        httpOnly: true, // not js access client
-        overwrite: true // ow existing cookie
-      }*/
-//xxxx          }));
-//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
-//});
-
-//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
+appk.use(sessionkstore(
+  {store: sessionkmongo.create({
+//  db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
+   url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
+//   db: "kyxtree",  //pets.dbc,
+//   collection: "sessions",
+//   username: "yones",
+//   password: "555777",
+   expires: 60*60*1})
+ }
+// ,appk
+));
+appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
 //appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
 //appk.use(sessionk(appk));
-
 appk.use(routerk.routes());
 appk.use(routerk.allowedMethods());
-
-
 //appk
 //  .use(routerk.routes())
 //  .use(routerk.allowedMethods());
