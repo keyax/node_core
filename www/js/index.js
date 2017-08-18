@@ -27,12 +27,15 @@ const http = require('http');
 
 const Koa = require('koa');
 const appk = new Koa();  // const app = Koa();
+//koa deprecated Support for generators will be removed in v3.
 const convert = require('koa-convert');
 // ---------- override app.use method ----------
 const _use = appk.use
 appk.use = x => _use.call(appk, convert(x))
 // ---------- end ----------
-
+const cookies = require('cookies');
+const cookiek = require('koa-cookie'); // only parser
+//var cookie = cookiek();
 const sessionk = require('koa-session');
 const sessionkstore = require('koa-session-store');
 const sessionkmongo = require('koa-session-mongo');
@@ -57,7 +60,9 @@ const Logger = require('koa-logger');
 const respond = require('koa-respond');
 const send = require('koa-send');
 
+const kssession = require('koa-socket-session');
 const koasocket = require('koa-socket');
+const koasocketio = require('koa-socket.io');
 const socketio = require('socket.io');
 ///const sio = socketio(server);
 //const sio = require('socket.io')(server);
@@ -332,9 +337,12 @@ routerk.use(//"/login",
 
 routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
 */
+routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
 routerk.post("/login", async function (ctx, next) {
  try {
+const cokie = ctx.cookie; console.log("cokie:"+cokie);
+
 if (ctx.sessions){console.log("New session");}
 
 const {fields} = await abb(ctx.req, {});

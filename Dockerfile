@@ -116,6 +116,7 @@ RUN cd /home/node \
 
  && npm install --save socket.io-mongodb \
 # && npm install --save mubsub \
+ && npm install --save cookies \
  && npm install --save koa-cookie \
  && npm install --save koa2-session-store \
  && npm install --save koa-jwt \
