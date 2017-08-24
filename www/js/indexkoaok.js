@@ -27,7 +27,6 @@ const http = require('http');
 
 const Koa = require('koa');
 const appk = new Koa();  // const app = Koa();
-//const serverhk  = http.createServer(appk.callback());
 //koa deprecated Support for generators will be removed in v3.
 const convert = require('koa-convert');
 // ---------- override app.use method ----------
@@ -37,16 +36,14 @@ appk.use = x => _use.call(appk, convert(x))
 const Cookies = require('cookies');
 const cookiek = require('koa-cookie'); // only parser
 //var cookie = cookiek();
-//const Session = require('koa.session');
-const koasession = require('koa-session');
+const session = require('koa-session');
 const sessionkstore = require('koa-session-store');
 const sessionkmongo = require('koa-session-mongo');
 const sessionkmongoose = require('koa-session-mongoose');
-const IO = require('koa-socket');
-const io = new IO({namespace: 'kyx', hidden: true});  //'chat'
 
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
+//const serverhk  = http.createServer(appk.callback());
 const abb = require('async-busboy');
 var progress = require('progress-stream');
 const app = new Koa();  // const app = Koa();
@@ -58,13 +55,15 @@ const Parser = require('koa-body');
 const Valid = require('koa-validate');
 var Formis = require('koa-formidable');
 const Multer = require('koa-multer');
+//const Session = require('koa.session');
 const Logger = require('koa-logger');
 const respond = require('koa-respond');
 const send = require('koa-send');
 
 const KSsession = require('koa-socket-session');
+const KS = require('koa-socket');
 const KSIO = require('koa-socket.io');
-const ksio = new KSIO({namespace: '/'});
+const ksio = new KSIO();
 
 const socketio = require('socket.io');
 ///const sio = socketio(server);
@@ -342,28 +341,9 @@ routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON
 */
 /////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
-routerk.get("/who/", async function (ctx, next) {
- try {
-///////const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
-//if (ctx.sessions){console.log("New session");}
-////ctx.body = await ctx.session.username;
-//const {fields} = await abb(ctx.req, {});
-  console.log(util.inspect("{fields}"));
-//  await next();
-//  ctx.cookies.set("sesiones", "fantasticas");// = {resp: "login eureka!!"};
-return;
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-
-});
-
-
-
 routerk.post("/login", async function (ctx, next) {
  try {
-///////const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
+const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
 
 //if (ctx.sessions){console.log("New session");}
 
@@ -371,7 +351,7 @@ const {fields} = await abb(ctx.req, {});
   console.log(util.inspect({fields}));
 //  await next();
 //  ctx.cookies.set("sesiones", "fantasticas");// = {resp: "login eureka!!"};
-return;
+
 } catch (err) {
 ctx.body = { message: err.message }
 ctx.status = err.status || 500
@@ -504,7 +484,7 @@ ctx.status = err.status || 500
 });
 //appk.context.lista = {};  //  ctx.lista = f();
 routerk.post("/sqldb/:langs", async function (ctx, next) {
-//  const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);  // undefined
+  const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
 
   /// ctx.state.varyin = 'vary';
   try {
@@ -556,21 +536,31 @@ routerk.post("/sqldb/:langs", async function (ctx, next) {
   //   res.send(manager);
      });*/
 // await next();
-//await next();
-return ctx;
 
 } catch (err) {
   ctx.body = { message: err.message }
   ctx.status = err.status || 500
 };
-//console.log("sqlcokie._sid:"+ctx.cookies.get("kyx:sess1"));  // undefined
-//console.log("sqlsession.blob:"+JSON.stringify(ctx.session));  // {}
+console.log("sqlcokie._sid:"+ctx.cookies.get("kyx:sess1"));  // undefined
+console.log("sqlsession.blob:"+JSON.stringify(ctx.session));  // {}
 
 //console.log("ctx.session"+ JSON.stringify(ctx.session.isNew));
-//await next();
-//return ctx;
-
 });  // end sqlang()
+
+
+
+
+/*
+// uses async arrow functions
+app.use(async (ctx, next) => {
+  try {
+    await next() // next is now a function
+  } catch (err) {
+    ctx.body = { message: err.message }
+    ctx.status = err.status || 500
+  }
+})
+*/
 
 // 3*) home page route (http://localhost:8080)
 //router.get('/', function (req, res, next) {....});
@@ -592,16 +582,70 @@ routerk.post('/xform', function (req, res, next) {
 });
 */
 
-
-appk.use(routerk.routes());
-appk.use(routerk.allowedMethods());
-//appk
-//  .use(routerk.routes())
-//  .use(routerk.allowedMethods());
-
 /*
-//  koa-session + koa-socket-session + koa-socket.io
+async function respond(next) {
+  this.body = 'OK';
+  await next;
+};
+
+async function process(next) {
+  await next;
+  await function (done) { setTimeout(done, 5000); };
+  console.log('processed');
+};
+*/
+
+//appk
+//    .use(process)
+/////////appk.use(respond);
+////////appk.use(require('koa-body')({ multipart: true }));
+/*appk.use(function*(next){  //loop
+  yield next;
+  console.log('after response');
+});
+*/
+/*
+appk.use((ctx, next) => {
+  try {
+       ctx.status = 200;
+       ctx.set("Access-Control-Allow-Origin", "*");
+       ctx.set("Access-Control-Allow-Credentials", "true");
+       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  //     ctx.set("Content-Type", "application/json");
+       ctx.type="application/json";
+  //     ctx.flushHeaders();
+       ctx.body = {"respuesta2":"Hola amigos de Keyax"};  /// first step  >> who
+*/
+  /*       const start = new Date();
+         return next().then(() => {const ms = new Date() - start;
+                        console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+                        console.log(`hi${JSON.stringify(ctx.response.body)}`);
+          });
+*/
+
+//        await next();
+//      ctx.state.rec = list(ctx, next);
+/*      } catch (err) {
+        ctx.body = { message: err.message }
+        ctx.status = err.status || 500
+      }
+     next();
+});
+*/
+// response
+/*
+appk.use((ctx) => {
+  //ctx.body = ctx.db;
+console.log('业务逻辑处理'+JSON.stringify(ctx.state.resul));
+});*/
+//appk.use(Parser());
+//appk.use(Formis());
+//appk.use(async function (ctx) {ctx.body = await ctx.request.body;});
+//////appk.context.vary =  'varyin';
+
 appk.keys = ["keyax57secretos"];
+/*
 const CONFIG = {
   key: 'koa:sess', // (string) cookie key (default is koa:sess)
   // (number || 'session') maxAge in ms (default is 1 days)
@@ -613,15 +657,9 @@ const CONFIG = {
   signed: true, // (boolean) signed or not (default true)
   rolling: false, // (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
 };
-appk.use(koasession(CONFIG, appk));
-// or if you prefer all default config, just use => app.use(koasession(app));
-// init koa-socket-session as koa-socket's middleware
-ksio.use(KSsession(appk, koasession));
+appk.use(session(CONFIG, appk));
+// or if you prefer all default config, just use => app.use(session(app));
 */
-
-// koa-session-store + koa-session-mongo
-appk.keys = ["keyax57secretos"];
-//appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
 const CONFIGS = {
     name: 'kyx:sess1',    // cookie name
     secret: "mysecretcode", //koa2-session-store
@@ -636,22 +674,121 @@ const CONFIGS = {
             expirationTime: 60}),
 //            expires: 60*60*1}),
     cookie: {
-      key: 'koa:sess', // (string) cookie key (default is koa:sess)
-       // number || 'session' maxAge in ms (default is 1 days)
-       //'session' will result in a cookie that expires when session/browser is closed
-       // Warning: If a session cookie is stolen, this cookie will never expire
+      key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
+       /** (number || 'session') maxAge in ms (default is 1 days) */
+       /** 'session' will result in a cookie that expires when session/browser is closed */
+       /** Warning: If a session cookie is stolen, this cookie will never expire */
       maxAge:  3600000, //86400000,//=60*60*24*1000ms
-      overwrite: true, // (boolean) overwrite existing cookie (default true)
-      httpOnly: true,  // (boolean) httpOnly not access js (default true)
-      signed: true,    // (boolean) signed using KeyGrip (default true)
-      rolling: false   // (boolean) Force a session identifier cookie to be set on every response.
-                       //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
+      overwrite: true, /** (boolean) can overwrite or not (default true) */
+      httpOnly: true, /** (boolean) httpOnly or not (default true) */
+      signed: true, /** (boolean) signed or not (default true) */
+      rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false **/
     }
   };
-const sesion = sessionkstore(CONFIGS);
-appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
-  // or if you prefer all default config, just use => app.use(session(appk));
+//appk.use(cookiek());  // TypeError: cookiek is not a function
+appk.use(sessionkstore(CONFIGS)); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
+  // or if you prefer all default config, just use => app.use(session(app));
+/*
+  appk.use(ctx => {
+  //  return function *(){
+      var n = ctx.session.views || 0;
+      ctx.session.views = ++n;
+  //    ctx.body = n + ' views';
+    //}
+  })
+*/
 
+/*
+  appk.use(function(next){
+    return function *(){
+      var n = this.session.views || 0;
+      this.session.views = ++n;
+      this.body = n + ' views';
+    }
+  })
+  */
+
+appk.use(async (ctx,next) => {
+//ctx.state.varyin = 'vary';
+//  ctx.state.varyin.name = ctx.session.name;
+//   ctx.cookies.set()
+
+//  if (ctx.path === '/favicon.ico') return;  // ignore favicon
+let n = ctx.session.views || 0;
+  ctx.session.views = await ++n;
+  ctx.session.name = await 'multimero';
+//  ctx.body = n + ' views';
+
+console.log("cokie._sid:"+ctx.cookies.get("kyx:sess1"));  // undefined
+console.log("session.blob:"+JSON.stringify(ctx.session));  // {}
+//appk.context.vary =  n + 'views'; //'varyin';
+//ctx.session = null;  //destroy session
+await next();
+return ctx;
+});
+
+/*
+keys = ["keyax57secretkey"];
+appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
+app.use(async(ctx, next) => {
+    var n = ctx.session.views || 0;
+    ctx.session.views = ++n;
+    ctx.response.body = n + ' views';
+});
+*/
+//appk.use(sessionkstore());
+
+//xxxxxx{
+//    name:  'kyx.dynu.net'  //  cookie name
+//xxxxx    store: 'cookie'
+/*
+    store: sessionkmongo.create({
+            url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions",
+//          db: "kyxtree",  //pets.dbc,
+//          collection: "sessions",
+//          username: "yones",
+//          password: "555777",
+            expirationTime: 60*5}),*/
+/*    cookie: {
+        signed: true, // using KeyGrip
+        httpOnly: true, // not js access client
+        overwrite: true // ow existing cookie
+      }*/
+//xxxx          }));
+//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
+//});
+
+//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
+//appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
+//appk.use(sessionk(appk));
+
+appk.use(routerk.routes());
+appk.use(routerk.allowedMethods());
+
+
+//appk
+//  .use(routerk.routes())
+//  .use(routerk.allowedMethods());
+
+
+// Response
+/////////////appk.use(ctx => { ctx.body =  'Hello world Keyax';});
+/*    //  ctx.body.set('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers'); //Methods, Origin, Accept, Content-Type');
+    //  ctx.body.set('Access-Control-Allow-Origin', '*');
+    //     ctx.body = "Helloo!!!"; //"set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');";*/
+/*
+appk.use(Cors({
+           allowHeaders: ['Headears', 'Origin', 'Methods', 'Content-Type', 'Accept'], //'Authorization'
+           origin: '*',
+           allowMethods: ['GET', 'POST', 'OPTIONS']
+             /*function(ctx) {console.log("ctx.req.body:" +ctx.request.body);
+                //      if (ctx.url === '^/socket.io/') {console.log("ctx.url2:" +ctx.url);return '*';}
+                      return '*';
+                    },*/
+//            exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+//            maxAge: 5,
+//            credentials: false,
+  //        }));
 
 function callback(req, res) {
   //res = "HOyolanokati";
@@ -660,7 +797,7 @@ function callback(req, res) {
   }
   res.end('done in full')*/
   //function( req, res ) {
-/*    var cookies = new Cookies( ctx.req, ctx.res, { "keys": keys } )
+    var cookies = new Cookies( ctx.req, ctx.res, { "keys": keys } )
       , unsigned, signed, tampered
 console.log("cb req.url:"+ctx.url);
     if ( ctx.req.url == "/" ) {
@@ -696,153 +833,25 @@ console.log("cb req.url:"+ctx.url);
       "signed actual: " + signed + "\n\n" +
       "tampered expected: undefined\n\n"+
       "tampered: " + tampered + "\n\n"
-    )*/
+    )
 //  }
 }
 
 var serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
+
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
 // var port = process.argv[2] || 9000;
 var port = 9000;
 var filesize = 0;
-/*
-// koa-session + koa-socket-session + koa-socket.io
-// koa-session-store + koa-session-mongo + koa-socket.io
-//const opts = {host: 'http://kyx.dynu.net', port: '9000'};
-//ksio.start(serverk, opts);
-ksio.start(serverk);  //  koa-socket.io
-ksio.on('connect', async function (socket) {   //  no * generator
-      console.log('join event received, new user: '+socket.id);
-    //  ctx.session.socketo = "socket.id";
-    ksio.emit('news', { hello: 'world baby'+socket.id });
-    ksio.on('myevent', function (ctx, data) {
-       console.log('data:'+data);
-       console.log(`connected socket news FF!${JSON.stringify(data)}`);
-    });
-    // use global io send borad cast
-//    ksio.emit('msg', '[All]: ' + this.data + ' joind');
-    // use current socket send a broadcast
-//    this.socket.broadcast('msg', '[All]: Hello guys, I\'m ' + this.data + '.');
-     // just send to current user
-//    this.socket.emit('msg', '[' + this.data + ']' + " Welcome to koa-socket.io !");
-   await next();
-   return ctx;
-});
-*/
-
-// koa-session-store + koa-session-mongo + koa-socket
-io.attach(appk);  // koa-socket
-/*
-io.on('myevent', function (ctx, data) {
-   console.log('data:'+data);
-   console.log(`connected socket news FF!${JSON.stringify(data)}`);
-});
-*/
-
-appk._io.on('connect', (sock) =>  {   //  no * generator
-      console.log('join event received, new user: '+sock.id);
-    //  ctx.session.socketo = "socket.id";
-    appk._io.emit('news', { hello: 'world baby'+sock.id });
-    appk._io.on('myevent', function (ctx, data) {
-       console.log('data:'+data);
-       console.log(`connected socket news FF!${JSON.stringify(data)}`);
-    });
-    // use global io send borad cast
-//////    appk._io.emit('msg', '[All]: ' + this.data + ' joind');
-    // use current socket send a broadcast
-//   appk._io.broadcast('msg', '[All]: Hello guys, I\'m ' + this.data + '.');   //broadcast not a function
-     // just send to current user
-//////    appk._io.emit('msg', '[' + this.data + ']' + " Welcome to koa-socket.io !");
-//  await next();
-//  return ctx;
-});
-
-appk.use(async (ctx,next) => {
-//ctx.state.varyin = 'vary';
-//  ctx.state.varyin.name = ctx.session.name;
-//   ctx.cookies.set()
-
-//  if (ctx.path === '/favicon.ico') return;  // ignore favicon
-let n = ctx.session.views || 0;
-  ctx.session.views = await ++n;
-  ctx.session.username = await 'socketmero';
-
-//  ctx.body = n + ' views';
-//  ctx.session.socketo = await ctx.socket.id;
-// use current socket send a broadcast
-///ctx.socket.broadcast('msg', '[All]: Hello guys, I\'m ' + this.data + '.'); //broadcast not a function
- // just send to current user
-ctx.socket.emit('msg', '[' + this.data + ']' + " Welcome to koa-socket.io !");
-//  await next();
-console.log("cokie._sid:"+ctx.cookies.get("kyx:sess1"));  // undefined
-console.log("session.blob:"+JSON.stringify(ctx.session));  // {}
-console.log("ctx.socket:"+typeof(ctx.socket));  // {}
-
-//appk.context.vary =  n + 'views'; //'varyin';
-//ctx.session = null;  //destroy session
-await next();
-return ctx;
-});
-
-/*
-async function process(next) {
-  await next;
-  await function (done) { setTimeout(done, 5000); };
-  console.log('processed');
-};
-*/
-//appk.use(process)
-//appk.use(require('koa-body')({ multipart: true }));
-//appk.use(Parser());
-//appk.use(Formis());
-//////appk.context.vary =  'varyin';
-//appk.use(cookiek());  // TypeError: cookiek is not a function
-
-//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
-//appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
-
-
-/*
-var siok = require('socket.io')(serverk);
-siok.on('connection', function (socket){
-      socket.emit('news', { hello: 'world baby'+socket.id });
-      socket.on('message', function (data) {
-         console.log('data:'+data);
-         console.log(`connected socket news FF!${JSON.stringify(data)}`);
-      });
-       socket.emit('news',socket.id);
-       socket.on('upload', function (msg) {filesize=msg; console.log("msg:",msg);
-  //         socket.broadcast.emit('progress', bytesReceived);
-       });
-    });
-serverk.listen(parseInt(`${port}`), (err) => {
-      if (err) {return console.log('something bad happened', err)}
-      console.log(`server is listening on port: ${port}`)
-      });
-*/
-
-
-appk.use(function *() {
-    // set username in session to 'LnsooXD'
-    this.session.userapp = 'LnsooXD';
-  //  console.log('ctx.session.socketo'+this.session.socketo);
-});
-
-
-appk.listen(parseInt(`${port}`), (err) => {
-    if (err) {return console.log('something bad happened', err)}
-    console.log(`socket server is listening on port: ${port}`)
-});
-
-/* // koa + socket.io first style
 var serverkio = serverk.listen(parseInt(`${port}`), (err) => {
   if (err) {return console.log('something bad happened', err)}
   console.log(`server is listening on port: ${port}`)
-  });
+});
+
 var siok = require('socket.io')(serverkio);
 siok.on('connection', function (socket){
     socket.emit('news', { hello: 'world baby'+socket.id });
-    socket.on('message', function (data) {
+    socket.on('myevent', function (data) {
        console.log('data:'+data);
        console.log(`connected socket news FF!${JSON.stringify(data)}`);
     });
@@ -850,8 +859,8 @@ siok.on('connection', function (socket){
      socket.on('upload', function (msg) {filesize=msg; console.log("msg:",msg);
 //         socket.broadcast.emit('progress', bytesReceived);
      });
+
   });
-  ////      socket.disconnect();
+////      socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
-*/
