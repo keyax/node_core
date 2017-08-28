@@ -127,6 +127,7 @@ RUN cd /home/node \
  && npm install --save koa-basic-auth \
  && npm install --save koa-passport \
  && npm install --save passport-local \
+ && npm install --save passport-jwt \
  && npm install --save passport-facebook \
  && npm install --save passport-twitter \
  && npm install --save passport-google-auth \
