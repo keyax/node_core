@@ -126,10 +126,10 @@ RUN cd /home/node \
  && npm install --save koa-session-mongoose \
  && npm install --save koa-basic-auth \
  && npm install --save koa-passport \
- && npm install --save koa-passport-local \
- && npm install --save koa-passport-facebook \
- && npm install --save koa-passport-twitter \
- && npm install --save koa-passport-google-auth \
+ && npm install --save passport-local \
+ && npm install --save passport-facebook \
+ && npm install --save passport-twitter \
+ && npm install --save passport-google-auth \
 
  && npm install --save co \
  && npm install --save koa-convert \
