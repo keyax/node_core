@@ -27,6 +27,7 @@ const http = require('http');
 const co = require("co");
 const Koa = require('koa');
 const appk = new Koa();  // const app = Koa();
+appk.proxy = true;  // koa passport trust proxy
 //const serverhk  = http.createServer(appk.callback());
 //koa deprecated Support for generators will be removed in v3.
 const convert = require('koa-convert');
@@ -41,12 +42,24 @@ const cookiek = require('koa-cookie'); // only parser
 const koasession = require('koa-session');
 const sessionkstore = require('koa-session-store');
 const sessionkmongo = require('koa-session-mongo');
+const mongoose = require('mongoose');
 const sessionkmongoose = require('koa-session-mongoose');
+const dbUrl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
+const mongooseConn = mongoose.connection.openUri(dbUrl);
+//mongoose.connect(dburl);
+//mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 const abb = require('async-busboy');
+const auth = require('./auth.js');
 const passport = require('koa-passport');
+//auth(passport);
+const local = require('passport-local').Strategy;
+const facebook = require('passport-facebook').Strategy;
+const twitter = require('passport-twitter').Strategy;
+const google = require('passport-google-auth').Strategy;
+const jwt = require('passport-jwt').Strategy;
 
 var progress = require('progress-stream');
 const app = new Koa();  // const app = Koa();
@@ -81,11 +94,11 @@ const socketio = require('socket.io');
 //const mongo = require('mongodb');
 //const MongoClient = require('mongodb').MongoClient;
 //const Serverdb = require('mongodb').Server;
-//const mongoose = require('mongoose');
+
 const formidable = require('formidable');
 
 //var fetch = require('node-fetch');
-var jwt = require('jsonwebtoken');
+var jwt0 = require('jsonwebtoken');
 
 /*
 //const appi = new Koa();  // const app = Koa();
@@ -276,44 +289,38 @@ app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
 
-/*
-app.keys = ["keyax57secretkey"];
-app.use(routek.post("/pets/login", async function (ctx, next) {
-  try {
-
- const {fields} = await abb(ctx.req, {
-     }); // await abb(ctx.req,
-   console.log("route:"+util.inspect({fields}));
-   ctx.body = {resp: "login eureka!!"};
-
-   await next();
-   sessionkstore(
-    {store: sessionkmongo.create({
-  //  db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
-     url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-  //   db: "kyxtree",  //pets.dbc,
-  //   collection: "sessions",
-  //   username: "yones",
-  //   password: "555777",
-     expires: 60*60*1})
-   }
-  // ,appk
-);
-//  await next();
-   ctx.cookies.set('sessiond', 123456);
-   ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
-  //appk.use(sessionk(appk));
-
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-}));
-*/
 app.listen(9100);
 console.log('listening on port 9100');
 
 
+// koa-session-store + koa-session-mongoose
+appk.keys = ["keyax57secretos"];
+const CONFIGS = {
+    name: 'kyx:sesgoose',    // cookie name
+    secret: "mysecretcode", //koa2-session-store
+//  store: "cookie",   // session storage layer - see below
+    store: new sessionkmongoose({
+      collection: 'sessions',
+      connection: mongooseConn,
+      expires: 60 * 60 * 24 * 14, // 2 weeks is the default
+      model: 'KoaSession'
+    }),
+    cookie: {
+      key: 'kyx:sesgoose', // (string) cookie key (default is koa:sess)
+       // number || 'session' maxAge in ms (default is 1 days)
+       //'session' will result in a cookie that expires when session/browser is closed
+       // Warning: If a session cookie is stolen, this cookie will never expire
+      maxAge:  3600000, //86400000,//=60*60*24*1000ms
+      overwrite: true, // (boolean) overwrite existing cookie (default true)
+      httpOnly: true,  // (boolean) httpOnly not access js (default true)
+      signed: true,    // (boolean) signed using KeyGrip (default true)
+      rolling: false   // (boolean) Force a session identifier cookie to be set on every response.
+                       //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
+    }
+  };
+  appk.use(sessionkstore(CONFIGS)); //{store: new sessionkmongoose()}
+
+/*
 // koa-session-store + koa-session-mongo
 appk.keys = ["keyax57secretos"];
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
@@ -345,7 +352,7 @@ const CONFIGS = {
 const sesion = sessionkstore(CONFIGS);
 appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
   // or if you prefer all default config, just use => app.use(session(appk));
-
+*/
 /*
 //  koa-session + koa-socket-session + koa-socket.io
 appk.keys = ["keyax57secretos"];
@@ -366,9 +373,7 @@ appk.use(koasession(CONFIG, appk));
 ksio.use(KSsession(appk, koasession));
 */
 
-
-
-  appk.use(async (ctx,next) => {
+appk.use(async (ctx,next) => {
   //ctx.state.varyin = 'vary';
   //  ctx.state.varyin.name = ctx.session.name;
   //   ctx.cookies.set()
@@ -385,14 +390,14 @@ ksio.use(KSsession(appk, koasession));
    // just send to current user
 //////  ctx.socket.emit('msg', '[' + this.data + ']' + " Welcome to koa-socket.io !");
   //  await next();
-  console.log("cokie._sid:"+ctx.cookies.get("kyx:sess1"));  // undefined
+  console.log("cokie._sid:"+ctx.cookies.get("kyx:sesgoose"));  // undefined
   console.log("session.blob:"+JSON.stringify(ctx.session));  // {}
 ////////////////???????????????????  console.log("ctx.socket:"+JSON.stringify(ctx.socket));  // {}
   //appk.context.vary =  n + 'views'; //'varyin';
   //ctx.session = null;  //destroy session
   await next();
   return ctx;
-  });
+});
 
 // koa-session-store + koa-session-mongo + koa-socket
 ///////  io.attach(appk);  // koa-socket
@@ -448,9 +453,29 @@ ksio.use(KSsession(appk, koasession));
   //appk.use(Parser());  // koa-body
   //appk.use(Formis());
   //appk.use(Cookies());  // TypeError: cookiek is not a function
+//  require('./auth.js');
+
   appk.use(Parser());
   appk.use(passport.initialize());
   appk.use(passport.session());
+
+/*
+  // Require authentication for now
+  appk.use(function(ctx, next) {
+    if (ctx.isAuthenticated()) {
+      return next()
+    } else {
+//    ctx.body = "ctx.redirect('/')";
+    }
+  })
+  */
+  /*
+  appk.use(route.get('/app', function(ctx) {
+    ctx.type = 'html'
+    ctx.body = fs.createReadStream('views/app.html')
+  }))
+
+  */
 
 
 //appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
@@ -507,14 +532,14 @@ routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON
 */
 /////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
-routerk.get("/who", async function (ctx) {
+routerk.post("/who", async function (ctx, next) {
  try {
 ///////const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
 //if (ctx.sessions){console.log("New session");}
 ctx.body = ctx.session;
 //const {fields} = await abb(ctx.req, {});
 //  console.log(util.inspect("who:"+ctx.cookies.get("kyx:sess1")));
-//  await next();
+//await next();
 //  ctx.cookies.set("sesiones", "fantasticas");// = {resp: "login eureka!!"};
 return ctx;
 } catch (err) {
@@ -524,25 +549,107 @@ ctx.status = err.status || 500
 
 });
 
-
-
 routerk.post("/login", async function (ctx, next) {
  try {
+//   const auth = require('./auth.js');
+//   const passport = require('koa-passport');
+
+
+
 ///////const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);
-
 //if (ctx.sessions){console.log("New session");}
-
 const {fields} = await abb(ctx.req, {});
   console.log(util.inspect({fields}));
+ctx.state.user = {};
+ctx.state.user.username = fields.username;
+ctx.state.user.password = fields.password;
+console.log("loginx:"+util.inspect(ctx.state.user));
 //  await next();
 //  ctx.cookies.set("sesiones", "fantasticas");// = {resp: "login eureka!!"};
-return;
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-
+/*
+passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/pets/pets'
 });
+*/
+//ctx.body = ctx.state.user;
+
+  return ctx;
+  } catch (err) {
+  ctx.body = { message: err.message };
+  ctx.status = err.status || 500;
+  };
+});
+
+routerk.post('/loginy', function(ctx, next) {  //'/custom'
+  return passport.authenticate('local', function(user, info, status) {
+    if (user === false) {
+      ctx.status = 401
+      ctx.body = { success: false }
+//      ctx.throw(401)
+    } else {
+      ctx.body = { success: true };
+      return ctx.login(user);
+    }
+  })(ctx, next)
+
+//console.log("auth:", ctx.isAuthenticated);
+});
+
+// POST /login
+routerk.post('/loginz',
+  passport.authenticate('local', {
+    successRedirect: '/pets/pets',
+    failureRedirect: '/'
+  })
+);
+
+routerk.get('/logout', function(ctx) {
+  ctx.logout();
+  ctx.redirect('/');
+});
+/*
+routerk.get('/auth/facebook',
+  passport.authenticate('facebook')
+)
+routerk.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect: '/app',
+    failureRedirect: '/'
+  })
+)
+routerk.get('/auth/twitter',
+  passport.authenticate('twitter')
+)
+routerk.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {
+    successRedirect: '/app',
+    failureRedirect: '/'
+  })
+)
+routerk.get('/auth/google',
+  passport.authenticate('google')
+)
+routerk.get('/auth/google/callback',
+  passport.authenticate('google', {
+    successRedirect: '/app',
+    failureRedirect: '/'
+  })
+)
+// Require authentication for now
+appk.use(function(ctx, next) {
+  if (ctx.isAuthenticated()) {
+    return next()
+  } else {
+    ctx.redirect('/')
+  }
+})
+routerk.get('/app', function(ctx) {
+  ctx.type = 'html'
+  ctx.body = fs.createReadStream('views/app.html')
+})
+*/
+
 
 routerk.post("/uploadf", async function (ctx, next) {
  try {
@@ -762,9 +869,6 @@ appk.use(routerk.allowedMethods());
 //appk
 //  .use(routerk.routes())
 //  .use(routerk.allowedMethods());
-
-
-
 
 
 function callback(req, res) {

@@ -104,7 +104,7 @@ RUN cd /home/node \
  && npm install --save jsonwebtoken \
 # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
  && npm install --save mongodb \
- && npm install --save mongoose \
+ && npm install --save mongoose@4.10.8 \
  && npm install --save socket.io \
  && npm install --save cookie \
  && npm install --save cookies \
@@ -118,15 +118,16 @@ RUN cd /home/node \
  && npm install --save socket.io-mongodb \
  && npm install --save mubsub \
  && npm install --save koa-socket-passport \
- && npm install --save koa-jwt \
 # && npm install --save koa-session2 \
 # && npm install --save koa2-session-store \
+ && npm install --save koa-jwt \
+ && npm install --save koa-basic-auth \
  && npm install --save koa-session-store \
  && npm install --save koa-session-mongo \
  && npm install --save koa-session-mongoose \
- && npm install --save koa-basic-auth \
  && npm install --save koa-passport \
  && npm install --save passport-local \
+ && npm install --save passport-local-mongoose \
  && npm install --save passport-jwt \
  && npm install --save passport-facebook \
  && npm install --save passport-twitter \

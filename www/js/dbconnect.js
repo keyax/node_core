@@ -7,6 +7,7 @@ const dburl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 //var conexion = null;
 var result = null;
+const mongoose = require('mongoose');
 /*
 the server/replset/mongos options are deprecated,
 all their options are supported at the top level of the options object
@@ -68,7 +69,6 @@ let db = {
 }
 
 module.exports = db;
-
 
 exports.test = async function () {
       return await MongoClient.connect(dburl, options);
