@@ -104,7 +104,8 @@ RUN cd /home/node \
  && npm install --save jsonwebtoken \
 # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
  && npm install --save mongodb \
- && npm install --save mongoose@4.10.8 \
+ && npm install --save mongoose \
+# && npm install --save mongoose@4.10.8 \
  && npm install --save socket.io \
  && npm install --save cookie \
  && npm install --save cookies \

@@ -45,9 +45,9 @@ const sessionkmongo = require('koa-session-mongo');
 const mongoose = require('mongoose');
 const sessionkmongoose = require('koa-session-mongoose');
 const dbUrl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
-const mongooseConn = mongoose.connection.openUri(dbUrl);
-//mongoose.connect(dburl);
-//mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
+//const mongooseConn = mongoose.connection.openUri(dbUrl); //
+const mongooseConn = mongoose.connect(dbUrl);//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
+//const mongooseConn = mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
@@ -56,6 +56,7 @@ const auth = require('./auth.js');
 const passport = require('koa-passport');
 //auth(passport);
 const local = require('passport-local').Strategy;
+const localm = require('passport-local-mongoose');
 const facebook = require('passport-facebook').Strategy;
 const twitter = require('passport-twitter').Strategy;
 const google = require('passport-google-auth').Strategy;
@@ -572,7 +573,7 @@ passport.authenticate('local', {
   failureRedirect: '/pets/pets'
 });
 */
-//ctx.body = ctx.state.user;
+ctx.body = ctx.state.user;
 
   return ctx;
   } catch (err) {

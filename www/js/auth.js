@@ -5,7 +5,7 @@ const passport = require('koa-passport')
 //mongoose.connect(dbUrl);  //  && npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 //mongoose.connect(config.get('mongo'), {useMongoClient: true});  // no updates
-/////mongoose.connection.openUri(dbUrl);
+/////mongoose.connection.openUri(dbUrl); //  mongoose@4.11
 const User = require('./user.js');    //('./models/user.js')
 
 
