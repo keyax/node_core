@@ -173,7 +173,7 @@ RUN cd /home/node \
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
 # ADD www/index.js /home/node/
-ADD www/js /home/node/js
+#ADD www/js /home/node/js
 ADD www/img /home/node/img
 ADD www/css /home/node/css
 ADD www/fonts /home/node/fonts
