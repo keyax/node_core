@@ -1,0 +1,361 @@
+
+yones@keyax50:~$ export DOTOKEN=6d44554118b685aeaaf12c607e29deeaf477928320d9748eb692402b8dd95c25
+
+root@keyaxdo:~# curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOTOKEN" "https://api.digitalocean.com/v2/regions"
+
+{"regions":[{"name":"New York 1","slug":"nyc1","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true},{"name":"San Francisco 1","slug":"sfo1","sizes":["512mb","1gb","2gb"],"features":["private_networking","backups","ipv6","metadata","install_agent"],"available":true},{"name":"Amsterdam 2","slug":"ams2","sizes":["512mb","1gb","2gb"],"features":["private_networking","backups","ipv6","metadata","install_agent"],"available":true},{"name":"Singapore 1","slug":"sgp1","sizes":["512mb","1gb","2gb"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true},{"name":"London 1","slug":"lon1","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent"],"available":true},{"name":"New York 3","slug":"nyc3","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent"],"available":true},{"name":"Amsterdam 3","slug":"ams3","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent"],"available":true},{"name":"Frankfurt 1","slug":"fra1","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true},{"name":"Toronto 1","slug":"tor1","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true},{"name":"San Francisco 2","slug":"sfo2","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true},{"name":"Bangalore 1","slug":"blr1","sizes":["512mb","1gb","2gb","c-2"],"features":["private_networking","backups","ipv6","metadata","install_agent","storage"],"available":true}],"links":{},"meta":{"total":11}}
+
+yones@keyax50:~$ curl -X GET -H "Content-Type: application/json" -H "Authorization: Bearer $DOTOKEN" "https://api.digitalocean.com/v2/account/keys"
+{"ssh_keys":[{"id":13180034,"fingerprint":"5b:d0:5f:1f:5e:3e:99:b1:64:9e:41:eb:fd:cf:4f:2f","public_key":"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeN9FEJ0RKM6nUhIXrfz4MZIl5kRzRSXQyJeX1aOP+zTC+4O4mQU6HvsxjxcrAMtxGJ24kVkU3xNwr5sStk46ESkJ7TwFm+uIXS0Pz94+uRwH4MEtKx81HEPIpvqzAvsaHcbqoiGCNbIJ5yAOcukCt5gMlyM1QhkPs206yPKXVmycxFtWjPIhXOoVue57JsIH/QUoTadHlzIE7+a69lSMv/aS3U64qYhRLRVJIreK9k8GX2+BFNGwSRz1m2oArQkDGvymcjAQhooyzSou+JvuLsipT0mWLzf8+MOtvQpq2n0duCdJ1S8OuNYe1mmTWATQQDc47lT3tptAJ8xr3LhET","name":"keyaxdo"}],"links":{},"meta":{"total":1}}
+yones@keyax50:~$ 
+
+## default region nyc3 with storage fra1, nyc1, sfo2, tor1, blr1, sgp1 
+yones@keyax50:~$ docker-machine create --driver digitalocean --digitalocean-access-token $DOTOKEN \
+                 --digitalocean-ssh-key-fingerprint "5b:d0:5f:1f:5e:3e:99:b1:64:9e:41:eb:fd:cf:4f:2f" --digitalocean-region fra1 keyaxdo
+Running pre-create checks...
+Creating machine...
+(keyaxdo) Creating SSH key...
+(keyaxdo) Creating Digital Ocean droplet...
+(keyaxdo) Waiting for IP address to be assigned to the Droplet...
+Waiting for machine to be running, this may take a few minutes...
+Detecting operating system of created instance...
+Waiting for SSH to be available...
+Detecting the provisioner...
+Provisioning with ubuntu(systemd)...
+Installing Docker...
+Copying certs to the local machine directory...
+Copying certs to the remote machine...
+Setting Docker configuration on the remote daemon...
+Checking connection to Docker...
+Docker is up and running!
+To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: docker-machine env keyaxdo
+yones@keyax50:~$ 
+
+yones@keyax50:~$ docker-machine env keyaxdo
+export DOCKER_TLS_VERIFY="1"
+export DOCKER_HOST="tcp://46.101.233.86:2376"
+export DOCKER_CERT_PATH="/home/yones/.docker/machine/machines/keyaxdo"
+export DOCKER_MACHINE_NAME="keyaxdo"
+export DOCKER_API_VERSION="1.31"
+# Run this command to configure your shell: 
+# eval $(docker-machine env keyaxdo)
+yones@keyax50:~$ 
+
+# to restore local environment
+yones@keyax50:~$ eval "$(docker-machine env -u)"
+
+yones@keyax50:~$ eval $(docker-machine env keyaxdo)
+yones@keyax50:~$ docker-machine ssh keyaxdo
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+17 packages can be updated.
+8 updates are security updates.
+
+# show installed packages which has an update in repos
+root@keyaxdo:~# dpkg --get-selections | xargs apt-cache policy {} | grep -1 Installed | sed -r 's/(:|Installed: |Candidate: )//' | uniq -u | tac | sed '/--/I,+1 d' | tac | sed '$d' | sed -n 1~2p
+apparmor
+cloud-init
+cryptsetup
+cryptsetup-bin
+grub-legacy-ec2
+grub-pc
+libapparmor-perl
+libapparmor1
+libcryptsetup4
+linux-headers-generic
+linux-headers-virtual
+linux-image-virtual
+linux-virtual
+snapd
+tcpdump
+ubuntu-core-launcher
+
+# show installed packages which has an update in repos  
+# as of ubuntu 16.04 apt released april 2014
+root@keyaxdo:~# sudo apt update
+root@keyaxdo:~# apt list --upgradable
+Listing... Done
+apparmor/xenial-updates 2.10.95-0ubuntu2.7 amd64 [upgradable from: 2.10.95-0ubuntu2.6]
+cloud-init/xenial-updates 0.7.9-233-ge586fe35-0ubuntu1~16.04.1 all [upgradable from: 0.7.9-153-g16a7302f-0ubuntu1~16.04.2]
+cryptsetup/xenial-updates 2:1.6.6-5ubuntu2.1 amd64 [upgradable from: 2:1.6.6-5ubuntu2]
+cryptsetup-bin/xenial-updates 2:1.6.6-5ubuntu2.1 amd64 [upgradable from: 2:1.6.6-5ubuntu2]
+grub-legacy-ec2/xenial-updates 0.7.9-233-ge586fe35-0ubuntu1~16.04.1 all [upgradable from: 0.7.9-153-g16a7302f-0ubuntu1~16.04.2]
+libapparmor-perl/xenial-updates 2.10.95-0ubuntu2.7 amd64 [upgradable from: 2.10.95-0ubuntu2.6]
+libapparmor1/xenial-updates 2.10.95-0ubuntu2.7 amd64 [upgradable from: 2.10.95-0ubuntu2.6]
+libcryptsetup4/xenial-updates 2:1.6.6-5ubuntu2.1 amd64 [upgradable from: 2:1.6.6-5ubuntu2]
+linux-headers-generic/xenial-updates,xenial-security 4.4.0.96.101 amd64 [upgradable from: 4.4.0.93.98]
+linux-headers-virtual/xenial-updates,xenial-security 4.4.0.96.101 amd64 [upgradable from: 4.4.0.93.98]
+linux-image-virtual/xenial-updates,xenial-security 4.4.0.96.101 amd64 [upgradable from: 4.4.0.93.98]
+linux-virtual/xenial-updates,xenial-security 4.4.0.96.101 amd64 [upgradable from: 4.4.0.93.98]
+snapd/xenial-updates 2.27.5 amd64 [upgradable from: 2.26.10]
+tcpdump/xenial-updates,xenial-security 4.9.2-0ubuntu0.16.04.1 amd64 [upgradable from: 4.9.0-1ubuntu1~ubuntu16.04.1]
+ubuntu-core-launcher/xenial-updates 2.27.5 amd64 [upgradable from: 2.26.10]
+root@keyaxdo:~#
+
+root@keyaxdo:~# sudo apt-get update
+root@keyaxdo:~# sudo apt-get upgrade --dry-run
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Calculating upgrade... Done
+The following package was automatically installed and is no longer required:
+  grub-pc-bin
+Use 'sudo apt autoremove' to remove it.
+The following packages have been kept back:
+  cloud-init linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual
+The following packages will be upgraded:
+  apparmor cryptsetup cryptsetup-bin grub-legacy-ec2 libapparmor-perl libapparmor1 libcryptsetup4 snapd tcpdump
+  ubuntu-core-launcher
+10 upgraded, 0 newly installed, 0 to remove and 5 not upgraded.
+Inst libapparmor1 [2.10.95-0ubuntu2.6] (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Conf libapparmor1 (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Inst libapparmor-perl [2.10.95-0ubuntu2.6] (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Inst apparmor [2.10.95-0ubuntu2.6] (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Inst ubuntu-core-launcher [2.26.10] (2.27.5 Ubuntu:16.04/xenial-updates [amd64]) []
+Inst snapd [2.26.10] (2.27.5 Ubuntu:16.04/xenial-updates [amd64])
+Inst libcryptsetup4 [2:1.6.6-5ubuntu2] (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Conf libcryptsetup4 (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Inst tcpdump [4.9.0-1ubuntu1~ubuntu16.04.1] (4.9.2-0ubuntu0.16.04.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])
+Inst cryptsetup-bin [2:1.6.6-5ubuntu2] (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Inst cryptsetup [2:1.6.6-5ubuntu2] (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Inst grub-legacy-ec2 [0.7.9-153-g16a7302f-0ubuntu1~16.04.2] (0.7.9-233-ge586fe35-0ubuntu1~16.04.1 Ubuntu:16.04/xenial-updates [all])
+Conf libapparmor-perl (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Conf apparmor (2.10.95-0ubuntu2.7 Ubuntu:16.04/xenial-updates [amd64])
+Conf snapd (2.27.5 Ubuntu:16.04/xenial-updates [amd64])
+Conf ubuntu-core-launcher (2.27.5 Ubuntu:16.04/xenial-updates [amd64])
+Conf tcpdump (4.9.2-0ubuntu0.16.04.1 Ubuntu:16.04/xenial-updates, Ubuntu:16.04/xenial-security [amd64])
+Conf cryptsetup-bin (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Conf cryptsetup (2:1.6.6-5ubuntu2.1 Ubuntu:16.04/xenial-updates [amd64])
+Conf grub-legacy-ec2 (0.7.9-233-ge586fe35-0ubuntu1~16.04.1 Ubuntu:16.04/xenial-updates [all])
+root@keyaxdo:~# 
+
+root@keyaxdo:~# sudo apt-get upgrade
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+Calculating upgrade... Done
+The following package was automatically installed and is no longer required:
+  grub-pc-bin
+Use 'sudo apt autoremove' to remove it.
+The following packages have been kept back:
+  cloud-init linux-headers-generic linux-headers-virtual linux-image-virtual linux-virtual
+The following packages will be upgraded:
+  apparmor cryptsetup cryptsetup-bin grub-legacy-ec2 libapparmor-perl libapparmor1 libcryptsetup4 snapd tcpdump
+  ubuntu-core-launcher
+10 upgraded, 0 newly installed, 0 to remove and 5 not upgraded.
+Need to get 11.9 MB of archives.
+After this operation, 4,477 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 libapparmor1 amd64 2.10.95-0ubuntu2.7 [31.2 kB]
+Get:2 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 libapparmor-perl amd64 2.10.95-0ubuntu2.7 [31.6 kB]
+Get:3 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 apparmor amd64 2.10.95-0ubuntu2.7 [450 kB]
+Get:4 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 ubuntu-core-launcher amd64 2.27.5 [1,562 B]    
+Get:5 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 snapd amd64 2.27.5 [10.7 MB]                   
+Get:6 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 libcryptsetup4 amd64 2:1.6.6-5ubuntu2.1 [73.3 kB]
+Get:7 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 tcpdump amd64 4.9.2-0ubuntu0.16.04.1 [387 kB]  
+Get:8 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 cryptsetup-bin amd64 2:1.6.6-5ubuntu2.1 [61.8 kB]
+Get:9 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 cryptsetup amd64 2:1.6.6-5ubuntu2.1 [123 kB]   
+Get:10 http://nyc2.mirrors.digitalocean.com/ubuntu xenial-updates/main amd64 grub-legacy-ec2 all 0.7.9-233-ge586fe35-0ubuntu1~16.04.1 [28.3 kB]
+Fetched 11.9 MB in 24s (493 kB/s)                                                                                          
+Preconfiguring packages ...
+(Reading database ... 54495 files and directories currently installed.)
+Preparing to unpack .../libapparmor1_2.10.95-0ubuntu2.7_amd64.deb ...
+Unpacking libapparmor1:amd64 (2.10.95-0ubuntu2.7) over (2.10.95-0ubuntu2.6) ...
+Processing triggers for libc-bin (2.23-0ubuntu9) ...
+Setting up libapparmor1:amd64 (2.10.95-0ubuntu2.7) ...
+Processing triggers for libc-bin (2.23-0ubuntu9) ...
+(Reading database ... 54495 files and directories currently installed.)
+Preparing to unpack .../libapparmor-perl_2.10.95-0ubuntu2.7_amd64.deb ...
+Unpacking libapparmor-perl (2.10.95-0ubuntu2.7) over (2.10.95-0ubuntu2.6) ...
+Preparing to unpack .../apparmor_2.10.95-0ubuntu2.7_amd64.deb ...
+Unpacking apparmor (2.10.95-0ubuntu2.7) over (2.10.95-0ubuntu2.6) ...
+Preparing to unpack .../ubuntu-core-launcher_2.27.5_amd64.deb ...
+Unpacking ubuntu-core-launcher (2.27.5) over (2.26.10) ...
+Preparing to unpack .../snapd_2.27.5_amd64.deb ...
+Warning: Stopping snapd.service, but it can still be activated by:
+  snapd.socket
+Unpacking snapd (2.27.5) over (2.26.10) ...
+Preparing to unpack .../libcryptsetup4_2%3a1.6.6-5ubuntu2.1_amd64.deb ...
+Unpacking libcryptsetup4:amd64 (2:1.6.6-5ubuntu2.1) over (2:1.6.6-5ubuntu2) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Processing triggers for libc-bin (2.23-0ubuntu9) ...
+Setting up libcryptsetup4:amd64 (2:1.6.6-5ubuntu2.1) ...
+Processing triggers for systemd (229-4ubuntu19) ...
+Processing triggers for libc-bin (2.23-0ubuntu9) ...
+(Reading database ... 54498 files and directories currently installed.)
+Preparing to unpack .../tcpdump_4.9.2-0ubuntu0.16.04.1_amd64.deb ...
+Unpacking tcpdump (4.9.2-0ubuntu0.16.04.1) over (4.9.0-1ubuntu1~ubuntu16.04.1) ...
+Preparing to unpack .../cryptsetup-bin_2%3a1.6.6-5ubuntu2.1_amd64.deb ...
+Unpacking cryptsetup-bin (2:1.6.6-5ubuntu2.1) over (2:1.6.6-5ubuntu2) ...
+Preparing to unpack .../cryptsetup_2%3a1.6.6-5ubuntu2.1_amd64.deb ...
+Unpacking cryptsetup (2:1.6.6-5ubuntu2.1) over (2:1.6.6-5ubuntu2) ...
+Preparing to unpack .../grub-legacy-ec2_0.7.9-233-ge586fe35-0ubuntu1~16.04.1_all.deb ...
+Leaving 'diversion of /usr/sbin/grub-set-default to /usr/sbin/grub-set-default.real by grub-legacy-ec2'
+Unpacking grub-legacy-ec2 (0.7.9-233-ge586fe35-0ubuntu1~16.04.1) over (0.7.9-153-g16a7302f-0ubuntu1~16.04.2) ...
+Processing triggers for man-db (2.7.5-1) ...
+Processing triggers for ureadahead (0.100.0-19) ...
+Processing triggers for systemd (229-4ubuntu19) ...
+Setting up libapparmor-perl (2.10.95-0ubuntu2.7) ...
+Setting up apparmor (2.10.95-0ubuntu2.7) ...
+update-rc.d: warning: start and stop actions are no longer supported; falling back to defaults
+Skipping profile in /etc/apparmor.d/disable: usr.sbin.rsyslogd
+Setting up snapd (2.27.5) ...
+Installing new version of config file /etc/apparmor.d/usr.lib.snapd.snap-confine.real ...
+Setting up ubuntu-core-launcher (2.27.5) ...
+Setting up tcpdump (4.9.2-0ubuntu0.16.04.1) ...
+Installing new version of config file /etc/apparmor.d/usr.sbin.tcpdump ...
+Setting up cryptsetup-bin (2:1.6.6-5ubuntu2.1) ...
+Setting up cryptsetup (2:1.6.6-5ubuntu2.1) ...
+update-initramfs: deferring update (trigger activated)
+update-rc.d: warning: start and stop actions are no longer supported; falling back to defaults
+update-rc.d: warning: start and stop actions are no longer supported; falling back to defaults
+Setting up grub-legacy-ec2 (0.7.9-233-ge586fe35-0ubuntu1~16.04.1) ...
+Searching for GRUB installation directory ... found: /boot/grub
+Searching for default file ... found: /boot/grub/default
+Testing for an existing GRUB menu.lst file ... found: /boot/grub/menu.lst
+Searching for splash image ... none found, skipping ...
+Found kernel: /boot/vmlinuz-4.4.0-93-generic
+###############
+# replace /boot/grub/menu.lst with mantainers version instead keep local version found
+###############
+Replacing config file /run/grub/menu.lst with new version
+Found kernel: /boot/vmlinuz-4.4.0-93-generic
+Updating /boot/grub/menu.lst ... done
+Processing triggers for initramfs-tools (0.122ubuntu8.8) ...
+update-initramfs: Generating /boot/initrd.img-4.4.0-93-generic
+W: mdadm: /etc/mdadm/mdadm.conf defines no arrays.
+root@keyaxdo:~# 
+
+root@keyaxdo:~# sudo apt autoremove
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following packages will be REMOVED:
+  grub-pc-bin
+0 upgraded, 0 newly installed, 1 to remove and 5 not upgraded.
+After this operation, 3,006 kB disk space will be freed.
+Do you want to continue? [Y/n] y
+(Reading database ... 54498 files and directories currently installed.)
+Removing grub-pc-bin (2.02~beta2-36ubuntu3.12) ...
+root@keyaxdo:~# 
+
+# to show memory status
+root@keyaxdo:~# curl -sSL https://agent.digitalocean.com/install.sh | sh
+root@keyaxdo:~# sudo apt-get purge do-agent
+
+
+yones@keyax50:~$ ssh root@keyax.org
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@       WARNING: POSSIBLE DNS SPOOFING DETECTED!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+The ECDSA host key for keyax.org has changed,
+and the key for the corresponding IP address 165.227.154.73
+is unchanged. This could either mean that
+DNS SPOOFING is happening or the IP address for the host
+and its host key have changed at the same time.
+Offending key for IP in /home/yones/.ssh/known_hosts:21
+  remove with:
+  ssh-keygen -f "/home/yones/.ssh/known_hosts" -R 165.227.154.73
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:MOIn842dEguRORhILjTmUBjD8lPTkf4v2a7nI+xB3mk.
+Please contact your system administrator.
+Add correct host key in /home/yones/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/yones/.ssh/known_hosts:16
+  remove with:
+  ssh-keygen -f "/home/yones/.ssh/known_hosts" -R keyax.org
+ECDSA host key for keyax.org has changed and you have requested strict checking.
+Host key verification failed.
+yones@keyax50:~$ 
+yones@keyax50:~$   ssh-keygen -f "/home/yones/.ssh/known_hosts" -R keyax.org
+# Host keyax.org found: line 16
+/home/yones/.ssh/known_hosts updated.
+Original contents retained as /home/yones/.ssh/known_hosts.old
+
+yones@keyax50:~$ ssh root@keyax.org
+The authenticity of host 'keyax.org (165.227.154.73)' can't be established.
+ECDSA key fingerprint is SHA256:MOIn842dEguRORhILjTmUBjD8lPTkf4v2a7nI+xB3mk.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'keyax.org' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+28 packages can be updated.
+19 updates are security updates.
+
+
+Last login: Wed Sep 20 01:05:08 2017 from 41.249.64.75
+root@keyaxdo:~# 
+
+
+yones@keyax50:~$ rsync -av -e 'docker-machine ssh keyaxdo' sh :
+exit status 255
+rsync: connection unexpectedly closed (0 bytes received so far) [sender]
+rsync error: error in rsync protocol data stream (code 12) at io.c(235) [sender=3.1.2]
+
+
+##yones@keyax50:~$ ssh-add -k ~/.ssh/id_rsa
+yones@keyax50:~$ ssh-add -k ~/.docker/machine/machines/keyaxdo/id_rsa
+yones@keyax50:~$ ssh root@165.227.154.73
+yones@keyax50:~$ ssh root@keyax.eu
+yones@keyax50:~$ ssh root@keyax.org
+Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.4.0-93-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  Get cloud support with Ubuntu Advantage Cloud Guest:
+    http://www.ubuntu.com/business/services/cloud
+
+28 packages can be updated.
+19 updates are security updates.
+
+
+Last login: Wed Sep 20 00:57:16 2017 from 41.249.64.75
+root@keyaxdo:~# 
+root@keyaxdo:~# exit
+logout
+Connection to keyax.eu closed.
+
+
+yones@keyax50:~$ rsync -av -e 'docker-machine ssh keyaxdo' sh :
+sending incremental file list
+sh/
+sh/codes.json
+sh/comment.sh
+sh/consul.sh
+sh/digitalocean.txt
+.....
+sent 72,118 bytes  received 659 bytes  13,232.18 bytes/sec
+total size is 69,617  speedup is 0.96
+
+yones@keyax50:~$ rsync -a ~/sh root@keyax.org:~/sh
+yones@keyax50:~$ rsync -av ~/sh root@keyax.org:~/sh
+sending incremental file list
+
+sent 1,072 bytes  received 18 bytes  436.00 bytes/sec
+total size is 69,617  speedup is 63.87
+yones@keyax50:~$ 
+
+
+

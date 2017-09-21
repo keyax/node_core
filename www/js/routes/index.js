@@ -1,3 +1,6 @@
+//module.exports = function(app, passport) {  // express
+//module.exports = function(passport) {
+
 const assert = require('assert');
 const path = require('path');
 const url = require('url');
@@ -9,19 +12,21 @@ const util = require('util');
 
 var Koa = require('koa');
 var appk = new Koa();
-//import Router from 'koa-router';
 const Router = require('koa-router');
 const routerk = new Router();
 //const routerk = new Routerk(); // new Routerk({prefix: '/corp1'});
 //routerk.prefix('corp1')
+
 const bodyParser = require('koa-bodyparser');
+
 const passport = require('koa-passport');
+
 const Multer = require('koa-multer');
 const abb = require('async-busboy');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-//const dbUrl = "mongodb://user57:555777@192.168.1.2:27017/kyxtree?authSource=admin";
-const dbUrl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
+const dbUrl = "mongodb://user57:555777@192.168.1.2:27017/kyxtree?authSource=admin";
+//const dbUrl = "mongodb://admin:555777@192.168.1.2:27017/kyxtree";
 const mongooseConn = mongoose.connection.openUri(dbUrl); //
 var User = require('./../models/user');
 
@@ -120,6 +125,13 @@ return username;
 //, function (u) {console.log("results",u)}
 
 );  // end routerk.post("/login"
+
+// process the login form
+routerk.post('/loginlocal', passport.authenticate('local-login', {
+        successRedirect : '/who', // redirect to the secure profile section
+        failureRedirect : '/login'//, // redirect back to the signup page if there is an error
+//        failureFlash : true // allow flash messages
+}));
 
 routerk.post('/loginy', async  function(ctx, next) {  //'/custom'
    //await abb(ctx.req);
@@ -279,7 +291,7 @@ const {fields} = await abb(ctx.req, {
           //  console.log("ctx.req:"+ctx.request.get);
       ///      console.log("filesinctx:"+ctx.req.files);
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            var upfile = `img/${filename}`;
+            var upfile = `${filename}`;
   //          fs.closeSync(fs.openSync(upfile, 'w'));
 /*           fs.open(upfile,'w', function(err,fd){
                   if(err)console.log('cant open: '+upfile+err);//handle error
@@ -358,7 +370,7 @@ routerk.post("/sqldb/:langs", async function (ctx, next) {
        console.log('%'+ling+'%');
 //  var dbconn = require('./dbconnect.js');
   const sqlconnect = require('./../sqlconnect.js');   // pool or single
-  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@Gn:' AND LANGTO='eng'`, // AND VALUE LIKE ?`,
                  'values' :  ['%'+ling+'%'], 'timeout' : 40000 }; // '%_%'   40s
                   console.log("ctx.response"+ JSON.stringify(ctx.request.url));
   // const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
@@ -367,7 +379,15 @@ routerk.post("/sqldb/:langs", async function (ctx, next) {
               .then(rows => {//console.log("rowssqlpre:"+rows);  //undefined
             //          ctx.body = rows; //JSON.stringify(rows);
               //      ctx.send(rows);
-                      console.log("rowssql:"+JSON.stringify(rows));   //OOOOOOOKKKKKK
+                /*      var lst = "[";
+                      rows.map(value =>{lst += '\"'+value.VALUE+'''\",'});
+                      lst += "]";*/
+                      var lst = "{";
+                      rows.map(value =>{lst += '\"'+value.VALUE+'\":\"'+value.LEXIC+'\",'});
+                      lst += "}";
+
+                      console.log("rowssql:"+lst);   //OOOOOOOKKKKKK
+//                      console.log("rowssql:"+JSON.stringify(rows));   //OOOOOOOKKKKKK
             /*          // temporary data holder
                       const body = [];
                       // on every content chunk, push it to the data array
@@ -426,6 +446,6 @@ routerk.post('/xform', function (req, res, next) {
 //  }
 });
 */
-
+/////};
 module.exports = routerk.routes();
 //module.exports = routerk.allowedMethods();

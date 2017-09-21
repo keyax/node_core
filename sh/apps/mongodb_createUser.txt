@@ -1,0 +1,99 @@
+# show roles->privileges: dbAdmin dbOwner userAdmin read readWrite enableSharding 
+use trees
+db.getRoles({rolesInfo: 1, showPrivileges: true, showBuiltinRoles: true})
+
+
+# create dbs admin
+use admin
+db.createUser({user: "yones", pwd: "555777", roles: [{role: "userAdminAnyDatabase",db: "admin"}]})
+
+db.createUser({user: "treesx", pwd: "555777", roles: [{role: "dbAdmin",db: "trees"}]})
+use trees
+db.auth("treesx","555777")
+db.dropDatabase()
+db.dropAllUsers()
+db.system.users.find()
+
+use admin
+db.auth("yones","555777")
+use kyxtree
+db.createUser({user: "admin", pwd: "555777", roles: [{role: "dbAdmin",db: "kyxtree"}]})
+db.createUser({user: "user", pwd: "555777", roles: [{role: "readWrite",db: "kyxtree"}]})
+db.system.users.find()
+
+>use admin
+switched to db admin
+>db.auth("yones","555777")
+1
+>db.runCommand({connectionStatus: 1})
+{
+	"authInfo" : {
+		"authenticatedUsers" : [
+			{
+				"user" : "yones",
+				"db" : "admin"
+			}
+		],
+		"authenticatedUserRoles" : [
+			{
+				"role" : "userAdminAnyDatabase",
+				"db" : "admin"
+			}
+		]
+	},
+	"ok" : 1
+}
+
+====================================
+
+>use kyxtree
+>db.createUser({user: "yl", pwd: "555777", roles: [ { role: "readWrite", db: "kyxtree" } ] })
+
+>db.createUser(
+  {
+    user: "yl",
+    pwd: "555777",
+    roles: [ { role: "readWrite", db: "kyxtree" },
+             { role: "read", db: "local" } ]
+  }
+)
+
+>db.dropUser("yla")
+
+use kyxtree
+db.auth("yl","555777")
+db.geo.insert({yo:1,tu:2})
+db.runCommand({connectionStatus: 1})
+
+{
+    "authInfo" : {
+        "authenticatedUsers" : [ 
+            {
+                "user" : "yones",
+                "db" : "admin"
+            }, 
+            {
+                "user" : "yl",
+                "db" : "kyxtree"
+            }
+        ],
+        "authenticatedUserRoles" : [ 
+            {
+                "role" : "userAdminAnyDatabase",
+                "db" : "admin"
+            }, 
+            {
+                "role" : "readWrite",
+                "db" : "kyxtree"
+            }
+        ]
+    },
+    "ok" : 1.0
+}
+
+use admin
+db.auth("yones","555777")
+
+
+>db.logout()
+

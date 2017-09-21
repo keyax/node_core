@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="windows-1256" ?>
+<rules>
+	<rule c1="�" c2="�" c3="�" c4="�" kov="5" desc="���� ����� ����� " example="����">
+	</rule>
+	<rule c1="�" c2="�" c3="�" c4="�" kov="5" desc="���� ����� ����� " example="����">
+	</rule>
+	<rule c1="�" c2="C4" c3="�" c4="C2" kov="6" desc="���� ����� " example="����">
+	</rule>
+	<rule c1="�" c2="C4" c3="�" c4="C2" kov="6" desc="���� ����� " example="����">
+	</rule>
+	<rule c1="C3" c2="�" c3="C1" c4="�" kov="11" desc="���� " example="����">
+	</rule>
+	<rule c1="C3" c2="�" c3="C1" c4="�" kov="11" desc="���� " example="����">
+	</rule>
+	<rule c1="?" c2="�" c3="?" c4="�" kov="8" desc="���� �����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="�" c4="�" kov="8" desc="���� �����" example="����">
+	</rule>
+	<rule c1="C3" c2="�" c3="C1" c4="�" kov="3" desc="����� ����� " example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="�" c4="�" kov="10" desc="���� ����� " example="����">
+	</rule>
+	<rule c1="�" c2="?" c3="?" c4="�" kov="7" desc="���� �����" example="����">
+	</rule>
+	<rule c1="C3" c2="C4" c3="C1" c4="C2" kov="2" desc="�����" example="����">
+	</rule>
+	<rule c1="?" c2="�" c3="?" c4="?" kov="4" desc="�����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="�" c4="?" kov="4" desc="�����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="?" c4="�" kov="4" desc="�����" example="����">
+	</rule>
+	<rule c1="?" c2="�" c3="?" c4="?" kov="9" desc="����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="�" c4="?" kov="9" desc="����" example="����">
+	</rule>
+	<rule c1="?" c2="�" c3="?" c4="?" kov="9" desc="����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="�" c4="?" kov="9" desc="����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="?" c4="�" kov="10" desc="����" example="����">
+	</rule>
+	<rule c1="?" c2="?" c3="?" c4="?" kov="1" desc="����" example="����">
+	</rule>
+</rules>

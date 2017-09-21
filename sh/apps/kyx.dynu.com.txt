@@ -1,0 +1,19 @@
+Router ip gateway 192.168.1.100
+
+update dynamic DNS
+http://api.dynu.com/nic/update?hostname=kyx.dynu.com&password=Euro5577
+
+
+DLINK Advanced Setup > NAT > Virtual Server 
+Custom Service > Enable LAN Loopback > 192.168.1.1 (is bridge IP)
+Open Port 80 TCP 80
+Admin Dlink moves to 8080
+
+(DMZ host addres 192.168.1.1  irrelevante)
+
+(include dynamic IP in /etc/hosts
+160.176.254.165  kyx.dynu.com irrelevante)
+
+???innecesario
+sudo iptables -t nat -A PREROUTING -i ppp0 -p tcp --dport 8080 -j DNAT --to 192.168.1.3
+sudo iptables -A INPUT -i ppp0 -d 0.0 -p tcp --dport 8080 -j ACCEPT

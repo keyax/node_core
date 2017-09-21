@@ -1,0 +1,22 @@
+libstorage:
+  host: unix:///var/run/libstorage/localhost.sock
+  integration:
+    volume:
+      mount:
+        preempt: true
+      create:
+        default:
+          size: 1 # GB
+  server:
+    endpoints:
+      localhost:
+        address: unix:///var/run/libstorage/localhost.sock
+    services:
+      virtualbox:
+        driver: virtualbox
+        virtualbox:
+          endpoint:       http://10.0.2.2:18083
+          tls:            false
+          volumePath:     $HOME/VirtualBox/Volumes
+          controllerName: SATA
+

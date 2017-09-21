@@ -1,0 +1,47 @@
+# Install terminator
+# http://elkepon.com/install-terminator-terminal-emulator-in-ubuntu/
+sudo add-apt-repository ppa:gnome-terminator
+sudo apt-get update
+sudo apt-get install -y terminator
+
+# https://github.com/mbadolato/iTerm2-Color-Schemes  > 
+# Chose theme, go to terminator folder and copy theme.config content to...
+# Themes RightClick > Preferences > Profile + Add + Click Homebrew + Close + Exit
+gedit ~/.config/terminator/config
+
+[[Homebrew]]
+    palette = "#000000:#990000:#00a600:#999900:#0000b2:#b200b2:#00a6b2:#bfbfbf:#666666:#e50000:#00d900:#e5e500:#0000ff:#e500e5:#00e5e5:#e5e5e5"
+    background_color = "#000000"
+    cursor_color = "#23ff18"
+    foreground_color = "#00ff00"
+    background_image = None
+
+#check terminator
+terminator -v
+# terminator 1.90
+gsettings get org.gnome.desktop.interface gtk-theme
+# 'Ambiance'
+
+# change tab terminator v≤0.97 gtk2, ubuntu uses gtk3  NORMAL...@bg_color < "#ad7d0d"  f2f1f0
+sudo gedit /usr/share/themes/Ambiance/gtk-2.0/gtkrc
+
+style "notebook_bg" {
+  bg[NORMAL] = shade (1.02, @bg_color)
+  bg[ACTIVE] = shade (0.97, @bg_color)
+  fg[ACTIVE] = mix (0.8, @fg_color, shade (0.97, @bg_color))
+}
+
+# gtk3
+gedit ~/.config/gtk-3.0/gtk.css
+
+TerminalWindow .notebook tab:active{
+  background-color: @bg_color;
+}
+
+
+
+
+
+
+
+

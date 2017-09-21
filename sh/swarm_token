@@ -1,0 +1,34 @@
+Boot2Docker version 17.04.0-ce-rc2, build HEAD : 863bbb9 - Fri Mar 31 17:56:09 UTC 2017
+Docker version 17.04.0-ce-rc2, build 2f35d73
+docker@engine1:~$ docker swarm init --advertise-addr 192.168.42.39
+Swarm initialized: current node (dq86oq5jz07o4l3en15awyqrh) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-2jf7aksoyt4t9ipaqwhtoz4i8pxbblxh0jkmotliso2kkqvq38-bk3h8cchaybm1byap72awswu8 \
+    192.168.42.39:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+
+
+docker@engine1:~$ docker swarm join-token worker
+To add a worker to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-2jf7aksoyt4t9ipaqwhtoz4i8pxbblxh0jkmotliso2kkqvq38-bk3h8cchaybm1byap72awswu8 \
+    192.168.42.39:2377
+
+docker@engine1:~$ 
+
+
+docker@engine1:~$ docker swarm join-token manager
+To add a manager to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-2jf7aksoyt4t9ipaqwhtoz4i8pxbblxh0jkmotliso2kkqvq38-7nv5eby07w2yadh6l7kxjocjv \
+    192.168.42.39:2377
+
+docker@engine1:~$ 
+

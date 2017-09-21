@@ -2,14 +2,14 @@ FROM keyax/ubuntu_core
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
-      keyax.os.ver="16.04 xenial" \
+      keyax.os.ver="16.04.3 xenial" \
       keyax.vendor="Keyax" \
       keyax.app="Nodejs 8.1.2" \
-      keyax.app.ver="2.2"
+      keyax.app.ver="2.7"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+  && useradd --uid 1000 --gid node --shell /bin/bash --create-home nodek
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -26,15 +26,16 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B3866828
 #   94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
 #   B9AE9905FFD7803F25714661B63B535A4C206CA9 \ ha.pool unreach
 #   71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \ unreachable
-#         0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93 \
+###  0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93 \
 #   C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
 #   DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-#         9554F04D7259F04124DE6B476D5A82AC7E37093B \
+###  9554F04D7259F04124DE6B476D5A82AC7E37093B \
 #   FD3A5288F042B6850C66B31F09FE44734EB7990E \ hkp://p80 unreachable
 #   56730D5401028683275BD23C23EFEFE93C4CFFFE \ hkp://ha.pool   unreach
+#  ; do gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $key ; done"]
 #  ; do gpg --keyserver pool.sks-keyservers.net --recv-keys $key ; done"]
-# ; do gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $key ; done"]
-# ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done"]
+#  ; do gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys $key ; done"]
+#  ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys $key ; done"]
 #    apt-key adv --recv-key --keyserver pool.sks-keyservers.net $key || \
 #    apt-key adv --recv-key --keyserver pgp.mit.edu $key || \
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
@@ -75,8 +76,9 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN su node
-COPY package.json /home/node/
-RUN cd /home/node \
+COPY package.json /home/nodek/
+RUN cd /home/nodek \
+# && mkdir /home/statics \
  && npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
@@ -172,12 +174,15 @@ RUN cd /home/node \
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
 # ADD www/index.js /home/node/
-ADD www/js /home/node/js
-ADD www/img /home/node/img
-ADD www/css /home/node/css
-ADD www/fonts /home/node/fonts
-ADD www/data /home/node/data
-WORKDIR /home/node
+
+ADD www/js /home/nodek/js
+ADD www/css /home/nodek/css
+ADD www/fonts /home/nodek/fonts
+ADD www/data /home/nodek/data
+ADD www/img /home/nodek/img
+
+VOLUME /home/statics
+WORKDIR /home/nodek
 
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]

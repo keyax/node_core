@@ -24,8 +24,9 @@ const http = require('http');
 //const serverh  = http.createServer(handler);
 // 1*) get an instance of router
 ///const routerx = express.Router();
-//const parser = require('body-parser');
 //const formidable = require('formidable');
+const cookieParse = require('cookie-parser');
+const bodyParse = require('body-parser');
 
 const Koa = require('koa');
 const appk = new Koa();  // const appk = Koa();
@@ -67,6 +68,14 @@ const io = new IO({namespace: '/uploadz'});
 //const Serverdb = require('mongodb').Server;
 // const sqlconnect = require('./sqlconnect.js');   // pool or single
 
+const co = require("co");
+///const Promise = require('bluebird');
+//koa deprecated Support for generators will be removed in v3.
+const convert = require('koa-convert');
+// ---------- override app.use method ----------
+const _use = appk.use
+appk.use = x => _use.call(appk, convert(x))
+// ---------- end ----------
 const Cookies = require('cookies');
 const cookiek = require('koa-cookie'); // only parser
 //var cookie = cookiek();
@@ -80,7 +89,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 const sessionkmongoose = require('koa-session-mongoose');
 const dbUrl = "mongodb://user57:555777@192.168.1.2:27017/kyxtree?authSource=admin";
-const mongooseConn = mongoose.connection.openUri(dbUrl); //
+const mongooseConn = mongoose.connection.openUri(dbUrl);
 //const mongooseConn = mongoose.connect(dbUrl);//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //const mongooseConn = mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 
@@ -93,14 +102,6 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-auth').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 
-const co = require("co");
-///const Promise = require('bluebird');
-//koa deprecated Support for generators will be removed in v3.
-const convert = require('koa-convert');
-// ---------- override app.use method ----------
-const _use = appk.use
-appk.use = x => _use.call(appk, convert(x))
-// ---------- end ----------
 var filesize = 0;
 
 /*
@@ -295,6 +296,12 @@ app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 app.listen(9100);
 console.log('listening on port 9100');
 
+////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
+//appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
+////appk.use(require('body-parser').urlencoded({ extended: true }));
+
+//appk.use(cookiek("keyax57secretos")); // not a function
+
 // uid-safe vs uid2 vs node-uuid >>>> base64url.encode(crypto.randomBytes(length).toString('base64'))
 /*
 // koa-session-store + koa-session-mongo
@@ -331,7 +338,7 @@ appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
 */
 
 // koa-session-store + koa-session-mongoose
-appk.keys = ["keyax57secretos"];
+appk.keys = ["keyax57secretos"];  //salt key
 const CONFIGS = {
     name: 'kyx:sesgoose',    // cookie name
     secret: "mysecretcode", //koa2-session-store
@@ -384,8 +391,14 @@ appk.use(koasession(CONFIG, appk));
 // or if you prefer all default config, just use => appk.use(koasession(appk));
 ///////appk.use( ... );  from koa-socket-session
 */
-//appk.use(Parser());
-//appk.use(cookiek("keyax57secretos")); // not a function
+
+// authentication
+//require('./auth.js');
+// const passport = require('koa-passport')
+//appk.use(abb(ctx.req));
+appk.use(passport.initialize());
+appk.use(passport.session());
+
 appk.use(async (ctx,next) => {
   //ctx.state.varyin = 'vary';
   //  ctx.state.varyin.name = ctx.session.name;
@@ -413,12 +426,6 @@ appk.use(async (ctx,next) => {
   };
   */
 
-// authentication
-//require('./auth.js');
-// const passport = require('koa-passport')
-//appk.use(abb(ctx.req));
-appk.use(passport.initialize());
-appk.use(passport.session());
 
 // passport config
 var User = require('./models/user');
@@ -475,7 +482,8 @@ appk.use(ctx => {
 //      routerk.use('/api2/v0/', api2.routes(), api2.allowedMethods());
 //appk.use(rooter);
 
-appk.use(require('./routes')); // ./routes/index.js  default
+// require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
+appk.use(require('./routes/index.js')); // ./routes/index.js  default
 //appk.use(routerk.routes());
 //appk.use(routerk.allowedMethods());
 //appk
@@ -543,8 +551,8 @@ siokups.on('connection', function (socket){
          date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry
          var expires = "; expires="+date.toGMTString();
      var name = "kyx:socket"; var value = socket.id;
-         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
-  //   socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
+//Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
+//   socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
    });
    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
    // socket.broadcast.emit('progress', bytesReceived);

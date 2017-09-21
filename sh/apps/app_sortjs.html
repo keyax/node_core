@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>How to delete properties of a JSON object.</p>
+
+<p id="demo"></p>
+
+<script>
+var myObj, i, x = "", kyx={};
+myObj = {
+  "name":"John",
+  "age":30,
+  "cars": {
+    "car1":"Ford",
+    "car2":"BMW",
+    "car3":"Fiat"
+  }
+}
+delete myObj.cars.car2;
+myObj.cars["car2"]="Mercedes";
+// sort by key
+// kyx=myObj.cars;
+// sort by value
+for (i in myObj.cars) {kyx[myObj.cars[i]]=i; }
+
+console.log(kyx);
+
+Object.keys(kyx).sort().forEach(function(key) {
+// sort by value   key=kyx[key];
+      key=kyx[key]; 
+        var value = myObj.cars[key];
+        var value = myObj.cars[key];
+        delete myObj.cars[key];
+        myObj.cars[key] = value;
+    });
+
+console.log(kyx);
+
+
+for (i in myObj.cars) {
+    x += myObj.cars[i] + "<br>";
+}
+
+document.getElementById("demo").innerHTML = x;
+
+</script>
+
+</body>
+</html>
+
