@@ -286,12 +286,12 @@ let filesize = await ctx.state.filesize;
 //socket.on('upload', async function (msg) {filesize = msg; console.log("msg:",msg);});
 console.log('filesizerouter:'+JSON.stringify(ctx.session));
 const {fields} = await abb(ctx.req, {
-    onFile: async function(fieldname, file, filename, encoding, mimetype) {
+    onFile: function(fieldname, file, filename, encoding, mimetype) {
             //uploadFilesToS3(file);
           //  console.log("ctx.req:"+ctx.request.get);
       ///      console.log("filesinctx:"+ctx.req.files);
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            var upfile = `statics/${filename}`;
+            var upfile = `/home/node/statics/${filename}`;
   //          fs.closeSync(fs.openSync(upfile, 'w'));
 /*           fs.open(upfile,'w', function(err,fd){
                   if(err)console.log('cant open: '+upfile+err);//handle error
@@ -306,7 +306,7 @@ const {fields} = await abb(ctx.req, {
                   length: filesize, //stat.size,
                   time: 1 // ms
             });
-            wstream = await fs.createWriteStream(upfile);
+            wstream = fs.createWriteStream(upfile);
             file.pipe(strm).pipe(wstream);
 
             strm.on('progress', async function(progress) {
