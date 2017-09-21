@@ -4,12 +4,12 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
       keyax.os.ver="16.04.3 xenial" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 8.1.2" \
-      keyax.app.ver="2.7"
+      keyax.app="Nodejs 6.11.3" \
+      keyax.app.ver="2.75"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+ && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -42,6 +42,9 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B3866828
 
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.2.1
+# ENV NODE_VERSION 8.5.0
+# LTS
+# ENV NODE_VERSION 6.11.3
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -75,8 +78,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node
-COPY package.json /home/node/
+RUN su node && mkdir /home/node/statics
+COPY package.json /home/node
 RUN cd /home/node \
  && npm init --yes \
 && npm install -g nodemon \
@@ -174,10 +177,12 @@ RUN cd /home/node \
 # ADD 1 layer,untar,url~; COPY 3 layers
 # ADD www/index.js /home/node/
 ADD www/js /home/node/js
-ADD www/img /home/node/img
 ADD www/css /home/node/css
 ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
+ADD www/img /home/node/img
+
+VOLUME /home/node/statics
 WORKDIR /home/node
 
 EXPOSE 9000 9100 443
