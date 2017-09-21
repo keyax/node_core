@@ -41,9 +41,10 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B3866828
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
+ENV NODE_VERSION 8.2.1
 # ENV NODE_VERSION 8.5.0
 # LTS
-ENV NODE_VERSION 6.11.3
+# ENV NODE_VERSION 6.11.3
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -77,10 +78,9 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node
+RUN su node && mkdir /home/statics
 COPY package.json /home/node/
 RUN cd /home/node \
-# && mkdir /home/statics \
  && npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
@@ -188,4 +188,4 @@ WORKDIR /home/node
 
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node/", "js/index.js"]
