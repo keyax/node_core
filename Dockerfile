@@ -182,9 +182,9 @@ RUN cd /home/node \
 # ADD www/fonts /home/node/fonts
 # ADD www/data /home/node/data
 EXPOSE 9000 9100 443
-VOLUME /home/node/js /home/node/statics
+#VOLUME /home/node/js /home/node/statics
 #VOLUME ["/home/node/js/","/home/node/statics/"]
-#VOLUME /home/node/statics
+VOLUME /home/node/statics
 
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
