@@ -178,6 +178,7 @@ ADD www/img /home/node/img
 ADD www/css /home/node/css
 ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
+VOLUME ["/home/node/js/","/home/node/statics/"]
 WORKDIR /home/node
 
 EXPOSE 9000 9100 443
