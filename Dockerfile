@@ -187,4 +187,4 @@ WORKDIR /home/node
 
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node/", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
