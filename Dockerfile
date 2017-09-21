@@ -176,14 +176,13 @@ RUN cd /home/node \
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
 # ADD www/index.js /home/node/
-
 ADD www/js /home/node/js
 ADD www/css /home/node/css
 ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
 ADD www/img /home/node/img
 
-VOLUME /home/statics
+VOLUME /home/node/statics
 WORKDIR /home/node
 
 EXPOSE 9000 9100 443
