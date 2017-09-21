@@ -52,7 +52,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ## RUN su node \
-## && cd /home/node \
+## && cd /home/nodek \
 ## && npm init --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
 ## && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
@@ -167,13 +167,13 @@ RUN cd /home/nodek \
  && npm install --save leaflet \
  && npm init --yes
 
-# COPY index.js /home/node/index.js
+# COPY index.js /home/nodek/index.js
 # RUN chmod +x /home/server.js
-# VOLUME /home/node/index.js
+# VOLUME /home/nodek/index.js
 
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
-# ADD www/index.js /home/node/
+# ADD www/index.js /home/nodek/
 
 ADD www/js /home/nodek/js
 ADD www/css /home/nodek/css
@@ -186,4 +186,4 @@ WORKDIR /home/nodek
 
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/nodek", "js/index.js"]
