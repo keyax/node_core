@@ -75,7 +75,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node
+RUN su node && mkdir /home/node/js && mkdir /home/node/statics
 COPY package.json /home/node/
 RUN cd /home/node \
  && npm init --yes \
@@ -178,9 +178,8 @@ ADD www/img /home/node/img
 ADD www/css /home/node/css
 ADD www/fonts /home/node/fonts
 ADD www/data /home/node/data
-VOLUME ["/home/node/js/","/home/node/statics/"]
 WORKDIR /home/node
-
+VOLUME ["/home/node/js/","/home/node/statics/"]
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
