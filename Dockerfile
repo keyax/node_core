@@ -120,7 +120,6 @@ RUN cd /home/node \
 # && npm install --save ws \
 && npm install --save socket.io-mongodb \
  && npm install --save mubsub \
- && npm install --save koa-socket-passport \
 # && npm install --save koa-session2 \
 # && npm install --save koa2-session-store \
  && npm install --save koa-basic-auth \
@@ -139,6 +138,7 @@ RUN cd /home/node \
  && npm install --save passport-twitter \
  && npm install --save passport-google-auth \
  # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
+ && npm install --save koa-socket-passport \
 
 && npm install --save co \
 && npm install --save koa-convert \
@@ -168,8 +168,8 @@ RUN cd /home/node \
  && npm init --yes
 
  WORKDIR /home/node
- # VOLUME ["/home/node/js/","/home/node/statics/"]
- VOLUME /home/node/statics
+ VOLUME ["/home/node/js/","/home/node/statics/"]
+ #VOLUME /home/node/statics
 
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js

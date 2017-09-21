@@ -291,7 +291,7 @@ const {fields} = await abb(ctx.req, {
           //  console.log("ctx.req:"+ctx.request.get);
       ///      console.log("filesinctx:"+ctx.req.files);
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            var upfile = `/home/node/statics/${filename}`;
+            var upfile = `statics/${filename}`;  // as of `/home/node/statics/${filename}`;
   //          fs.closeSync(fs.openSync(upfile, 'w'));
 /*           fs.open(upfile,'w', function(err,fd){
                   if(err)console.log('cant open: '+upfile+err);//handle error
