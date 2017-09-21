@@ -4,12 +4,12 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
       keyax.os.ver="16.04.3 xenial" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 8.1.2" \
-      keyax.app.ver="2.7"
+      keyax.app="Nodejs 8.5.0" \
+      keyax.app.ver="2.75"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home nodek
+  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -54,7 +54,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
   && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ## RUN su node \
-## && cd /home/nodek \
+## && cd /home/node \
 ## && npm init --yes \
 # for building Couchbase Nodejs driver from source : make gcc ...
 ## && apt-get update && apt-get install --assume-yes --no-install-recommends build-essential \
@@ -78,8 +78,8 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # this forces "apt-get update" in dependent images, which is also good
 
 RUN su nodek
-COPY package.json /home/nodek/
-RUN cd /home/nodek \
+COPY package.json /home/node/
+RUN cd /home/node \
 # && mkdir /home/statics \
  && npm init --yes \
 && npm install -g nodemon \
@@ -169,23 +169,23 @@ RUN cd /home/nodek \
  && npm install --save leaflet \
  && npm init --yes
 
-# COPY index.js /home/nodek/index.js
+# COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
-# VOLUME /home/nodek/index.js
+# VOLUME /home/node/index.js
 
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
-# ADD www/index.js /home/nodek/
+# ADD www/index.js /home/node/
 
-ADD www/js /home/nodek/js
-ADD www/css /home/nodek/css
-ADD www/fonts /home/nodek/fonts
-ADD www/data /home/nodek/data
-ADD www/img /home/nodek/img
+ADD www/js /home/node/js
+ADD www/css /home/node/css
+ADD www/fonts /home/node/fonts
+ADD www/data /home/node/data
+ADD www/img /home/node/img
 
 VOLUME /home/statics
-WORKDIR /home/nodek
+WORKDIR /home/node
 
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/nodek", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
