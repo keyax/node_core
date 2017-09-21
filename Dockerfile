@@ -166,6 +166,10 @@ RUN cd /home/node \
  && npm install --save leaflet \
  && npm init --yes
 
+ WORKDIR /home/node
+ # VOLUME ["/home/node/js/","/home/node/statics/"]
+ VOLUME /home/node/statics
+
 # COPY index.js /home/node/index.js
 # RUN chmod +x /home/server.js
 # VOLUME /home/node/index.js
@@ -173,13 +177,11 @@ RUN cd /home/node \
 # empty directory not allowed throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
 # ADD www/index.js /home/node/
-#ADD www/js /home/node/js
-ADD www/img /home/node/img
-ADD www/css /home/node/css
-ADD www/fonts /home/node/fonts
-ADD www/data /home/node/data
-WORKDIR /home/node
-VOLUME ["/home/node/js/","/home/node/statics/"]
+# ADD www/js /home/node/js
+# ADD www/img /home/node/img
+# ADD www/css /home/node/css
+# ADD www/fonts /home/node/fonts
+# ADD www/data /home/node/data
 EXPOSE 9000 9100 443
 # CMD [ "pm2-docker", "index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
