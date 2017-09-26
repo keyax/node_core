@@ -25,7 +25,7 @@ const Multer = require('koa-multer');
 const abb = require('async-busboy');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-const dbUrl = "mongodb://user57:555777@192.168.1.2:27017/kyxtree?authSource=admin";
+const dbUrl = "mongodb://user57:555777@192.168.1.1:27017/kyxtree?authSource=admin";
 //const dbUrl = "mongodb://admin:555777@192.168.1.2:27017/kyxtree";
 const mongooseConn = mongoose.connection.openUri(dbUrl); //
 var User = require('./../models/user');
@@ -291,13 +291,22 @@ const {fields} = await abb(ctx.req, {
           //  console.log("ctx.req:"+ctx.request.get);
       ///      console.log("filesinctx:"+ctx.req.files);
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            var upfile = `statics/${filename}`;  // as of `/home/node/statics/${filename}`;
+            var upfile = `statics/upload/${filename}`;  // as of `/home/node/statics/${filename}`;
+
+//exiftool for media >> filename user+timegeostamp >> translatable tags
+//json test + upsert mongodb
+
+//            events.js:182
+//                  throw er; // Unhandled 'error' event
+//                  ^
+//            Error: EROFS: read-only file system, open 'js/routes/atompush.png'
+
   //          fs.closeSync(fs.openSync(upfile, 'w'));
 /*           fs.open(upfile,'w', function(err,fd){
                   if(err)console.log('cant open: '+upfile+err);//handle error
                       console.log('open: '+upfile);
                   fs.close(fd, function(err){
-                    if(err)console.log('cant close: '+upfile+err);//handle error
+                     if(err)console.log('cant close: '+upfile+err);//handle error
                       console.log('close: '+upfile);
               });
             });*/
@@ -347,8 +356,8 @@ return ctx;
 ctx.body = { message: err.message }
 ctx.status = err.status || 500
 };
-
 });
+
 //appk.context.lista = {};  //  ctx.lista = f();
 routerk.post("/sqldb/:langs", async function (ctx, next) {
 //  const cokie = ctx.cookie; console.log("routerk.use(cookiek());:"+cokie);  // undefined
@@ -370,7 +379,10 @@ routerk.post("/sqldb/:langs", async function (ctx, next) {
        console.log('%'+ling+'%');
 //  var dbconn = require('./dbconnect.js');
   const sqlconnect = require('./../sqlconnect.js');   // pool or single
-  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@Gn:' AND LANGTO='eng'`, // AND VALUE LIKE ?`,
+//  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE VALUE = LANGTO`, // language locale
+//  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng'`, // languages fra eng
+  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@Gn:' AND LANGTO='eng'`, // countries eng
+//    var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
                  'values' :  ['%'+ling+'%'], 'timeout' : 40000 }; // '%_%'   40s
                   console.log("ctx.response"+ JSON.stringify(ctx.request.url));
   // const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)

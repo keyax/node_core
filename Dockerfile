@@ -8,8 +8,8 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.app.ver="2.7"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+RUN groupadd --gid 11000 node \
+  && useradd --uid 11000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -42,6 +42,8 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B3866828
 
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.5.0
+# LTS
+# ENV NODE_VERSION 6.11.3
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -75,7 +77,6 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-#RUN su node && mkdir /home/node/js && mkdir /home/node/statics
 RUN su node
 COPY package.json /home/node/
 RUN cd /home/node \
@@ -97,7 +98,6 @@ RUN cd /home/node \
  && npm install --save body-parser \
  && npm install --save formidable \
  && npm install --save multer \
- && npm install --save jsonlint \
  && npm install --save bluebird \
  && npm install --save node-fetch \
  && npm install --save axios \
@@ -163,31 +163,32 @@ RUN cd /home/node \
  && npm install --save koa-logger \
 && npm install --save mysql \
  && npm install --save mysql2 \
+ && npm install --save jsonlint \
+ && npm install --save exiftool \
  && npm install --save d3 \
  && npm install --save leaflet \
  && npm init --yes
 
- WORKDIR /home/node
+WORKDIR /home/node
 
-# COPY index.js /home/node/index.js
-# RUN chmod +x /home/server.js
-# VOLUME /home/node/index.js
-
-# empty directory not allowed throws error:  no such file or directory
+### RUN mkdir /home/node/js && mkdir /home/node/statics
+# empty directory not allowed in ADD throws error:  no such file or directory
 # ADD 1 layer,untar,url~; COPY 3 layers
-# ADD www/index.js /home/node/
 # ADD www/js /home/node/js
 # ADD www/img /home/node/img
 # ADD www/css /home/node/css
 # ADD www/fonts /home/node/fonts
 # ADD www/data /home/node/data
-EXPOSE 9000 9100 443
-VOLUME /home/node/js
-VOLUME /home/node/statics
+# ADD www/index.js /home/node/
+# RUN chmod +x /home/node/index.js
+# VOLUME /home/node/index.js
+### VOLUME /home/node/js
+### VOLUME /home/node/statics
 # Unexpected error  with Success & Nobuild
 #VOLUME /home/node/js /home/node/statics     Unexpected error
 #VOLUME ["/home/node/js/","/home/node/statics/"]   Unexpected error
 
+EXPOSE 9000 9100 443
 
-# CMD [ "pm2-docker", "index.js"]
+# CMD [ "pm2-docker", "js/index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]

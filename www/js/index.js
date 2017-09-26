@@ -293,8 +293,8 @@ app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 //app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
 
-app.listen(9100);
-console.log('listening on port 9100');
+app.listen(9200);
+console.log('listening on port 9200');
 
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
@@ -539,9 +539,9 @@ console.log("cb req.url:"+ctx.url);
 let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
 
 var siok = require('socket.io')(serverk);
-var siokups = siok.of('/uploadz');    //, {path: '/uploadz'});
+//var siokups = siok.of('/uploadz');    //, {path: '/uploadz'});
 
-siokups.on('connection', function (socket){
+siok.on('connection', function (socket){
    socket.emit('hiserver', { hello: 'world baby>>>'+socket.id });
    socket.on('hiclient', function (data) {
      console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
