@@ -23,6 +23,7 @@ const passport = require('koa-passport');
 
 const Multer = require('koa-multer');
 const abb = require('async-busboy');
+const exif = require('exiftool');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 const dbUrl = "mongodb://user57:555777@192.168.1.1:27017/kyxtree?authSource=admin";
@@ -311,6 +312,24 @@ const {fields} = await abb(ctx.req, {
               });
             });*/
 //        var stat = fs.statSync(upfile);
+
+var filelist = fs.readdir('/statics/upload/');  //  fs.readdirSync
+console.log("filelist"+filelist);
+fs.access(upfile, fs.constants.R_OK | fs.constants.W_OK, (err) => {
+  console.log(err ? 'no access!' : 'can read/write');
+});
+fs.unlink(upfile, function(err) {
+    if(err && err.code == 'ENOENT') {
+        // file doens't exist
+        console.info("File doesn't exist, won't remove it.");
+    } else if (err) {
+        // other errors, e.g. maybe we don't have enough permission
+        console.error("Error occurred while trying to remove file");
+    } else {
+        console.info(`removed`);
+    }
+});
+
           var strm = progress({
                   length: filesize, //stat.size,
                   time: 1 // ms

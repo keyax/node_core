@@ -164,10 +164,10 @@ RUN cd /home/node \
 && npm install --save mysql \
  && npm install --save mysql2 \
  && npm install --save jsonlint \
- && npm install --save exiftool \
- && npm install --save d3 \
- && npm install --save leaflet \
- && npm init --yes
+&& npm install --save exiftool \
+&& npm install --save d3 \
+&& npm install --save leaflet \
+&& npm init --yes
 
 WORKDIR /home/node
 
