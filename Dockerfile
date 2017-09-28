@@ -90,6 +90,7 @@ RUN cd /home/node \
 ## && npm install --save https \
 ## && npm install --save assert \
 ## && npm install --save fs \
+&& npm install --save fs-extra \
 # && npm install --save jquery \
  && npm install --save express \
 # && npm install --save express-session \

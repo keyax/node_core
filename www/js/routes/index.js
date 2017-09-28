@@ -313,8 +313,28 @@ const {fields} = await abb(ctx.req, {
             });*/
 //        var stat = fs.statSync(upfile);
 
-var filelist = fs.readdir('/statics/upload/');  //  fs.readdirSync
+var extFilter = "jpg";
+function extension(element) {
+  var extName = path.extname(element);
+  return element; // extName === '.' + extFilter;
+};
+
+/*
+fs.readdir(pathSupplied, function(err, list) {
+  list.filter(extension).forEach(function(value) {
+    console.log(value);
+  });
+});
+*/
+//  fs.readdirSync  // ENOENT: no such file or directory
+//var filelistext = new FileList;
+var filelist = fs.readdirSync('statics/upload/', function(err, list) {
+                          list.filter(extension).forEach(function(value) {console.log(value);});
+//                filename =>  (filename.substr(0, filename.lastIndexOf('.')) == ".jpg") ? {filelistext.push(filename)}
+//                 console.log("filelistext"+filelistext);
+});
 console.log("filelist"+filelist);
+
 fs.access(upfile, fs.constants.R_OK | fs.constants.W_OK, (err) => {
   console.log(err ? 'no access!' : 'can read/write');
 });
