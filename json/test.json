@@ -1,0 +1,329 @@
+
+{
+  "@L": "",
+  "@G": {
+    "@Gw": {"val": "","txt": "world"},
+    "@Gk": {"val": "","txt": "continent"},
+    "@Gn": {"val": "","txt": "country"},
+    "@Gr": {"val": "","txt": "region"},
+    "@Gg": {"val": "","txt": "subregion"},
+    "@Gp": {"val": "","txt": "province"},
+    "@Gc": {"val": "","txt": "city"},
+    "@Gd": {"val": "","txt": "district"},
+    "@Gs": {"val": "","txt": "street"},
+    "@Gb": {"val": "","txt": "building"},
+    "@Ga": {"val": "","txt": "appartment"}
+  },
+
+
+  "@Gw": {"val": "","ref": "wrld","dat": {},
+    "@Gk": {"afri":{"val": "","ref": "afri"},
+            "amer":{"val": "","ref": "amer"},
+            "asia":{"val": "","ref": "asia"},
+            "euro":{"val": "","ref": "euro"},
+            "ocea":{"val": "","ref": "ocea"}
+    }
+  },
+
+  "afri": {"dat":{},
+           "@Gn": {"ma": {"val": "","ref": "ma", "dat":{}},
+                   "eg": {"val": "","ref": "eg", "dat":{}}
+                  }
+          },
+  "amer": {"dat":{},"@Gn":{}},
+  "asia": {"dat":{},"@Gn":{}},
+  "euro": {"dat":{},"@Gn":{}}, 
+  "ocea": {"dat":{},"@Gn":{}}, 
+  
+   "ma": {
+     "data": {
+       "val": "",
+       "value": "",
+       "flag": "",
+       "langs": [],
+       "shape": {}
+       },
+     "@Gr": {
+       "val": "",
+         "nord": {
+        "val": "",
+        "@Gg": {
+          "val": "",
+          "TNG": {
+            "val": "",
+            "@Gp": {
+              "val": "",
+              "TNG": {
+                "val": ""
+              },
+              "TET": {
+                "val": ""
+              },
+              "HOC": {
+                "val": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+===========================================================
+
+{
+"@L":"",
+"@G":{"@Gk":{"val":"","txt":"continent"},
+      "@Gn":{"val":"","txt":"country"},
+      "@Gr":{"val":"","txt":"region"},
+      "@Gg":{"val":"","txt":"subregion"},     
+      "@Gp":{"val":"","txt":"province"},
+      "@Gc":{"val":"","txt":"city"},
+      "@Gd":{"val":"","txt":"district"},
+      "@Gs":{"val":"","txt":"street"},
+      "@Gb":{"val":"","txt":"building"},
+      "@Ga":{"val":"","txt":"appartment"}
+     },
+  
+"@Gk":{"val":"",
+       "afr":{"val":"",
+             "ref":"afr",
+             "@Gn":{"ma":{"val":"","ref":"ma"},
+                    "eg":{"val":"","ref":"eg"}
+                   }
+            }
+      },
+  
+"afr": {
+    "val": "",
+    "ins":"@Gk.afr.@Gn",
+    "ma": "ma",
+    "eg": "eg"
+  },
+"ma":{
+    "val": "",
+    "value": "",
+    "flag": "",
+    "langs":[],
+    "ins": "@Gk.afr.@Gn.ma",
+    "shape": {},
+    "data": {},
+    "@Gr":{"val":"",
+           "nord":{"val":"",
+                   "@Gg":{"val":"",
+                          "TNG":{"val":"",
+                                 "@Gp":{"val":"",
+                                        "TNG":{"val":""},
+                                        "TET":{"val":""},
+                                        "HOC":{"val":""}
+                                        }
+                                }
+                         }
+                  }
+          }
+    }
+}
+
+========================================================
+
+{
+"@G":[{"@L": ""},
+       {"lvl":"@Gk","val":"","txt":"continent"},
+       {"lvl":"@Gn","val":"","txt":"country"},
+       {"lvl":"@Gr","val":"","txt":"region"},
+       {"lvl":"@Gs","val":"","txt":"subregion"},     
+       {"lvl":"@Gv","val":"","txt":"province"},
+       {"lvl":"@Gc","val":"","txt":"city"},
+       {"lvl":"@Gd","val":"","txt":"district"},
+       {"lvl":"@Gc","val":"","txt":"street"},
+       {"lvl":"@Gb","val":"","txt":"building"},
+       {"lvl":"@Ga","val":"","txt":"appartment"}],  
+"@Gk":{"val":"",
+       "af":{"val":"",
+             "ref":"af",
+             "@Gn":{"ma":{"val":"",
+                          "ref":"ma",
+                          "@Gr":{"val":"",
+                                 "nord":{"val":"",
+                                         "@Gs":{"val":"",
+                                                "TNG":{"val":"",
+                                                       "@Gv":{"val":"",
+                                                              "TNG":{"val":""},
+                                                              "TET":{"val":""},
+                                                              "HOC":{"val":""}
+                                                             }
+                                                      }
+                                               }
+                                        }
+                                }
+                         }
+                   }
+            }
+      },
+  
+"af": {
+    "ins":"@Gn",
+    "val": "",
+    "ma": "ma",
+    "eg": "eg"
+  },
+"ma":{
+    "path": "@Gk.af.@Gn.ma",
+    "val": "",
+    "value": "",
+    "langs":[],
+    "flag": "",
+    "shape": {},
+    "data": {},
+    "@Gr":{"val":"",
+           "nord":{"val":"",
+                   "@Gs":{"val":"",
+                          "TNG":{"val":"",
+                                 "@Gv":{"val":"",
+                                        "TNG":{"val":""},
+                                        "TET":{"val":""},
+                                        "HOC":{"val":""}
+                                        }
+                                }
+                         }
+                  }
+          }
+    }
+}
+
+
+
+{
+ "@dic":{"@L": "",
+         "@Gk":{"val": "","txt":"continent"},
+         "@Gn":{"val": "","txt":"country"},
+         "@Gr":{"val": "","txt":"region"},
+         "@Gv":{"val": "","txt":"province"},
+         "@Gr":{"val": "","txt":"city"},
+         "@Gq":{"val": "","txt":"quarter"},
+         "@Gs":{"val": "","txt":"street"},
+         "@Gb":{"val": "","txt":"building"},
+         "@Ga":{"val": "","txt":"appartment"}},
+  
+  "@Gk": {"val": "","txt":"continent",
+        "@Gn":{"val": "","txt":"country",
+              "@Gr":{"val": "","txt":"region",
+                    "@Gv":{"val": "","txt":"province",
+                          "@Gr":{"val": "","txt":"city",
+                                "@Gq":{"val": "","txt":"quarter",
+                                      "@Gs":{"val": "","txt":"street",
+                                            "@Gb":{"val": "","txt":"building",
+                                                  "@Ga":{"val": "","txt":"appartment"
+                                                        }
+                                                  }
+                                            }
+                                      }
+                                }
+                          }
+                    }
+              }
+         },
+ 
+"af": {
+    "val": "",
+    "ma": "ma",
+    "eg": "eg"
+  },
+  "ma": {
+      "@path": "@Gk.af.@Gn.ma",
+      "val": "",
+      "value": "",
+      "langs":[],
+      "flag": "",
+      "shape": {},
+      "data": {},
+      "@Gr":{},
+      "@Gv":{}
+      }
+}
+
+
+
+
+
+
+
+
+
+
+
+{ "@L": "",
+  "@Gk":{"val": "", "valids": ["@Gk", "af", "am", "as", "eu", "oc"]},
+  "@Gn":{"val": ""},
+  "af": {"val": "",
+       "ma": {"val": "", "value": "", "flag":"", "shape":{}, "data":{}}
+        }
+}
+
+
+{
+	"@Gk": "",
+	"valids": ["@Gk", "af", "am", "as", "eu", "oc"],
+	"af": {
+		"val": "",
+		"ma": {
+			"val": ""
+		}
+	}
+}
+
+
+
+
+{
+  "@Gk":null,
+   valids:["@Gk","af","am","as","eu","oc"],
+   enabled:true,
+   visible:false,
+   tree:
+     {"af":
+      {"ma": 
+         valids:["@Gn","ma"],
+         enabled:true,
+         visible:true,
+    {"@Gn":"ma",
+      valids:["@Gr","nord"],
+      enabled:true,
+      visible:true,
+
+  
+}
+      
+  ]  
+              
+  "@Gk:af>@Gn":["ma"],
+  "with JSON": "there are no reserved field names"
+}
+
+
+{
+  "@Gk":null,
+   valids:["@Gk","af","am","as","eu","oc"],
+   enabled:true,
+   visible:false,
+   tree:
+     {"af": "",
+      {
+        {"ma": "", 
+          valids:["@Gn","ma"],
+          enabled:true,
+          visible:true}
+    {"@Gn":"ma",
+      valids:["@Gr","nord"],
+      enabled:true,
+      visible:true,
+
+  
+}
+      
+  ]  
+              
+  "@Gk:af>@Gn":["ma"],
+  "with JSON": "there are no reserved field names"
+}

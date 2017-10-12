@@ -189,7 +189,7 @@ WORKDIR /home/node
 #VOLUME /home/node/js /home/node/statics     Unexpected error
 #VOLUME ["/home/node/js/","/home/node/statics/"]   Unexpected error
 
-EXPOSE 9000 9100 443
+EXPOSE 9000 9200 443
 
 # CMD [ "pm2-docker", "js/index.js"]
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]

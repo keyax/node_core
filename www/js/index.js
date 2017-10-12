@@ -88,7 +88,7 @@ const sessionkmongo = require('koa-session-mongo');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 const sessionkmongoose = require('koa-session-mongoose');
-const dbUrl = "mongodb://user57:555777@192.168.1.1:27017/kyxtree?authSource=admin";
+const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
 const mongooseConn = mongoose.connection.openUri(dbUrl);
 //const mongooseConn = mongoose.connect(dbUrl);//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //const mongooseConn = mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
@@ -559,7 +559,7 @@ siok.on('connection', function (socket){
    });
 });
 
-/*
+/*   
 // koa-session + koa-socket-session + koa-socket.io
 // koa-session-store + koa-session-mongo + koa-socket.io
 //const opts = {host: 'http://kyx.dynu.net', port: '9000'};

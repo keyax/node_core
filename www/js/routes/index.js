@@ -7,6 +7,7 @@ const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 const fs = require('fs');
+const fse = require('fs-extra');
 var progress = require('progress-stream');
 const util = require('util');
 
@@ -26,7 +27,7 @@ const abb = require('async-busboy');
 const exif = require('exiftool');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-const dbUrl = "mongodb://user57:555777@192.168.1.1:27017/kyxtree?authSource=admin";
+const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
 //const dbUrl = "mongodb://admin:555777@192.168.1.2:27017/kyxtree";
 const mongooseConn = mongoose.connection.openUri(dbUrl); //
 var User = require('./../models/user');
@@ -314,54 +315,46 @@ const {fields} = await abb(ctx.req, {
 //        var stat = fs.statSync(upfile);
 
 var extFilter = "jpg";
-function extension(element) {
-  var extName = path.extname(element);
-  return element; // extName === '.' + extFilter;
+function extension(filename) {
+//  var extName = path.extname(filename);
+ var extName = filename.substr(0, filename.lastIndexOf('.')) || filename;
+ console.log("ext"+extName);
+  return extName === '.' + extFilter;
 };
-
+fse.readdir('statics/upload/')
+.then((list) => list.filter(extension))
+.then((listext) => listext.forEach((listitem) => console.log("listitem: "+listitem)))//  console.log("filelist"+filelist))
+.catch(err => console.error(err));
 /*
-fs.readdir(pathSupplied, function(err, list) {
-  list.filter(extension).forEach(function(value) {
-    console.log(value);
-  });
-});
-*/
-//  fs.readdirSync  // ENOENT: no such file or directory
-//var filelistext = new FileList;
-var filelist = fs.readdirSync('statics/upload/', function(err, list) {
-                          list.filter(extension).forEach(function(value) {console.log(value);});
+var filelist = fse.readdir('statics/upload/', function(err, list) {
+                          list.filter(extension).forEach(function(value) {console.log("value"+value);});
 //                filename =>  (filename.substr(0, filename.lastIndexOf('.')) == ".jpg") ? {filelistext.push(filename)}
 //                 console.log("filelistext"+filelistext);
-});
-console.log("filelist"+filelist);
-
-fs.access(upfile, fs.constants.R_OK | fs.constants.W_OK, (err) => {
+})
+*/
+/*
+fs.access(upfile, fs.constants.R_OK | fs.constants.W_OK, (err) => {  // fse.pathExists
   console.log(err ? 'no access!' : 'can read/write');
 });
-fs.unlink(upfile, function(err) {
-    if(err && err.code == 'ENOENT') {
-        // file doens't exist
+fs.unlink(upfile, function(err) {    // fse.remove
+    if(err && err.code == 'ENOENT') { // file doens't exist
         console.info("File doesn't exist, won't remove it.");
-    } else if (err) {
-        // other errors, e.g. maybe we don't have enough permission
+    } else if (err) {  // other errors, e.g. maybe we don't have enough permission
         console.error("Error occurred while trying to remove file");
     } else {
         console.info(`removed`);
     }
 });
-
+*/
           var strm = progress({
                   length: filesize, //stat.size,
                   time: 1 // ms
             });
             wstream = fs.createWriteStream(upfile);
             file.pipe(strm).pipe(wstream);
-
             strm.on('progress', async function(progress) {
                 await console.log('progreso:',progress);
-                /*
-                {
-                    percentage: 9.05,
+                /* {percentage: 9.05,
                     transferred: 949624,
                     length: 10485760,
                     remaining: 9536136,
@@ -369,8 +362,7 @@ fs.unlink(upfile, function(err) {
                     runtime: 3,
                     delta: 295396,
                     speed: 949624
-                }
-                */
+                } */
             });
           }  // onFile:  end
     }); // await abb ctx.req,
@@ -420,8 +412,8 @@ routerk.post("/sqldb/:langs", async function (ctx, next) {
   const sqlconnect = require('./../sqlconnect.js');   // pool or single
 //  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE VALUE = LANGTO`, // language locale
 //  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng'`, // languages fra eng
-  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@Gn:' AND LANGTO='eng'`, // countries eng
-//    var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+//  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@Gn:' AND LANGTO='eng'`, // countries eng
+    var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
                  'values' :  ['%'+ling+'%'], 'timeout' : 40000 }; // '%_%'   40s
                   console.log("ctx.response"+ JSON.stringify(ctx.request.url));
   // const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)

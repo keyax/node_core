@@ -1,0 +1,106 @@
+kyxtree.geo   (db.coll)
+db.geo.createIndex("map": "2dsphere");
+db.geo.createIndex("geo": 1);
+{"geo":"world","division": ["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar","as","at","au","aw",
+"ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv","bw","by","bz","ca",
+"cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de","dj","dk","dm","do",
+"dz","ec","ee","eg","er","es","et","eu","fi","fj","fk","fm","fo","fr","ga","gb","gd","ge","gf","gg","gh","gi",
+"gl","gm","gn","gp","gq","gr","gs","gt","gu","gw","gy","hk","hm","hn","hr","ht","hu","id","ie","il","im","in",
+"io","iq","ir","is","it","je","jm","jo","jp","ke","kg","kh","ki","km","kn","kp","kr","kw","ky","kz","la","lb",
+"lc","li","lk","lr","ls","lt","lu","lv","ly","ma","mc","md","me","mg","mh","mk","ml","mm","mn","mo","mp","mq",
+"mr","ms","mt","mu","mv","mw","mx","my","mz","na","nc","ne","nf","ng","ni","nl","no","np","nr","nu","nz","om",
+"pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs","ru","rw","sa","sb",
+"sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","su","sv","sy","sz","tc","td","tf","tg",
+"th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy","uz","va","vc","ve",
+"vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]}
+
+{"geo":"wrld", "division": ["afri","amer","asia","euro","ocea", "other"]}
+{"geo":"wrld/afri", "division": ["ac","ao","bf","bi","bj","bw","cd","cf","cg","ci","cm","cv","dj","dz","eg","er",
+"et","ga","gh","gm","gn","gq","gw","hm","ke","km","lr","ls","ly","ma","mg","ml","mr","mu","mw","mz","na","ne",
+"ng","re","rw","sc","sd","sh","sl","sn","so","st","sz","td","tg","tn","tz","ug","yt","za","zm","zw"]}
+{"geo":"wrld/amer", "division": ["ag","ai","an","aq","ar","as","aw","bb","bm","bo","br","bs","bz","ca","cl","co",
+"cr","cu","dm","do","ec","fk","gd","gf","gl","gp","gs","gt","gy","hn","ht","jm","kn","ky","lc","mq","ms","mx",
+"ni","pa","pe","pm","pr","py","sv","tc","tf","tt","us","uy","vc","ve","vg","vi"]}
+{"geo":"wrld/asia", "division": ["ae","af","am","az","bd","bh","bn","bt","by","cc","cn","cx","dk","ee","ge","hk",
+"id","il","in","io","iq","ir","jo","jp","kg","kh","kp","kr","kw","kz","la","lb","lk","mm","mn","mo","mv","my",
+"np","om","ph","pk","ps","qa","ru","sa","sg","sr","su","sy","th","tj","tl","tm","tp","tr","tw","uz","vn","ye"]}
+{"geo":"wrld/euro", "division": ["ad","al","at","ax","ba","be","bg","ch","cy","cz","de","es","eu","fi","fo","fr",
+"gb","gg","gi","gr","hr","hu","ie","im","is","it","je","li","lt","lu","lv","mc","md","me","mk","mt","nl","no",
+"pl","pt","ro","rs","se","si","sj","sk","sm","ua","uk","va","yu"]}
+{"geo":"wrld/ocea", "division": ["au","bv","ck","fj","fm","gu","ki","mh","mp","nc","nf","nr","nu","nz","pf","pg",
+"pn","pw","sb","tk","to","tv","vu","wf","ws"]}
+{"geo":"wrld/other", "division": []}  // inserts "ac": "" and fills
+
+{"geo":"intl/un","division":["es","fr","uk",....]}
+{"geo":"intl/nato","division":["es","fr","uk",....]}
+{"geo":"lang/rif","division":["ma","dz"],"map":[]}
+
+{"geo":"es", "division":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":[]}
+{"geo":"es/an", "division":["se","ca","al","ma"],"map":[]}
+{"geo":"es/an/se", "division":["sevi","dosh","cast"],"map":[]}    // nivel provincial
+{"geo":"es/an/se/sevi", "map":[]}   /// localidad  city level
+{"geo":"es/an/se/sevi", "road":{"spa":"Avenida Las Palmeras"},"numbers":[],"map":[]} // roads level kit
+{"geo":"es/an/se/sevi", "road":{"spa":"Avenida Las Palmeras"},"number":"","aparts":[],"map":[]} // estate level kit
+{"geo":"es/an/se/sevi", "road":{"spa":"Avenida Las Palmeras"},"number":"","apart":"","map":[],
+        "type":"apartment|room|office|shop", "activity":"sanidad/centro_salud", "center":"Centro de Salud Minerva",
+                                             "activity":"sanidad/farmacia",     "center":"Farmacia Los Molinos"
+}
+{"geo":"es/an/se/sevi", "axie":"sanidad/centro_salud", "center":["CS Minerva"], "street":"", "way":"", "zone":"urb", "number": "", "room": "", "map":[]}
+{"geo":"es/an/se/sevi", "axie":"sanidad/farmacia", "center":["F. Los Molinos"], "street":"", "way":"", "zone":"urb", "number": "", "room": "", "map":[]}
+
+{"geo":"es/an/se/sevi", "zone": "Urbanización Sol A", "map":[]}
+{"geo":"es/an/se/sevi", "division":["centro","triana","remedios","cartuja"],"map":[]}
+{"geo":"es/an/se/sevi/zip","division":["45001","45002","45003"],"map":[]}  // nivel callejero
+{"geo":"es/an/se/sevi/segsoc","division":["centrosalud1","centrosalud2","centrosalud3"],"map":[]}
+{"geo":"es/an/se/sevi/policia","division":["comisaria1","comisaria2","comisaria3"],"map":[]}
+//hospital, gestoria, restaurante, hotel, mercado                         // nivel servicios
+
+kyxtree.geo   (db.coll)
+db.geo.createIndex({"map": "2dsphere"}); // only indexes docs containing map field (text 2dsphere geoHaystack default sparse)
+db.geo.createIndex({"geo": 1, "road": 1, "number": 1, "apart": 1})  // ,{sparse: true}  $text autocomplete
+db.geo.createIndex({"geo": 1, "activity": 1})
+db.geo.find({geo:{$regex:/^es\/an\/se/i, $options:'m'}})   //'m' multiline string 'x' ignore blanks #comments\n
+
+{"geo":"wrld/data","data":{"language":  ["spa", "cat", "bas"],
+                           "spa":       {"level":"país",    "name":"España", "oficial":"Reino de España"},
+                           "zip": "45",  "phone": "954",
+                           "area":      {"unit":"km2",      "valued":999,  "calculed":999},
+                           "population":{"unit":"habitant", "valued":999,  "calculed":999},
+                           "income":    {"unit":"$",        "valued":999,  "calculed":999},
+                           "age":       {"unit":"year",     "valued":[99], "calculed":[99]
+                           }
+}
+{"geo":"wrld","vote":"summer day light saving?Y/N" ,"unit":"voter", "valued":999, "calculed":{"yes": 999, "no": 999}}}
+
+{"geo":"wrld/levels", "data": "world/continent/country/region/province/city/district/road/estate/apart"}
+
+kyxtree.axie   (db.coll)
+db.lng.createIndex("lng": 1, axie: 1);
+db.lng.findOne({"lng": "spa","axie": "geo/es"})
+{"lng": "spa", "axie": "geo/es", "lang": "flat", "word": "España"}
+{"lng": "fra", "axie": "geo/es", "lang": "flat", "word": "Espagne"}
+{"lng": "spa", "axie": "geo/es/oficial", "wrd": "Reino de España"}
+{"lng": "spa", "axie": "geo/es/region", "lang": "flat", "word": "Autonomía"}
+{"lng": "spa", "axie": "name", "lang": "eng", "wrd": "nombre"}
+{"lng":"world", "division": ["aar","abk","afr","aka","amh","arb","arg","asm","ava","ave","aym","aze","bak",
+"bam","bel","ben","bih","bis","bod","bos","bre","bul","cat","ces","cha","che","chu","chv","cor","cos","cre",
+"cym","dan","deu","div","dzo","ell","eng","eng","epo","est","eus","ewe","fao","fas","fij","fin","fra","fry",
+"ful","gla","gle","glg","glv","grn","guj","hat","hau","hbs","heb","her","hin","hmo","hrv","hun","hye","ibo",
+"ido","iii","iku","ile","ina","ind","ipk","isl","ita","jav","jpn","kal","kan","kas","kat","kau","kaz","khm",
+"kik","kin","kir","kom","kon","kor","kua","kur","lao","lat","lav","lim","lin","lit","ltz","lub","lug","mah",
+"mal","mar","mkd","mlg","mlt","mol","mon","mri","msa","mya","nau","nav","nbl","nde","ndo","nep","nld","nno",
+"nob","nor","nya","oci","oji","ori","orm","oss","pan","pli","pol","por","pus","que","roh","ron","run","rus",
+"sag","san","sin","slk","slv","sme","smo","sna","snd","som","sot","spa","sqi","srd","srp","ssw","sun","swa",
+"swe","tah","tam","tat","tel","tgk","tgl","tha","tir","ton","tsn","tso","tuk","tur","twi","uig","ukr","urd",
+"uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}
+{"lng": "latn", "division": ["spa","fra","ita","por","deu","eng"]}
+
+{"axie":"/global","division":[asl, verb, name, particle, phrase]}
+{"axie":"/global/asl","division":[خرج, فعل]}
+{"axie":"/global/name","division":[thing, person, animal, insect, microorg, vegetal]}
+{"axie":"/global/sector","division":[personal,administration,health,education,culture,commerce,industry,economy,services]} #primary,2ry,3ry\n
+
+tags  owner, geotime, sector, theme, channel, procedure,
+
+kyxtree.spa  (db.coll)
+db.spa.findOne({"axie":"/geo/wrld"})
