@@ -1,7 +1,9 @@
 kyxtree.geo   (db.coll)
 db.geo.createIndex("map": "2dsphere");
 db.geo.createIndex("geo": 1);
-{"geo":"world","division": ["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar","as","at","au","aw",
+
+var geos =
+{"geo":"world","world":{"data":{"lang":"eng"},"division": ["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar","as","at","au","aw",
 "ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv","bw","by","bz","ca",
 "cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de","dj","dk","dm","do",
 "dz","ec","ee","eg","er","es","et","eu","fi","fj","fk","fm","fo","fr","ga","gb","gd","ge","gf","gg","gh","gi",
@@ -12,7 +14,36 @@ db.geo.createIndex("geo": 1);
 "pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs","ru","rw","sa","sb",
 "sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","su","sv","sy","sz","tc","td","tf","tg",
 "th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy","uz","va","vc","ve",
-"vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]}
+"vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]},"data":{}};
+
+//geos.data={};
+geos.world.division.forEach((x)=>{geos.world[x]={data:{}};});
+// geos.division.forEach(function(x){geos[x]={};});
+// for(var i= 0; i < geos.division.length; i++){geos[geos.division[i]]={};}
+// for (var x in geos.division) {geos[geos.division[x]]={};}
+var w = "world", c = "es", lng="spa";
+geos[w][c].data.lang=lng;
+geos[w][c].division=["an","ba","ct","ex"];
+geos[w][c].division.forEach((r)=>{geos[w][c][r]={data:{}};});
+geos[w][c].ct.data.lang=["cat"];
+console.log(geos);
+
+//iterate json object
+Object.keys(obj).forEach((key, index) => { console.log(key);});
+Object.keys(obj).map(e => console.log(`key=${e}  value=${obj[e]}`));
+Object.entries(obj).forEach(([key, value]) => ...)
+
+{"world_language":
+  {"tree":"language",
+   "dat":"lng",
+   "es":{"lng":"spa","cat":{"lng":"cat"},"bas":{"lng":"eus"}}
+   "ma":{"lng":"arb zgh"},
+   "ae":{},
+   "af":{}
+ }
+}
+{"geo":"lng","":"world/language/es","val":"spa"}
+{"key":"world/language/es/cat","val":"cat"}
 
 {"geo":"wrld", "division": ["afri","amer","asia","euro","ocea", "other"]}
 {"geo":"wrld/afri", "division": ["ac","ao","bf","bi","bj","bw","cd","cf","cg","ci","cm","cv","dj","dz","eg","er",
@@ -31,32 +62,47 @@ db.geo.createIndex("geo": 1);
 "pn","pw","sb","tk","to","tv","vu","wf","ws"]}
 {"geo":"wrld/other", "division": []}  // inserts "ac": "" and fills
 
-{"geo":"intl/un","division":["es","fr","uk",....]}
-{"geo":"intl/nato","division":["es","fr","uk",....]}
-{"geo":"lang/rif","division":["ma","dz"],"map":[]}
-
-{"geo":"es", "division":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
-{"geo":"es/an", "division":["se","ca","al","ma"],    "map":{"type":"MultiPolygon","coordinates":[]}}
-{"geo":"es/an/se", "division":["sevi","dosh","cast"],"map":{"type":"MultiPolygon","coordinates":[]}}    // nivel provincial
-{"geo":"es/an/se/sevi", "map":{"type":"MultiPolygon","coordinates":[]}} // localidad  city level // esri SHP shapefiles use multi geometry
-{"geo":"es/an/se/sevi","road":{"spa":"Avenida Las Palmeras+urban>zone.spa"},"map":{"type":"MultiLineString","coordinates":[]}}
-{"geo":"es/an/se/sevi","road_estate":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"number":"80","aparts":[],"map":{}} // estate level kit
-{"geo":"es/an/se/sevi","road_estate":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"number":"35",
-      "estate":{"spa":"Pabellones Varela"},"buildings":[{"building":"A","aparts":[""]}],"map":{"type":"MultiPoint","coordinates":[]}} // estate level kit
+{"geo":"es","zone_type":"country","division":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
+{"geo":"es/an","zone_type":"region","division":["se","ca","al","ma"],    "map":{"type":"MultiPolygon","coordinates":[]}}
+{"geo":"es/an/se","zone_type":"province","division":["sevi","dosh","cast"],"map":{"type":"MultiPolygon","coordinates":[]}}    // nivel provincial
+{"geo":"es/an/se/sevi","zone_type":"city","map":{"type":"MultiPolygon","coordinates":[]}} // localidad  city level // esri SHP shapefiles use multi geometry
+{"geo":"es/an/se/sevi","road":{"spa":"Avenida Las Palmeras+urban>zone.spa"},"map":{"type":"MultiPolygon","coordinates":[]}}
+{"geo":"es/an/se/sevi","road_estate":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"estate":"80+estate.zone.spa",
+      "aparts":["buildingA"+"type(apartment|room|office|shop)"+"number"],"map":{"type":"MultiPolygon","coordinates":[]}} // estate level kit
 copy estates to corporate db and populate customer data
-{"geo":"es/an/se/sevi","road_estate":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"number":"35",
-      "estate":{"spa":"Pabellones Varela"},"building":"A","apart":"1","anchors":{"waterp":{}},"map":{},"cmt":"apart level",
- "type":"apartment|room|office|shop", "activity":"app/waterp/amendis","banner":[{"spa":"José Pérez Pérez"}], + family_data account_data
- "type":"apartment|room|office|shop", "activity":"health/head",    "banner":[{"spa":"Centro de Salud Minerva"}],
-                                      "activity":"health/pharmacy","banner":[{"spa":"Farmacia Los Molinos"}]
+{"geo":"es/an/se/sevi","road_apart":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"estate":"80,82+estate.zone.spa",
+      "apart":{"buildingA"+"office"+"4B1" },"anchors":[{"waterp":{},"cnss":{}}],"map":{},
+      "activity":"app/waterp/amendis","banner":[{"spa":"José Pérez Pérez"}], + family_data account_data
+      "activity":"health/head",    "banner":[{"spa":"Centro de Salud Minerva"}],
+      "activity":"health/pharmacy","banner":[{"spa":"Farmacia Los Molinos"}]
 }
 {"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Urbanización Sol A"}, "map":[]}
+{"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Pabellones Varela"}, "map":[]}
+{"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Pabellones Varela"}, "building":"A", "map":[]}
 {"geo":"es/an/se/sevi","zone_type":"admin","division":["centro","triana","remedios","cartuja"],"maps":[]} //distrito,demarcacion
 {"geo":"es/an/se/sevi","zone_type":"post","division":["45001","45002","45003"],"maps":[]}  // nivel callejero
 {"geo":"es/an/se/sevi","zone_type":"health","division":["centrosalud1","centrosalud2","centrosalud3"],"maps":[]}// map map_head
 {"geo":"es/an/se/sevi","zone_type":"education","division":["colegio1","colegio2","colegio3"],"maps":[]}// map map_head
 {"geo":"es/an/se/sevi","zone_type":"police","division":["comisaria1","comisaria2","comisaria3"],"maps":[]}
 //hospital, gestoria, restaurante, hotel, mercado                         // nivel servicios
+
+http://rextester.com/l/nodejs_online_compiler
+http://www.webtoolkitonline.com/javascript-tester.html
+http://www.statoids.com/statoids.html   >> HASC  Hierarchical administrative subdivision codes
+http://www.naturalearthdata.com/downloads/
+https://wambachers-osm.website/boundaries/
+http://mapshaper.org/   >>  simplify geojson + nginx gzip compress files
+http://ustroetz.github.io/gimmeOSM/
+http://geojson.io/#map=17/35.56938/-5.38262
+https://openstreetbrowser.org
+http://www.torop.net/coordonnees-gps.php  >>  adresse
+https://overpass-turbo.eu/  Nominatim, Mapquest
+http://wiki.openstreetmap.org/wiki/Editors   ID web, Overpass, Osmose, Merkaartor, JOSM
+https://dataist.wordpress.com/2011/11/25/tutorial-how-to-extract-street-coordinates-from-open-street-map-geodata/
+// openstreetmaps shapefile > quantum gis (Layer > Add vector layer) > (select object tool)
+http://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu
+sudo add-apt-repository ppa:ubuntugis/ppa
+sudo apt-get update
 
 kyxtree.geo   (db.coll)
 db.geo.createIndex({"map": "2dsphere"}); // only indexes docs containing map field (text 2dsphere geoHaystack default sparse)
@@ -73,19 +119,19 @@ db.geo.find({geo:{$regex:/^es\/an\/se/i, $options:'m'}})   //'m' multiline strin
                            "age":       {"unit":"year",     "valued":[99], "calculed":[99]
                            }
 }
-{"geo":"wrld","vote":"summer day light saving?Y/N" ,"unit":"voter", "valued":999, "calculed":{"yes": 999, "no": 999}}}
 
 {"geo":"wrld/levels", "data": "world/continent/country/region/province/city/district/road/estate/apart"}
+{"geo":"intl/un","zone_type":"country_union","division":["es","fr","uk",....]}
+{"geo":"intl/nato","zone_type":"country_union","division":["es","fr","uk",....]}
+{"geo":"lang/rif","zone_type":"country_union","division":["ma","dz"],"map":[]}
 
-kyxtree.axie   (db.coll)
-db.lng.createIndex("lng": 1, axie: 1);
-db.lng.findOne({"lng": "spa","axie": "geo/es"})
-{"lng": "spa", "axie": "geo/es", "lang": "flat", "word": "España"}
-{"lng": "fra", "axie": "geo/es", "lang": "flat", "word": "Espagne"}
-{"lng": "spa", "axie": "geo/es/oficial", "wrd": "Reino de España"}
-{"lng": "spa", "axie": "geo/es/region", "lang": "flat", "word": "Autonomía"}
-{"lng": "spa", "axie": "name", "lang": "eng", "wrd": "nombre"}
-{"lng":"world", "division": ["aar","abk","afr","aka","amh","arb","arg","asm","ava","ave","aym","aze","bak",
+{"todo": "entertainment, advice, culture, education levels,..."}
+{"todo": "functional trees,continuous integration & management analytics for corps, municipal admins & govs."}
+{"todo": "admin-citizen: public & private channels for information,procedures,communication, declarations,claims,votes,..."}
+{"geo":"wrld","vote":"summer day light saving?Y/N" ,"unit":"voter", "valued":999, "calculed":{"yes": 999, "no": 999}}}
+
+var langs =
+{"lng":"global","global":{"division": ["aar","abk","afr","aka","amh","arb","arg","asm","ava","ave","aym","aze","bak",
 "bam","bel","ben","bih","bis","bod","bos","bre","bul","cat","ces","cha","che","chu","chv","cor","cos","cre",
 "cym","dan","deu","div","dzo","ell","eng","eng","epo","est","eus","ewe","fao","fas","fij","fin","fra","fry",
 "ful","gla","gle","glg","glv","grn","guj","hat","hau","hbs","heb","her","hin","hmo","hrv","hun","hye","ibo",
@@ -95,10 +141,28 @@ db.lng.findOne({"lng": "spa","axie": "geo/es"})
 "nob","nor","nya","oci","oji","ori","orm","oss","pan","pli","pol","por","pus","que","roh","ron","run","rus",
 "sag","san","sin","slk","slv","sme","smo","sna","snd","som","sot","spa","sqi","srd","srp","ssw","sun","swa",
 "swe","tah","tam","tat","tel","tgk","tgl","tha","tir","ton","tsn","tso","tuk","tur","twi","uig","ukr","urd",
-"uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}
+"uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}}
+
+langs.global.division.forEach((x)=>{langs.global[x]={}});
+console.log(langs);
 {"lng": "latn", "division": ["spa","fra","ita","por","deu","eng"]}
 
-{"axie":"/global","division":[asl, verb, name, particle, phrase]}
+kyxtree.axie   (db.coll)
+db.lng.createIndex("lng": 1, axie: 1);
+db.lng.findOne({"lng": "spa","axie": "geo/es"})
+{"lng": "spa", "axie": "lng/glbl",      "lang": "tree","tree": {"global":{"fra":{"spa":"francés"},"spa":{"spa":"castellano"}}}}
+{"lng": "spa", "axie": "geo/es",        "lang": "flat","word": "España"}  << {"geo":"es"
+{"lng": "fra", "axie": "geo/es",        "lang": "flat","word": "Espagne"}
+{"lng": "spa", "axie": "geo/es/oficial",               "word": "Reino de España"}
+{"lng": "spa", "axie": "geo/es/region", "lang": "flat","word": "Autonomía"}
+{"lng": "spa", "axie": "name",          "lang": "eng", "word": "nombre","sector":"",}
+{"lng": "spa", "axie": "Spain",         "lang": "eng", "word":"España", "sector":"name country",} //profession,tool,machine
+{"lng": "spa", "axie": "lion",          "lang": "eng", "word": "león",  "sector":"name animal"}
+
+"sector_corp_app"  html css js(routes,querys) json axie
+
+// AXIZE, DOMIZE : generic, specific app
+{"axie":"/global","division":[asl, verb, name, adjective, adverb, pronoun, particle, phrase]}
 {"axie":"/global/asl","division":[خرج, فعل]}
 {"axie":"/global/name","division":[thing, person, animal, insect, microorg, vegetal]}
 {"axie":"/global/sector","division":[personal,administration,health,education,culture,commerce,industry,economy,services]} #primary,2ry,3ry\n
@@ -116,3 +180,6 @@ on their grammatical function in the sentence (subject vs object vs indirect obj
 The mother of a friend of mine once told me that in its early days Google was unusable for Finnish because of this.
 A lot of internationalization and translation and whatever frameworks are not equipped to handle things like this
 at all as they assume it's like in English where words are largely immutable.
+
+http://translate.google.be/translate?&langpair=en|ar&u=http://www.papou.byethost9.com/maps/Belgium/Belgium.html?i=1
+https://translate.google.be/?langpair=en%7Car#en/ar/heaven

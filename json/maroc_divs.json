@@ -1,0 +1,175 @@
+ISO 3166-2:MA  HASC Hierarchichal Administrative Subdivision Codes http://www.statoids.com/ihasc.html
+
+01 Tanger-Tetouan-Al Hoceima x
+    Al Hoceima Province
+    Chefchaouen Province
+    Fahs-Anjra Province
+    Larache Province
+    M'diq-Fnideq Prefecture
+    Ouezzane Province
+    Tangier-Assilah Prefecture
+    Tetouan Province
+02 Oriental x
+    Berkane Province
+    Driouch Province
+    Figuig Province
+    Guercif Province
+    Jerada Province
+    Nador Province
+    Oujda-Angad Perfecture
+    Taourirt Province
+03 FM Fès-Meknès x
+03.231 MA-FES MA.FM.FS Fès Prefecture           6 	3     311,5	1.150.131 	PJD
+03.061 MA-MEK MA.FM.ME Meknès Prefecture        6 	15  1.787	835.695 	PJD
+03.171 MA-HAJ MA.FM.EH El Hajeb Province        4 	12  2.135	247.016 	PI
+03.271 MA-IFR MA.FM.IF Ifrane Province          2 	8   3.777	155.221 	MP
+03.451 MA-SEF MA.FM.SE Sefrou Province 	        5 	18  3.462	286.489 	MP
+03.591 MA-MOU MA.FM.ZM Moulay Yacoub Province 	1 	10  1.480	174.079 	PAM
+03.131 MA-BOM MA.FM.BO Boulemane Province 	4 	17 14.234	197.596 	MP
+03.561 MA-TAZ MA.FM.TZ Taza Province 	        4 	34  6.097       528.419 	PAM Canceled[6]
+03.531 MA-TAO MA.FM.TN Taounate Province 	5 	44 5.598	662.246 	RNI
+
+04 Rabat-Salé-Kénitra x
+    Rabat Prefecture
+    Salé Prefecture
+    Skhirate-Témara Prefecture
+    Kénitra Province
+    Sidi Kacem Province
+    Sidi Slimane Province
+    Khemisset Province
+
+05 Béni Mellal-Khénifra x
+    Azilal Province
+    Béni Mellal Province
+    Fquih Ben Salah Province
+    Khénifra Province
+    Khouribga Province
+
+06 Casablanca-Settat x
+    Benslimane Province
+    Berrechid Province
+    Casablanca Prefecture
+    El Jadida Province
+    Médiouna Province
+    Mohammadia Prefecture
+    Nouaceur Province
+    Settat Province
+    Sidi Bennour Province
+
+07 Marrakech-Safi x
+    Pref2ecture of Marrakech
+    Al Haouz Province
+    Chichaoua Province
+    El Kelâa des Sraghna Province
+    Essaouira Province
+    Rehamna Province
+    Safi Province
+    Youssoufia Province
+
+08 Drâa-Tafilalet x
+    Errachidia Province
+    Ouarzazate Province
+    Midelt Province
+    Tinghir Province
+    Zagora Province
+
+09 Souss-Massa x
+    Agadir-Ida Ou Tanane Prefecture
+    Chtouka-Aït Baha Province
+    Inezgane-Aït Melloul Prefecture
+    Taroudannt Province
+    Tata Province
+    Tiznit Province
+
+10 Guelmim-Oued Noun x
+    Assa-Zag Province
+    Guelmim Province
+    Sidi Ifni Province
+    Tan-Tan Province
+
+11 Laâyoune-Sakia El Hamra
+    Boujdour Province
+    Es-Semara Province
+    Laâyoune Province
+    Tarfaya Province
+
+12 Dakhla-Oued Ed-Dahab x
+    Aousserd Province
+    Oued Ed-Dahab Province
+
+Division	HASC	ISO	Code	Typ	Population	Capital
+Agadir Ida Ou Tanane	MA.SS.AI	AGD	09.001	f	600,599	Agadir
+Al Haouz	MA.MS.AH	HAO	07.041	v	573,128	Tahanaoute, Aït Ourir
+Al Hoceima	MA.TC.AH	HOC	01.051	v	399,654	Al Hoceïma
+Aousserd	MA.OL.AO	AOU	12.066	v	16,190	Aousserd, Lagouira
+Assa-Zag	MA.GN.AZ	ASZ	10.071	v	44,124	Assa
+Azilal	MA.BK.AZ	AZI	05.081	v	554,001	Kasba Tadla, Azilal
+Béni Mellal	MA.BK.BM	BEM	05.091	v	550,678	Béni Mellal
+Ben Slimane	MA.CS.BS	BES	06.111	v	233,123	Ben Slimane
+Berkane	MA.OF.BE	BER	02.113	v	289,137	Berkane
+Berrechid	MA.CS.BR		06.117	v	484,518	
+Boujdour	MA.LS.BO	BOD	11.121	v	50,566	Boujdour
+Boulemane	MA.FK.BO	BOM	03.131	v	197,596	Boulemane
+Casablanca	MA.CS.CB	CAS	06.141	f	3,359,818	Casablanca
+Chefchaouen	MA.TC.CH	CHE	01.151	v	457,432	Chefchaouen
+Chichaoua	MA.MS.CH	CHI	07.161	v	369,955	Chichaoua
+Chtouka Aït Baha	MA.SS.CA	CHT	09.163	v	371,102	Biougra, Aït Baha
+Driouch	MA.OF.DR		02.167	v	211,059	
+El Hajeb	MA.FK.EH	HAJ	03.171	v	247,016	El Hajeb
+El Jadida	MA.CS.EJ	JDI	06.181	v	786,716	El Jadida
+El Kelâa des Sraghna	MA.MS.EK	KES	07.191	v	537,488	El Kelaâ des Sraghna
+Errachidia	MA.DT.ER	ERR	08.201	v	418,451	Errachidia
+Essaouira	MA.MS.ES	ESI	07.211	v	450,527	Essaouira
+Es-Semara	MA.LS.ES	ESM	11.221	v	66,014	Es-Semara
+Fahs-Anjra	MA.TC.FB	FAH	01.227	v	76,447	Fahs-Bni Makada, Anjra
+Fès	MA.FK.FS	FES	03.231	f	1,150,131	Fès
+Figuig	MA.OF.FI	FIG	02.251	v	138,325	Figuig
+Fquih Ben Salah	MA.BK.FB		05.255	v	502,827	
+Guelmim	MA.GN.GU	GUE	10.261	v	187,808	Guelmim
+Guercif	MA.OF.GU		02.265	v	216,717	
+Ifrane	MA.FK.IF	IFR	03.271	v	155,221	Ifrane
+Inezgane Aït Melloul	MA.SS.IA	INE	09.273	f	541,118	Inezgane
+Jerada	MA.OF.JE	JRA	02.275	v	108,727	Jerada
+Kénitra	MA.RK.KE	KEN	04.281	v	1,061,435	Kénitra
+Khémisset	MA.RK.KH	KHE	04.291	v	542,221	Khémisset
+Khénifra	MA.BK.KF	KHN	05.301	v	371,145	Khénifra
+Khouribga	MA.BK.KB	KHO	05.311	v	542,125	Khouribga
+Laâyoune	MA.LS.LA	LAA	11.321	v	238,096	Laâyoune
+Larache	MA.TC.LA	LAR	01.331	v	496,687	Larache
+Marrakech	MA.MS.MR		07.351	f	1,330,468	Marrakech
+M'diq Fnidq	MA.TC.MF		01.573	f	209,897	
+Médiouna	MA.CS.ME	MED	06.355	v	172,680	Médiouna
+Meknès	MA.FK.ME	MEK	03.061	f	835,695	Meknès
+Midelt	MA.DT.MI		08.363	v	289,337	
+Mohammedia	MA.CS.MH	MOH	06.371	f	404,648	Mohammedia
+Moulay Yacoub	MA.FK.ZM	MOU	03.591	v	174,079	Fès, Moulay Yacoub
+Nador	MA.OF.NA	NAD	02.381	v	565,426	Nador
+Nouaceur	MA.CS.NC	NOU	06.385	v	333,604	Nouaceur
+Ouarzazate	MA.DT.OU	OUA	08.401	v	297,502	Ouarzazate
+Oued Ed-Dahab	MA.OL.OE	OUD	12.391	v	126,765	Dakhla
+Ouezzane	MA.TC.OU		01.405	v	300,637	
+Oujda Angad	MA.OF.OA	OUJ	02.411	f	551,767	Oujda
+Rabat	MA.RK.RA	RAB	04.421	f	577,827	Rabat
+Rehamna	MA.MS.RE		07.427	v	315,077	
+Safi	MA.MS.SA	SAF	07.431	v	691,983	Safi
+Salé	MA.RK.SA	SAL	04.441	f	982,163	Salé
+Sefrou	MA.FK.SE	SEF	03.451	v	286,489	Sefrou
+Settat	MA.CS.SE	SET	06.461	v	634,184	Settat
+Sidi Bennour	MA.CS.SB		06.467	v	452,448	
+Sidi Ifni	MA.GN.SI		10.473	v	115,691	
+Sidi Kacem	MA.RK.SK	SIK	04.481	v	522,270	Sidi Kacem
+Sidi Slimane	MA.RK.SS		04.491	v	320,407	
+Skhirate-Témara	MA.RK.ST	SKH	04.501	f	574,543	Témara
+Tanger-Assilah	MA.TC.TA	TNG	01.511	f	1,065,601	Tanger
+Tan-Tan	MA.GN.TN	TNT	10.521	v	86,134	Tan-Tan
+Taounate	MA.FK.TN	TAO	03.531	v	662,246	Taounate
+Taourirt	MA.OF.TA	TAI	02.533	v	233,188	Taourirt
+Tarfaya	MA.LS.TA		11.537	v	13,082	
+Taroudannt	MA.SS.TR	TAR	09.541	v	838,820	Taroudannt
+Tata	MA.SS.TT	TAT	09.551	v	117,841	Tata
+Taza	MA.FK.TZ	TAZ	03.561	v	528,419	Taza
+Tétouan	MA.TC.TE	TET	01.571	v	550,374	Tétouan
+Tinghir	MA.DT.TI		08.577	v	322,412	
+Tiznit	MA.SS.TI	TIZ	09.581	v	207,367	Tiznit
+Youssoufia	MA.MS.YO		07.585	v	251,943	
+Zagora	MA.DT.ZA	ZAG	08.587	v	307,306	Zagora
