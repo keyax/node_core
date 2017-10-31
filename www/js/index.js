@@ -4,8 +4,9 @@
 //  'fs','http','https','module','net','os','path','process','punycode','querystring','readline','repl',
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
 const assert = require('assert');
-const fs = require('fs');
 const path = require('path');
+// const fs = require('fs');
+const fs = require('mz/fs');
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
@@ -48,6 +49,24 @@ const Logger = require('koa-logger');
 const respond = require('koa-respond');
 const send = require('koa-send');
 
+
+//fs.readFile('./Index.html').then(contents => console.log(contents))
+//  .catch(err => console.error(err));
+async function Readfile (file) {
+  try {
+    const data = await fs.readFile(file);
+    return data;
+  }
+  catch (err) { console.error( err ) }
+};
+var dbadmin = readFile(process.env.DBADMIN);
+
+// var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON
+var dbadminqp = JSON.parse(dbadminq);
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0]));
+//fs.readFile(process.env.DBADMIN , function(err,data) { if(err) console.log(err)
+//                                                       else console.log(data.toString()); }  );
 //const socketio = require('socket.io');
 //let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
 
@@ -293,8 +312,8 @@ app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 //app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
 
-app.listen(9200);
-console.log('listening on port 9200');
+app.listen(8100);
+console.log('listening on port 8100');
 
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
@@ -559,10 +578,10 @@ siok.on('connection', function (socket){
    });
 });
 
-/*   
+/*
 // koa-session + koa-socket-session + koa-socket.io
 // koa-session-store + koa-session-mongo + koa-socket.io
-//const opts = {host: 'http://kyx.dynu.net', port: '9000'};
+//const opts = {host: 'http://kyx.dynu.net', port: '8000'};
 //io.start(serverk, opts);
 io.start(serverk);  // koa-socket.io
 //io.use(async (ctx, next) => {   });
@@ -602,8 +621,8 @@ io.on( 'message', ( ctx, data ) => {
 */
 
 // you can pass the parameter in the command line. e.g. node static_server.js 3000
-// var port = process.argv[2] || 9000;
-var port = 9000;
+// var port = process.argv[2] || 8000;
+var port = 8000;
 serverk.listen(parseInt(`${port}`), (err) => {
       if (err) {return console.log('something bad happened', err)}
       console.log(`server is listening on port: ${port}`)

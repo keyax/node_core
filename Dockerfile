@@ -91,10 +91,13 @@ RUN cd /home/node \
 ## && npm install --save assert \
 ## && npm install --save fs \
 && npm install --save fs-extra \
+&& npm install --save mz \
 # && npm install --save jquery \
  && npm install --save express \
 # && npm install --save express-session \
 # && npm install --save express-jwt \
+ && npm install --save json-parse-async \
+ && npm install --save json-schema-ref-parser \
  && npm install --save cookie-parser \
  && npm install --save body-parser \
  && npm install --save formidable \

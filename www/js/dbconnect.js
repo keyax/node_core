@@ -1,5 +1,7 @@
 // dbconnect.js   myAwesomeDbModule.js
 // import { MongoClient } from 'mongodb';  //.mjs
+const dbadmin = process.env.DBADMIN;
+console.log(dbadmin);
 const util = require('util');
 const mongo = require('mongodb');
 const mongoClient = require('mongodb').MongoClient;
