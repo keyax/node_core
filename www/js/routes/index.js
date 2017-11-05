@@ -10,24 +10,21 @@ const fs = require('fs');
 const fse = require('fs-extra');
 var progress = require('progress-stream');
 const util = require('util');
+const abb = require('async-busboy');
+const exif = require('exiftool');
 
 var Koa = require('koa');
 var appk = new Koa();
 const Router = require('koa-router');
-const routerk = new Router();
-//const routerk = new Routerk(); // new Routerk({prefix: '/corp1'});
-//routerk.prefix('corp1')
-
+const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
 const bodyParser = require('koa-bodyparser');
-
 const passport = require('koa-passport');
-
 const Multer = require('koa-multer');
-const abb = require('async-busboy');
-const exif = require('exiftool');
+
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
+const dbUrl = "mongodb://172.17.0.1:27017/kyxtree";
+//const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
 //const dbUrl = "mongodb://admin:555777@192.168.1.2:27017/kyxtree";
 const mongooseConn = mongoose.connection.openUri(dbUrl); //
 var User = require('./../models/user');
@@ -84,9 +81,7 @@ ctx.status = err.status || 500
 //routerk.post("/login", async function (ctx, next) {await abb(ctx.req);},function (filds) {console.log("results",filds);})
 
 routerk.post("/login", async function (ctx, next) {
-
  try {
-
 const {fields} = await abb(ctx.req);  console.log(util.inspect({fields}));
 var username = fields.username;
 var password = fields.password;

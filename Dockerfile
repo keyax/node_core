@@ -110,6 +110,7 @@ RUN cd /home/node \
 && npm install --save mongodb \
 && npm install --save mongoose \
 # && npm install --save mongoose@4.10.8 \
+&& npm install --save ws \
 && npm install --save socket.io \
 && npm install --save socketio-auth \
  && npm install --save cookie \
@@ -121,7 +122,6 @@ RUN cd /home/node \
  && npm install --save koa-socket \
  && npm install --save koa-socket.io \
 # && npm install --save koa.io \
-# && npm install --save ws \
 && npm install --save socket.io-mongodb \
  && npm install --save mubsub \
 # && npm install --save koa-session2 \

@@ -5,13 +5,14 @@ console.log(dbadmin);
 const util = require('util');
 const mongo = require('mongodb');
 const mongoClient = require('mongodb').MongoClient;
-const dburl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
+var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+//const dburl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
 //var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
 //var conexion = null;
 var result = null;
 const mongoose = require('mongoose');
 /*
-the server/replset/mongos options are deprecated,
+the server/replSet/mongos options are deprecated,
 all their options are supported at the top level of the options object
 [poolSize,ssl,sslValidate,sslCA,sslCert,sslKey,sslPass,autoReconnect,noDelay,keepAlive,
 connectTimeoutMS,socketTimeoutMS,reconnectTries,reconnectInterval,ha,haInterval,replicaSet,
@@ -20,22 +21,20 @@ forceServerObjectId,serializeFunctions,ignoreUndefined,raw,promoteLongs,bufferMa
 readPreference,pkFactory,promiseLibrary,readConcern,maxStalenessSeconds,loggerLevel,logger,
 promoteValues,promoteBuffers,promoteLongs,domainsEnabled,keepAliveInitialDelay,checkServerIdentity,validateOptions]
 */
+options.server.socketOptions = options.replset.socketOptions = { keepAlive: 120 };
+mongoose.connect(uri, options);
 
 var options = {
 //    db: {
       authSource: "kyxtree" //,
-//>>      native_parser: true,
+//>>  native_parser: true,
 //      },
-//    server: {
-//>>      poolSize: 10,
-///   socketOptions: {
-//>>        connectTimeoutMS: 500
-///   }
-//        }
-//    replSet: {},
-//    mongos: {}
+//    poolSize: 10,
+//    socketOptions: {
+//      keepAlive: 120
+//      connectTimeoutMS: 500
+//    }
     };
-
 //    'use strict';
 /*
 const
@@ -90,7 +89,7 @@ module.exports.conect = () => new Promise((resolve, reject) => {
 //console.log(url);
 
 module.exports.conect = () => new Promise((resolve, reject) =>
-                      {MongoClient.connect(dburl,  options, function(err, dbs) {
+                              {MongoClient.connect(dburl,  options, function(err, dbs) {
                                  if (err) { console.log("error mongopen:" + err); reject(err); return; };
                                  resolve(dbs);
                                  conexion = dbs;

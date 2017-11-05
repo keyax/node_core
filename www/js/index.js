@@ -3,38 +3,54 @@
 //[ 'assert','buffer','child_process','cluster','console','constants','crypto','dgram','dns','domain','events',
 //  'fs','http','https','module','net','os','path','process','punycode','querystring','readline','repl',
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
-const assert = require('assert');
+const bluebird = require('bluebird');
+global.Promise = require('bluebird');
+const co = require("bluebird").coroutine;
+//const co = require("co");
+//var fs = Promise.promisifyAll(require("fs"));  // readFileAsync
+const fs = require('fs');
+const mzfs = require('mz/fs');
 const path = require('path');
-// const fs = require('fs');
-const fs = require('mz/fs');
+const util = require('util');
+const https = require('https');
+const http = require('http');
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
-const util = require('util');
-var progress = require('progress-stream');
 //var fetch = require('node-fetch');
 const xhr2 = require('xhr2');
+const assert = require('assert');
+var progress = require('progress-stream');
 
-const https = require('https');
-const http = require('http');
-
-///const express = require('express');
-///const appx = express();
-//const app = require('express')();
-///const server  = http.createServer(appx);
-//const serverh  = http.createServer(handler);
-// 1*) get an instance of router
-///const routerx = express.Router();
-//const formidable = require('formidable');
-const cookieParse = require('cookie-parser');
-const bodyParse = require('body-parser');
+const koasession = require('koa-session');
+const KSsession = require('koa-socket-session');
+const sessionkstore = require('koa-session-store');  //  or koa-generic-session
+const sessionkmongo = require('koa-session-mongo');
+const mongoose = require('mongoose');
+const sessionkmongoose = require('koa-session-mongoose');
+const mongo = mongoose.mongo;
+// const mongo = require('mongodb');
+const MongoClient = mongo.MongoClient;
+const MongoServer = mongo.Server;
+//mongoose.mongo.MongoClient.connect(uri, function (err, conn) {});
+// const sqlconnect = require('./sqlconnect.js');   // pool or single
+//const mongoAdapter = require('socket.io-mongodb'); // siok.adapter(mongoAdapter('mongodb://localhost:27017/socket-io'));
+//const mubsub = require('mubsub');
 
 const Koa = require('koa');
+const app = new Koa();  // const app = Koa();
 const appk = new Koa();  // const appk = Koa();
 //const serverhk  = http.createServer(appk.callback());
 //const Routerk = require('koa-router');
 //const routerk = new Routerk(); // new{prefix: '/'}
-const app = new Koa();  // const app = Koa();
+
+//koa deprecated Support for generators will be removed in v3.
+const convert = require('koa-convert');
+// ---------- override app.use method ----------
+const _use = appk.use
+appk.use = x => _use.call(appk, convert(x))
+// ---------- end ----------
+
 const routek = require('koa-route');
 const Mount = require('koa-mount');
 const Static = require('koa-static');
@@ -48,30 +64,19 @@ const Multer = require('koa-multer');
 const Logger = require('koa-logger');
 const respond = require('koa-respond');
 const send = require('koa-send');
+const jsparse = require('json-parse-async');
+const jsonref = require('json-schema-ref-parser');
+const cookieParse = require('cookie-parser');
+const bodyParse = require('body-parser');
 
+const Cookies = require('cookies');
+const cookiek = require('koa-cookie'); // only parser
+//var cookie = cookiek();
+var jwt = require('jsonwebtoken');
 
-//fs.readFile('./Index.html').then(contents => console.log(contents))
-//  .catch(err => console.error(err));
-async function Readfile (file) {
-  try {
-    const data = await fs.readFile(file);
-    return data;
-  }
-  catch (err) { console.error( err ) }
-};
-var dbadmin = readFile(process.env.DBADMIN);
-
-// var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');
-var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON
-var dbadminqp = JSON.parse(dbadminq);
-console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0]));
-//fs.readFile(process.env.DBADMIN , function(err,data) { if(err) console.log(err)
-//                                                       else console.log(data.toString()); }  );
 //const socketio = require('socket.io');
 //let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
-
 //var siok = require('socket.io')(serverk);
-
 //const sio = require('socket.io')(server);
 //const sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
 //const sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
@@ -82,33 +87,60 @@ const io = new IO({namespace: '/uploadz'});
 //const KSIO = require('koa-socket');
 //const ksio = new KSIO({namespace: '/uploadz'});
 
-//const mongo = require('mongodb');
-//const MongoClient = require('mongodb').MongoClient;
-//const Serverdb = require('mongodb').Server;
-// const sqlconnect = require('./sqlconnect.js');   // pool or single
+console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
+var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
+var dbadminqp = JSON.parse(dbadminq); // 0.150ms
+var record = JSON.stringify(dbadminqp.session); // 0.140ms
+console.timeEnd("fileread");
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
+// console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0])); // 2.541ms
+/*
+console.time("fileread");  //  1173.343ms
+mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
+.then(function(dbadmin){return dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');}) // 0.252ms
+.then(function(dbadminq){return JSON.parse(dbadminq);}) // 0.191ms
+.then(function(dbadminqp){return JSON.stringify(dbadminqp[0]);}) // 0.149ms
+.then(function(record){console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record);}) // 7.609ms
+.then(()=>{console.timeEnd("fileread");})  //  1173.343ms
+.catch(error => console.error(error));
+//console.timeEnd("fileread");  //0.714ms
+*/
+//const dbUrl = `mongodb://${dbadminqp.dbuser.user}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
+//console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
 
-const co = require("co");
-///const Promise = require('bluebird');
-//koa deprecated Support for generators will be removed in v3.
-const convert = require('koa-convert');
-// ---------- override app.use method ----------
-const _use = appk.use
-appk.use = x => _use.call(appk, convert(x))
-// ---------- end ----------
-const Cookies = require('cookies');
-const cookiek = require('koa-cookie'); // only parser
-//var cookie = cookiek();
-var jwt = require('jsonwebtoken');
-//const Session = require('koa.session');
-const koasession = require('koa-session');
-const KSsession = require('koa-socket-session');
-const sessionkstore = require('koa-session-store');
-const sessionkmongo = require('koa-session-mongo');
-const mongoose = require('mongoose');
+const dbUrl = "mongodb://172.17.0.1:27017/kyxtree";
+//var MongoClient = require('mongodb').MongoClient;
+MongoClient.connect(dbUrl, // { uri_decode_auth: true }, // { poolSize: 10, ssl: true },
+  function(err, dbx) { // assert.equal(null, err);
+  console.log("Connected correctly to mongodb server");
+  var geo = dbx.collection("geo");
+  dbx.command(dbadminqp.dbuser)   // superadmin, dbadmin, dbuser
+//dbAdmin = dbx.admin();
+//dbAdmin.addUser(dbadminqp.superadmin.user,dbadminqp.superadmin.pwd,{roles: dbadminqp.superadmin.roles})
+//dbAdmin.addUser(dbadminqp.dbadmin.user,dbadminqp.dbadmin.pwd,{roles: dbadminqp.dbadmin.roles})
+//dbAdmin.addUser(dbadminqp.dbuser.user,dbadminqp.dbuser.pwd,{roles: dbadminqp.dbuser.roles})
+         .then(usr => console.log('Mongodb has been created:'+JSON.stringify(usr)))
+         .catch(err => {console.log('Error while trying to create user mongodb: '+err); });  // throw err;
+  dbx.close();
+});
+
+//module.exports.connect = function(mongoUri, promiseLib){
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-const sessionkmongoose = require('koa-session-mongoose');
-const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
-const mongooseConn = mongoose.connection.openUri(dbUrl);
+const mongooseConn = mongoose.connect(dbUrl, {
+    useMongoClient: true//,
+//  promiseLibrary: bluebird // Deprecation issue again
+});
+mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('Mongoose has been connected');})
+       .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
+// Even though it's a promise, no need to worry about creating models immediately, as mongoose buffers requests until a connection is made
+//    return mongoDB
+//};
+
+//(node:118) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): MongoError: Authentication failed.
+//(node:118) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+//(node:118) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): MongoError: Authentication failed.
+//////const mongooseConn = mongoose.connection.openUri(dbUrl);  // goto line 389
 //const mongooseConn = mongoose.connect(dbUrl);//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //const mongooseConn = mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 
@@ -315,6 +347,19 @@ app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 app.listen(8100);
 console.log('listening on port 8100');
 
+appk.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    ctx.status = err.status || 500;
+    ctx.body = err.message;
+    ctx.appk.emit('error', err, ctx);
+// (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
+    console.log('errordb', err, ctx);
+  }
+});
+
+
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
 ////appk.use(require('body-parser').urlencoded({ extended: true }));
@@ -322,19 +367,20 @@ console.log('listening on port 8100');
 //appk.use(cookiek("keyax57secretos")); // not a function
 
 // uid-safe vs uid2 vs node-uuid >>>> base64url.encode(crypto.randomBytes(length).toString('base64'))
-/*
+/* // star
 // koa-session-store + koa-session-mongo
-appk.keys = ["keyax57secretos"];
+appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
 const CONFIGS = {
     name: 'kyx:sess1',    // cookie name
     secret: "mysecretcode", //koa2-session-store
 //    store: "cookie",   // session storage layer - see below
       store: sessionkmongo.create({
-//          db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
+//          db: "kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
             url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-//          db: "kyxtree",  //pets.dbc,
-//          collection: "sessions",
+//          url: "mongodb://172.17.0.1:27017/kyxtree/sessions", //pets.dbc, // sessions,
+            db: "kyxtree",  //pets.dbc,
+            collection: "sessions",
 //          username: "yones",
 //          password: "555777",
             expirationTime: 60}),   // expires: 60*60*1
@@ -354,13 +400,13 @@ const CONFIGS = {
 const sesion = sessionkstore(CONFIGS);
 appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
   // or if you prefer all default config, just use => app.use(session(appk));
-*/
+*/// end star
 
 // koa-session-store + koa-session-mongoose
-appk.keys = ["keyax57secretos"];  //salt key
+appk.keys = dbadminqp.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
 const CONFIGS = {
     name: 'kyx:sesgoose',    // cookie name
-    secret: "mysecretcode", //koa2-session-store
+//  secret: "mysecretcode", //koa2-session-store
 //  store: "cookie",   // session storage layer - see below
     store: new sessionkmongoose({
       collection: 'sessions',
@@ -369,7 +415,7 @@ const CONFIGS = {
       model: 'KoaSession'
     }),
     cookie: {
-      key: 'kyx:sesgoosec', // (string) cookie key (default is koa:sess)
+//    key: 'kyx:sesgoosec', // (string) cookie key (default is koa:sess)
       maxAge:  3600000, //86400000,//=60*60*24*1000ms
        // number || 'session' maxAge in ms (default is 1 days)
        //'session' will result in a cookie that expires when session/browser is closed
@@ -556,7 +602,15 @@ console.log("cb req.url:"+ctx.url);
   };*/
 };
 let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
+// you can pass the parameter in the command line. e.g. node static_server.js 3000
+// var port = process.argv[2] || 8000;
+var port = 8000;
+serverk.listen(parseInt(`${port}`), (err) => {
+      if (err) {return console.log('something bad happened', err)}
+      console.log(`server is listening on port: ${port}`)
+});
 
+/*
 var siok = require('socket.io')(serverk);
 //var siokups = siok.of('/uploadz');    //, {path: '/uploadz'});
 
@@ -577,7 +631,7 @@ siok.on('connection', function (socket){
    // socket.broadcast.emit('progress', bytesReceived);
    });
 });
-
+*/
 /*
 // koa-session + koa-socket-session + koa-socket.io
 // koa-session-store + koa-session-mongo + koa-socket.io
@@ -620,35 +674,43 @@ io.on( 'message', ( ctx, data ) => {
 });
 */
 
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-// var port = process.argv[2] || 8000;
-var port = 8000;
-serverk.listen(parseInt(`${port}`), (err) => {
-      if (err) {return console.log('something bad happened', err)}
-      console.log(`server is listening on port: ${port}`)
-});
+
+
 
 /*
 // koa + socket.io first style
-var serverkl = serverk.listen(parseInt(`${port}`), (err) => {
-  if (err) {return console.log('something bad happened', err)}
-  console.log(`server is listening on port: ${port}`)
+var ports = 8200;
+var servers = require('http').createServer();  //(handler)
+var siok = require('socket.io')(servers);
+servers.listen(parseInt(`${ports}`), (err) => {
+  if (err) {return console.log('something bad happened in sockets', err)}
+  console.log(`server is listening sockets on port: ${ports}`)
   });
-var siok = require('socket.io')(serverkl);
+*/
+// note, io(<port>) will create a http server for you
+var siok = require('socket.io')(8200);
 
-siok.on('connection', function (socket){
+siok  //.of('/namespace')
+.on('connection', function (socket){
+//  socket.join('room1');  //  socket.leave('room1');  // default Socket#id
+//  socket.broadcast.in('room1').emit('hiserver', { hello: 'world baby '+socket.id });
     socket.emit('hiserver', { hello: 'world baby '+socket.id });
     socket.on('hiclient', function (data) {
        console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
        console.log(`with socket cookie: ${socket.request.headers.cookie}`);
        console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`);
-
+       var date = new Date();
+           date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry
+           var expires = "; expires="+date.toGMTString();
+       var name = "kyx:socket"; var value = socket.id;
+  //Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
+  //   socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
     });
-     socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
+    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
+//    socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
 //   socket.broadcast.emit('progress', bytesReceived);
      });
   });
 //    socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
-*/
