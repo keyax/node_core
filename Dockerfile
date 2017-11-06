@@ -157,6 +157,8 @@ RUN cd /home/node \
  && npm install --save koa-static \
 && npm install --save async-busboy \
 && npm install --save progress-stream \
+&& npm install --save koa-connect-flash \
+ && npm install --save koa-flash \
 # && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
  && npm install --save koa-bodyparser \
  && npm install --save koa-body \

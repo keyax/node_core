@@ -5,15 +5,13 @@
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
 const bluebird = require('bluebird');
 global.Promise = require('bluebird');
-const co = require("bluebird").coroutine;
-//const co = require("co");
+//const co = require("bluebird").coroutine;
+const co = require("co");
 //var fs = Promise.promisifyAll(require("fs"));  // readFileAsync
 const fs = require('fs');
 const mzfs = require('mz/fs');
 const path = require('path');
 const util = require('util');
-const https = require('https');
-const http = require('http');
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
@@ -28,19 +26,34 @@ const sessionkstore = require('koa-session-store');  //  or koa-generic-session
 const sessionkmongo = require('koa-session-mongo');
 const mongoose = require('mongoose');
 const sessionkmongoose = require('koa-session-mongoose');
-const mongo = mongoose.mongo;
 // const mongo = require('mongodb');
-const MongoClient = mongo.MongoClient;
+const mongo = mongoose.mongo;
+const MongoClient = mongo.MongoClient; //mongoose.mongo.MongoClient.connect(uri, function (err, conn) {});
 const MongoServer = mongo.Server;
-//mongoose.mongo.MongoClient.connect(uri, function (err, conn) {});
 // const sqlconnect = require('./sqlconnect.js');   // pool or single
 //const mongoAdapter = require('socket.io-mongodb'); // siok.adapter(mongoAdapter('mongodb://localhost:27017/socket-io'));
 //const mubsub = require('mubsub');
 
+
+const http = require('http');
+// const https = require('https');
 const Koa = require('koa');
-const app = new Koa();  // const app = Koa();
 const appk = new Koa();  // const appk = Koa();
-//const serverhk  = http.createServer(appk.callback());
+const serverk  = http.createServer(appk.callback());  // can mount (express.app) // serverk.listen(8000);
+// const serverks  = https.createServer(appk.callback()); // serverks.listen(8443);
+const port =  8000 || process.argv[2]; // node server.js 8000 // pass parameter in command line
+const app = new Koa();  // const app = Koa();
+const server  = http.createServer(app.callback());  // can mount (express.app) // server.listen(8000);
+const socketio = require('socket.io');
+
+//const siok = socketio(serverk, {origins:'keyax.org:* http://www.keyax.org:* ws://keyax.org:*'}); // socketio(appk);
+//const siok = socketio.listen(serverk);
+const IO = require('koa-socket.io');
+const io = new IO({namespace: '/uploadz'});
+//const IO = require('koa-socket');
+//const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
+//io.attach(appk);
+
 //const Routerk = require('koa-router');
 //const routerk = new Routerk(); // new{prefix: '/'}
 
@@ -74,19 +87,6 @@ const cookiek = require('koa-cookie'); // only parser
 //var cookie = cookiek();
 var jwt = require('jsonwebtoken');
 
-//const socketio = require('socket.io');
-//let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
-//var siok = require('socket.io')(serverk);
-//const sio = require('socket.io')(server);
-//const sio = socketio(server, {origins:'kyx.dynu.com:* ws://kyx.dynu.com:*'});
-//const sio = socketio(server, {origins:'domain.com:* http://domain.com:* http://www.domain.com:*'});
-///const sio = socketio.listen(server);
-//const sio = require('socket.io')(app);
-const IO = require('koa-socket.io');
-const io = new IO({namespace: '/uploadz'});
-//const KSIO = require('koa-socket');
-//const ksio = new KSIO({namespace: '/uploadz'});
-
 console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
 var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
 var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
@@ -111,7 +111,7 @@ mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
 
 const dbUrl = "mongodb://172.17.0.1:27017/kyxtree";
 //var MongoClient = require('mongodb').MongoClient;
-MongoClient.connect(dbUrl, // { uri_decode_auth: true }, // { poolSize: 10, ssl: true },
+MongoClient.connect(dbUrl, // ,{poolSize:10,ssl:true,uri_decode_auth:true},
   function(err, dbx) { // assert.equal(null, err);
   console.log("Connected correctly to mongodb server");
   var geo = dbx.collection("geo");
@@ -344,8 +344,16 @@ app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 //app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
 
-app.listen(8100);
+server.listen(8100); // app.listen(8100);
 console.log('listening on port 8100');
+/*
+server.listen(parseInt(`${port}+100`), (err) => {
+      if (err) {return console.log('app something bad happened', err)}
+      console.log(`app server is listening on port: ${port}`)
+});
+*/
+
+//io.attach(appk);
 
 appk.use(async (ctx, next) => {
   try {
@@ -491,7 +499,6 @@ appk.use(async (ctx,next) => {
   };
   */
 
-
 // passport config
 var User = require('./models/user');
 passport.use(new LocalStrategy(User.authenticate()));
@@ -502,7 +509,6 @@ passport.use(new LocalStrategy(User.authenticate()));
   passport.serializeUser(function(user, done) {
     done(null, user._id)
   })
-
   passport.deserializeUser(function(id, done) {
     User.findById(id, done);
   })
@@ -554,8 +560,8 @@ appk.use(require('./routes/index.js')); // ./routes/index.js  default
 //appk
 //  .use(routerk.routes())
 //  .use(routerk.allowedMethods());
-
-function callback(req, res) {
+//========================================================================
+///function callback(req, res) {
   //res = "HOyolanokati";
 /*  if (parseInt(req.headers['content-length']) > 1375347) {
     res.end('to large')
@@ -600,56 +606,47 @@ console.log("cb req.url:"+ctx.url);
       "tampered: " + tampered + "\n\n"
     )
   };*/
-};
-let serverk = http.createServer(appk.callback());// callback for http.createServer or express.app
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-// var port = process.argv[2] || 8000;
-var port = 8000;
-serverk.listen(parseInt(`${port}`), (err) => {
-      if (err) {return console.log('something bad happened', err)}
-      console.log(`server is listening on port: ${port}`)
-});
-
+///};
+//======================================================================================
+//io.attach(appk); //, {origins:'keyax.org:* http://www.keyax.org:* ws://keyax.org:*'}); // socketio(appk);
+//appk._io.set('origins', 'http://www.keyax.org:8000');
 /*
-var siok = require('socket.io')(serverk);
-//var siokups = siok.of('/uploadz');    //, {path: '/uploadz'});
-
-siok.on('connection', function (socket){
-   socket.emit('hiserver', { hello: 'world baby>>>'+socket.id });
-   socket.on('hiclient', function (data) {
-     console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
-     console.log(`with socket cookie: ${socket.request.headers.cookie}`);
-     console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`);
-     var date = new Date();
-         date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry
-         var expires = "; expires="+date.toGMTString();
-     var name = "kyx:socket"; var value = socket.id;
-//Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
-//   socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
-   });
-   socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
-   // socket.broadcast.emit('progress', bytesReceived);
-   });
+appk._io.on( 'join', ( ctx, data ) => {
+  console.log( 'join event fired', data )
+})
+io.broadcast( 'hiserver', 'Hola red ' );
+io.on( 'join', function *( next)  {
+  console.log( this.data )
+  console.log( this.event)
+})
+*/
+/*
+appk._io.on( 'message', ( ctx, data ) => {
+  // get username from session
+  let username = ctx.session.username;
+  // print the message received and username in session
+  console.log( `message: ${ data }, username: ${username}` )
 });
 */
 /*
 // koa-session + koa-socket-session + koa-socket.io
 // koa-session-store + koa-session-mongo + koa-socket.io
 //const opts = {host: 'http://kyx.dynu.net', port: '8000'};
-//io.start(serverk, opts);
-io.start(serverk);  // koa-socket.io
-//io.use(async (ctx, next) => {   });
+const opts = {host: 'http://keyax.org', port: '8000'};
+io.start(serverk, opts);
+io.use((ctx, next) => {console.log("hola socketes");});
 io.use(co.wrap(function* (next){
   let start = new Date();
   yield next;
   console.log( `response time: ${ new Date() - start }ms` );
 }));
+*/
 // init koa-socket-session as koa-socket's middleware
 //io.use(KSsession(appk, koasession));
 ///io.use(KSsession(appk, sessionkstore)); // fails routes
 //????ksio.attach(appk); //koa-socket
-
-io.on('connect', (ctx, next) => {
+/*
+io.on('join', (ctx, next) => {
   ctx.socket.emit('hiserver', { hello: 'world baby koa-socket.io >>>'+ctx.socket.id });
   ctx.socket.on('upload', (ctx, next) => {    filesize = ctx.data;
  // console.log( JSON.stringify(ctx) );// {"packet":null,"event":"upload","data":302400}
@@ -660,37 +657,17 @@ io.on('connect', (ctx, next) => {
   });
 });
 */
-/*
-io.broadcast( 'hiserver', 'Hola red ' );
-io.on( 'join', function *( next)  {
-  console.log( this.data )
-  console.log( this.event)
-})
-io.on( 'message', ( ctx, data ) => {
-  // get username from session
-  let username = ctx.session.username;
-  // print the message received and username in session
-  console.log( `message: ${ data }, username: ${username}` )
+//===========================================================================
+serverk.listen(parseInt(`${port}`), (err) => {
+      if (err) {return console.log('something bad happened', err)}
+      console.log(`server is listening on port: ${port}`)
 });
-*/
 
-
-
-
-/*
 // koa + socket.io first style
-var ports = 8200;
-var servers = require('http').createServer();  //(handler)
-var siok = require('socket.io')(servers);
-servers.listen(parseInt(`${ports}`), (err) => {
-  if (err) {return console.log('something bad happened in sockets', err)}
-  console.log(`server is listening sockets on port: ${ports}`)
-  });
-*/
-// note, io(<port>) will create a http server for you
-var siok = require('socket.io')(8200);
+//var siok = require('socket.io')(8200);  // note, io(<port>) will create a http server for you
 
-siok  //.of('/namespace')
+var siok = require('socket.io')(serverk);
+siok  //.of('/uploadz');    //, {path: '/uploadz'});
 .on('connection', function (socket){
 //  socket.join('room1');  //  socket.leave('room1');  // default Socket#id
 //  socket.broadcast.in('room1').emit('hiserver', { hello: 'world baby '+socket.id });
@@ -703,14 +680,15 @@ siok  //.of('/namespace')
            date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry
            var expires = "; expires="+date.toGMTString();
        var name = "kyx:socket"; var value = socket.id;
-  //Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
-  //   socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
+// Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
+// socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
     });
     socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
-//    socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
-//   socket.broadcast.emit('progress', bytesReceived);
-     });
+//  socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
+//  socket.broadcast.emit('progress', bytesReceived);
+//  });
   });
+});
 //    socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();

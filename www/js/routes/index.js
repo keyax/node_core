@@ -286,7 +286,7 @@ const {fields} = await abb(ctx.req, {
     onFile: function(fieldname, file, filename, encoding, mimetype) {
             //uploadFilesToS3(file);
           //  console.log("ctx.req:"+ctx.request.get);
-      ///      console.log("filesinctx:"+ctx.req.files);
+      //      console.log("filesinctx:"+ctx.req.files);
             console.log("abb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
             var upfile = `statics/upload/${filename}`;  // as of `/home/node/statics/${filename}`;
 
