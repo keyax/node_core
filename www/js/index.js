@@ -79,8 +79,13 @@ const respond = require('koa-respond');
 const send = require('koa-send');
 const jsparse = require('json-parse-async');
 const jsonref = require('json-schema-ref-parser');
-const cookieParse = require('cookie-parser');
-const bodyParse = require('body-parser');
+const cookieParse = require('cookie-parser'); // read cookies (needed for auth)
+const bodyParse = require('body-parser');     // get information from html forms
+const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
+// const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
+const passport = require('passport');
+require('./auth0.js')(passport); // require('./config/passport')(passport); // pass passport for configuration
+appk.proxy = true;  // koa passport trust proxy
 
 const Cookies = require('cookies');
 const cookiek = require('koa-cookie'); // only parser
@@ -143,15 +148,6 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
 //////const mongooseConn = mongoose.connection.openUri(dbUrl);  // goto line 389
 //const mongooseConn = mongoose.connect(dbUrl);//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //const mongooseConn = mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
-
-appk.proxy = true;  // koa passport trust proxy
-const passport = require('koa-passport');
-const LocalStrategy = require('passport-local').Strategy;
-const LocalMongoose = require('passport-local-mongoose');
-const FacebookStrategy = require('passport-facebook').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
-const GoogleStrategy = require('passport-google-auth').Strategy;
-const JwtStrategy = require('passport-jwt').Strategy;
 
 var filesize = 0;
 
@@ -355,15 +351,16 @@ server.listen(parseInt(`${port}+100`), (err) => {
 
 //io.attach(appk);
 
-appk.use(async (ctx, next) => {
+appk.use(async (ctx, next) => {  // koa error handling
   try {
     await next();
   } catch (err) {
     ctx.status = err.status || 500;
     ctx.body = err.message;
     ctx.appk.emit('error', err, ctx);
-// (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
     console.log('errordb', err, ctx);
+// (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
+// process.setMaxListeners(15); // require('events').EventEmitter.defaultMaxListeners = 15; // default 10 unlimited 0
   }
 });
 
@@ -469,8 +466,12 @@ appk.use(koasession(CONFIG, appk));
 //require('./auth.js');
 // const passport = require('koa-passport')
 //appk.use(abb(ctx.req));
+appk.use(cookieParse) // read cookies (needed for auth)
+appk.use(bodyParse) // get information from html forms
+
 appk.use(passport.initialize());
 appk.use(passport.session());
+app.use(flash()); // use connect-flash for flash messages stored in session
 
 appk.use(async (ctx,next) => {
   //ctx.state.varyin = 'vary';
@@ -498,13 +499,14 @@ appk.use(async (ctx,next) => {
     console.log('processed');
   };
   */
-
+/*
 // passport config
 var User = require('./models/user');
 passport.use(new LocalStrategy(User.authenticate()));
 //  passport.use(User.createStrategy());
   passport.serializeUser(User.serializeUser());
   passport.deserializeUser(User.deserializeUser());
+*/
 /*
   passport.serializeUser(function(user, done) {
     done(null, user._id)
@@ -553,6 +555,7 @@ appk.use(ctx => {
 //      routerk.use('/api2/v0/', api2.routes(), api2.allowedMethods());
 //appk.use(rooter);
 
+appk.use(require('./routes/pass.js')(routerk, passport));
 // require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
 appk.use(require('./routes/index.js')); // ./routes/index.js  default
 //appk.use(routerk.routes());
