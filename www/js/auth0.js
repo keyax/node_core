@@ -126,7 +126,7 @@ const user = User.findOne({ username: user.username }, function (err, testUser)
     return user;
   }
 })();
-
+/*
 passport.serializeUser(function(user, done) {
   user = fetchUser();
   done(null, user._id)
@@ -140,6 +140,7 @@ const LocalStrategy = require('passport-local').Strategy;
 passport.use(new LocalStrategy(function(username, password, done) {
   User.findOne({ username: username, password: password }, done);
 }));
+*/
 /*
 const passport = require('koa-passport')
 const abb = require('async-busboy');

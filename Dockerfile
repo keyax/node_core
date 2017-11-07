@@ -143,7 +143,6 @@ RUN cd /home/node \
  && npm install --save passport-google-auth \
  # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
  && npm install --save koa-socket-passport \
-
 && npm install --save co \
 && npm install --save koa-convert \
 && npm install --save koa-router \
@@ -158,6 +157,7 @@ RUN cd /home/node \
 && npm install --save async-busboy \
 && npm install --save progress-stream \
 && npm install --save koa-connect-flash \
+&& npm install --save bcrypt-nodejs \
  && npm install --save koa-flash \
 # && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
  && npm install --save koa-bodyparser \
