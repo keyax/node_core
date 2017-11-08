@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 var bcrypt   = require('bcrypt-nodejs');
 var passportLocalMongoose = require('passport-local-mongoose');
 
 // define the schema for our user model
-var userSchema = mongoose.Schema({
+var userSchem = mongoose.Schema({
   local: {
 //  username: {type: String, required: true },
     email: {type: String, required: true },
@@ -31,21 +31,21 @@ var userSchema = mongoose.Schema({
   }
 });
 
-User.plugin(passportLocalMongoose);
+userSchem.plugin(passportLocalMongoose);
 
 // methods ======================
 // generating a hash
-userSchema.methods.generateHash = function(password) {
+userSchem.methods.generateHash = function(password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
 // checking if password is valid
-userSchema.methods.validPassword = function(password) {
+userSchem.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
 // create the model for users and expose it to our app
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchem);
 
 /*
 var Schema = mongoose.Schema;

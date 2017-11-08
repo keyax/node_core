@@ -1,18 +1,22 @@
 
 
 
-require('./auth0.js')(passport); // pass passport for configuration  ./config/passport
 // app/routes.js
-module.export.pass = function(routerk, passport) {
+module.exports = function(routerk, passport) {
+
+  require('../auth0.js')(passport); // pass passport for configuration  ./config/passport
+/*
     // HOME PAGE (with login links) ========
-    routerk.get('/', function(req, res) {
+    routerk.get('/', async function (ctx, next) { // function(req, res) {
         res.render('index.ejs'); // load the index.ejs file
     });
+*/
     // LOGIN ===============================
     // show the login form
-    routerk.get('/login', function(req, res) {
+    routerk.get('/login', async function (ctx, next) { // function(req, res) {
         // render the page and pass in any flash data if it exists
-        res.render('login.ejs', { message: req.flash('loginMessage') });
+//        res.render('login.ejs', { message: req.flash('loginMessage') });
+       console.log("msg from pass.js /login");
     });
     // process the login form
     // app.post('/login', do all our passport stuff here);

@@ -54,15 +54,17 @@ const io = new IO({namespace: '/uploadz'});
 //const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
 //io.attach(appk);
 
-//const Routerk = require('koa-router');
-//const routerk = new Routerk(); // new{prefix: '/'}
 
 //koa deprecated Support for generators will be removed in v3.
 const convert = require('koa-convert');
 // ---------- override app.use method ----------
-const _use = appk.use
+const _use = appk.use                        // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
+
 appk.use = x => _use.call(appk, convert(x))
 // ---------- end ----------
+
+const Routerk = require('koa-router');
+const routerk = new Routerk(); // new{prefix: '/'}
 
 const routek = require('koa-route');
 const Mount = require('koa-mount');
@@ -111,16 +113,16 @@ mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
 .catch(error => console.error(error));
 //console.timeEnd("fileread");  //0.714ms
 */
-//const dbUrl = `mongodb://${dbadminqp.dbuser.user}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
-//console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
-
+const dbUrl = `mongodb://${dbadminqp.dbuser.createUser}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
+console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
+/*
 const dbUrl = "mongodb://172.17.0.1:27017/kyxtree";
 //var MongoClient = require('mongodb').MongoClient;
 MongoClient.connect(dbUrl, // ,{poolSize:10,ssl:true,uri_decode_auth:true},
   function(err, dbx) { // assert.equal(null, err);
   console.log("Connected correctly to mongodb server");
   var geo = dbx.collection("geo");
-  dbx.command(dbadminqp.dbuser)   // superadmin, dbadmin, dbuser
+dbx.command(dbadminqp.dbuser)   // superadmin, dbadmin, dbuser
 //dbAdmin = dbx.admin();
 //dbAdmin.addUser(dbadminqp.superadmin.user,dbadminqp.superadmin.pwd,{roles: dbadminqp.superadmin.roles})
 //dbAdmin.addUser(dbadminqp.dbadmin.user,dbadminqp.dbadmin.pwd,{roles: dbadminqp.dbadmin.roles})
@@ -129,7 +131,7 @@ MongoClient.connect(dbUrl, // ,{poolSize:10,ssl:true,uri_decode_auth:true},
          .catch(err => {console.log('Error while trying to create user mongodb: '+err); });  // throw err;
   dbx.close();
 });
-
+*/
 //module.exports.connect = function(mongoUri, promiseLib){
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 const mongooseConn = mongoose.connect(dbUrl, {
@@ -219,7 +221,7 @@ const pets = {
          ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
   //     ctx.set("Content-Type", "application/json");
          ctx.type="application/json";
-         ctx.flushHeaders();
+///         ctx.flushHeaders();
       ////   ctx.body = {"respuesta":"Hola amigos de Keyax"};  /// first step  >> who
     /*       const start = new Date();
            return next().then(() => {const ms = new Date() - start;
@@ -266,12 +268,12 @@ const pets = {
       ctx.body = await resujs;
  } catch (err) {
    ctx.body = { message: err.message }
-   ctx.status = err.status || 500
+   ctx.status = err.status || 500     // AssertionError [ERR_ASSERTION]: headers have already been sent
  };
 //ctx.body = JSON.stringify({ status: 200, body: `${resujs}` });
 //ctx.status = 200;
 await next();
-ctx.body = resujs;
+ctx.body = resujs;   // ReferenceError: resujs is not defined  without ctx.flushHeaders();
 //ctx.state.dbs = resujs;
   }, // end listados()
 
@@ -330,12 +332,15 @@ ctx.body = await sqlconnect.querypr(sqlopts)
 
   }  // end sqlang()
 };  // end pets
+
 var rte= '/pets/pets'; var unit = pets.list;
 //var uploadm = Multer({dest: '/img'});
 app.use(Mount('/pets/hi', pets.hi));
 app.use(routek.get('/pets/hello', pets.hi));
 app.use(routek.get(rte, unit));
 app.use(routek.get('/pets/pets/:name', pets.show));
+unit = pets.hi;
+///app.use(routek.get(rte, pets.hi));
 app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
 //app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
@@ -461,7 +466,7 @@ appk.use(koasession(CONFIG, appk));
 // or if you prefer all default config, just use => appk.use(koasession(appk));
 ///////appk.use( ... );  from koa-socket-session
 */
-
+/*
 // authentication
 //require('./auth.js');
 // const passport = require('koa-passport')
@@ -471,8 +476,8 @@ appk.use(bodyParse) // get information from html forms
 
 appk.use(passport.initialize());
 appk.use(passport.session());
-app.use(flash()); // use connect-flash for flash messages stored in session
-
+appk.use(flash()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
+*/
 appk.use(async (ctx,next) => {
   //ctx.state.varyin = 'vary';
   //  ctx.state.varyin.name = ctx.session.name;
@@ -481,6 +486,7 @@ appk.use(async (ctx,next) => {
   //  if (ctx.path === '/favicon.ico') return;  // ignore favicon
   let n = ctx.session.views || 0;
     ctx.session.views = await ++n;
+    app.use(routek.get(rte, pets.hi));
     ctx.session.username = 'socketmetro';
     ctx.state.filesize = filesize;   //  socket.io no ctx
   console.log("cokie._sid:"+ctx.cookies.get("kyx:sesgoose"));  // undefined
@@ -555,14 +561,24 @@ appk.use(ctx => {
 //      routerk.use('/api2/v0/', api2.routes(), api2.allowedMethods());
 //appk.use(rooter);
 
-appk.use(require('./routes/pass.js')(routerk, passport));
+/*
+console.log("who.......................");
+console.log(require('./routes/index.js')); //(routerk, passport); // ./routes/index.js  default // module.exports = routerk.routes();
+
+require('./routes/pass.js')(routerk, passport); //
+//appk.use(require('./routes/pass.js').pass(routerk, passport));  // Object.<anonymous> // require is not a function
 // require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
-appk.use(require('./routes/index.js')); // ./routes/index.js  default
-//appk.use(routerk.routes());
-//appk.use(routerk.allowedMethods());
-//appk
-//  .use(routerk.routes())
-//  .use(routerk.allowedMethods());
+*/
+// independent routes + module.exports = routerk.routes();
+//appk.use(require('./routes/index.js')); // ./routes/index.js  default
+
+var routerk2 = require('./routes'); // ./routes/index.js  default
+//appk.use(routerk2.routes());
+//appk.use(routerk2.allowedMethods());
+appk
+  .use(routerk2.routes())
+  .use(routerk2.allowedMethods());
+
 //========================================================================
 ///function callback(req, res) {
   //res = "HOyolanokati";

@@ -1,25 +1,27 @@
 // mapmeld
 //////////////////const passport = require('koa-passport')
 //////const mongoose = require('mongoose');
+/*
+const dbUrl = `mongodb://${dbadminqp.dbuser.createUser}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
+console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
+*/
 /////const dbUrl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //mongoose.connect(dbUrl);  //  && npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 //mongoose.connect(config.get('mongo'), {useMongoClient: true});  // no updates
 /////mongoose.connection.openUri(dbUrl); //  mongoose@4.11
 //const passport = require('koa-passport');
-/*
-const LocalStrategy = require('passport-local').Strategy;
-const LocalMongoose = require('passport-local-mongoose');
-const JwtStrategy = require('passport-jwt').Strategy;
-const FacebookStrategy = require('passport-facebook').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
-const GoogleStrategy = require('passport-google-auth').Strategy;
-*/
+
+//const LocalStrategy = require('passport-local').Strategy;
+/////const LocalMongoose = require('passport-local-mongoose');
+/////const JwtStrategy = require('passport-jwt').Strategy;
+//const FacebookStrategy = require('passport-facebook').Strategy;
+//const TwitterStrategy = require('passport-twitter').Strategy;
+//const GoogleStrategy = require('passport-google-auth').Strategy;
 
 //var flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
 // var flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
 // config/passport.js  // load all the things we need
-var LocalStrategy   = require('passport-local').Strategy;
 // load up the user model
 var User            = require('./models/user');  // ../app/models/user   default  .js
 // expose this function to our app using module.exports
@@ -39,6 +41,8 @@ module.exports = function(passport) {
       done(err, user);
       });
    });
+
+const LocalStrategy = require('passport-local').Strategy;
 // =========================================================================
 // LOCAL SIGNUP ============================================================
 // =========================================================================
@@ -104,9 +108,47 @@ passport.use('local-login', new LocalStrategy({
           return done(null, user);
       }); // User.findOne
 }));     // function // LocalStrategy // passport.use 'local-login'
+
+const FacebookStrategy = require('passport-facebook').Strategy;
+passport.use(new FacebookStrategy({
+    clientID: 'your-client-id',
+    clientSecret: 'your-secret',
+    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/facebook/callback'
+  },
+  function(token, tokenSecret, profile, done) {
+    // retrieve user
+    User.findOne({ facebook_id: profile.id }, done);
+//  fetchUser().then(user => done(null, user))
+  }
+));
+const TwitterStrategy = require('passport-twitter').Strategy;
+passport.use(new TwitterStrategy({
+    consumerKey: 'your-consumer-key',
+    consumerSecret: 'your-secret',
+    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/twitter/callback'
+  },
+  function(token, tokenSecret, profile, done) {
+    // retrieve user
+    User.findOne({ twitter_id: profile.id }, done);
+    //  fetchUser().then(user => done(null, user))
+  }
+));
+const GoogleStrategy = require('passport-google-auth').Strategy;
+passport.use(new GoogleStrategy({
+    clientId: 'your-client-id',
+    clientSecret: 'your-secret',
+    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/google/callback'
+  },
+  function(token, tokenSecret, profile, done) {
+    // retrieve user
+    User.findOne({ google_id: profile.id }, done);
+//  fetchUser().then(user => done(null, user))
+  }
+));
+
 };      // module.exports.pass = function
 
-
+/*
 const fetchUser = ((ctx, next) => {
   // This is an example! Use password hashing in your app
 //  const user = { id: 1, username: 'test', password: 'test' }
@@ -126,6 +168,7 @@ const user = User.findOne({ username: user.username }, function (err, testUser)
     return user;
   }
 })();
+*/
 /*
 passport.serializeUser(function(user, done) {
   user = fetchUser();
@@ -151,7 +194,7 @@ const fetchUser = (async () => {
   // This is an example! Use password hashing in your
   const {fields} = await abb(ctx.req, {});
     console.log(util.inspect({fields}));
-  ctx.state.user = {};
+  ctx.state.user = {};                      // Cannot read property 'state' of undefined
   ctx.state.user.username = fields.userlogin;
   ctx.state.user.password = fields.userpwd;
   console.log("loginx:"+util.inspect(ctx.state.user));
@@ -199,40 +242,3 @@ passport.use(new LocalStrategy(function(username, password, done) {
     .catch(err => done(err))
 }))
 */
-
-const FacebookStrategy = require('passport-facebook').Strategy
-passport.use(new FacebookStrategy({
-    clientID: 'your-client-id',
-    clientSecret: 'your-secret',
-    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/facebook/callback'
-  },
-  function(token, tokenSecret, profile, done) {
-    // retrieve user
-    User.findOne({ facebook_id: profile.id }, done);
-//  fetchUser().then(user => done(null, user))
-  }
-))
-const TwitterStrategy = require('passport-twitter').Strategy
-passport.use(new TwitterStrategy({
-    consumerKey: 'your-consumer-key',
-    consumerSecret: 'your-secret',
-    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/twitter/callback'
-  },
-  function(token, tokenSecret, profile, done) {
-    // retrieve user
-    User.findOne({ twitter_id: profile.id }, done);
-    //  fetchUser().then(user => done(null, user))
-  }
-))
-const GoogleStrategy = require('passport-google-auth').Strategy
-passport.use(new GoogleStrategy({
-    clientId: 'your-client-id',
-    clientSecret: 'your-secret',
-    callbackURL: 'http://localhost:' + (process.env.PORT || 3000) + '/auth/google/callback'
-  },
-  function(token, tokenSecret, profile, done) {
-    // retrieve user
-    User.findOne({ google_id: profile.id }, done);
-//  fetchUser().then(user => done(null, user))
-  }
-))

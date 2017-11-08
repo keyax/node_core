@@ -93,86 +93,88 @@ RUN cd /home/node \
 && npm install --save fs-extra \
 && npm install --save mz \
 # && npm install --save jquery \
- && npm install --save express \
+# && npm install --save express \
 # && npm install --save express-session \
+# && npm install --save passport \
 # && npm install --save express-jwt \
- && npm install --save json-parse-async \
- && npm install --save json-schema-ref-parser \
- && npm install --save cookie-parser \
- && npm install --save body-parser \
- && npm install --save formidable \
- && npm install --save multer \
  && npm install --save bluebird \
  && npm install --save node-fetch \
  && npm install --save axios \
  && npm install --save xhr2 \
 # && npm install --save koa2-cors \
+ && npm install --save ws \
+&& npm install --save socket.io \
+&& npm install --save socketio-auth \
 && npm install --save mongodb \
 && npm install --save mongoose \
 # && npm install --save mongoose@4.10.8 \
-&& npm install --save ws \
-&& npm install --save socket.io \
-&& npm install --save socketio-auth \
+&& npm install --save koa \
+&& npm install --save koa-compose \
+ && npm install --save koa-cookie \
  && npm install --save cookie \
  && npm install --save cookies \
-&& npm install --save koa \
- && npm install --save koa-cookie \
+ && npm install --save cookie-parser \
  && npm install --save koa-session \
+# && npm install --save koa-session2 \
  && npm install --save koa-socket-session \
  && npm install --save koa-socket \
+ && npm install --save koa-socket-passport \
  && npm install --save koa-socket.io \
 # && npm install --save koa.io \
 && npm install --save socket.io-mongodb \
  && npm install --save mubsub \
-# && npm install --save koa-session2 \
-# && npm install --save koa2-session-store \
  && npm install --save koa-basic-auth \
 && npm install --save koa-session-store \
+# && npm install --save koa2-session-store \
  && npm install --save koa-session-mongo \
 && npm install --save koa-session-mongoose \
-  && npm install --save koa-passport \
-  && npm install --save koa-jwt \
-&& npm install --save jsonwebtoken \
-&& npm install --save passport \
-&& npm install --save jwt-simple \
-&& npm install --save passport-jwt \
- && npm install --save passport-local \
+&& npm install --save koa-passport \
+&& npm install --save passport-local \
 && npm install --save passport-local-mongoose \
+&& npm install --save bcrypt-nodejs \
  && npm install --save passport-facebook \
  && npm install --save passport-twitter \
  && npm install --save passport-google-auth \
+&& npm install --save passport-jwt \
+ && npm install --save koa-jwt \
+ && npm install --save jsonwebtoken \
+ && npm install --save jwt-simple \
  # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
- && npm install --save koa-socket-passport \
 && npm install --save co \
 && npm install --save koa-convert \
 && npm install --save koa-router \
 && npm install --save koa-route \
 && npm install --save koa-mount \
- && npm install --save querystring \
- && npm install --save qs \
  && npm install --save koa-rest-router \
  && npm install --save koa-respond \
  && npm install --save koa-send \
  && npm install --save koa-static \
 && npm install --save async-busboy \
 && npm install --save progress-stream \
-&& npm install --save koa-connect-flash \
-&& npm install --save bcrypt-nodejs \
- && npm install --save koa-flash \
+&& npm install --save querystring \
+&& npm install --save qs \
 # && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
  && npm install --save koa-bodyparser \
+ && npm install --save body-parser \
  && npm install --save koa-body \
  && npm install --save koa-validate \
 # && npm install --save koa-validation \
- && npm install --save koa-formidable \
- && npm install --save koa-multer \
- && npm install --save koa-logger \
-&& npm install --save mysql \
- && npm install --save mysql2 \
+&& npm install --save koa-formidable \
+&& npm install --save formidable \
+&& npm install --save koa-multer \
+&& npm install --save multer \
+ && npm install --save exiftool \
  && npm install --save jsonlint \
-&& npm install --save exiftool \
+ && npm install --save json-parse-async \
+ && npm install --save json-schema-ref-parser \
+ && npm install --save koa-logger \
+&& npm install --save koa-connect-flash \
+ && npm install --save koa-flash \
 && npm install --save d3 \
 && npm install --save leaflet \
+&& npm install --save mysql \
+ && npm install --save mysql2 \
+
 && npm init --yes
 
 WORKDIR /home/node

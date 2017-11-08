@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 const path = require('path');
-const url = require('url');   
+const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 const fs = require('fs');
@@ -70,6 +70,7 @@ routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON
 */
 /////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
+// module.exports.who =
 routerk.post("/who", async function (ctx, next) {
  try {
 ctx.body = ctx.session;
@@ -485,5 +486,6 @@ routerk.post('/xform', function (req, res, next) {
 });
 */
 /////};
-module.exports = routerk.routes();
+module.exports = routerk;
+//module.exports = routerk.routes();
 //module.exports = routerk.allowedMethods();
