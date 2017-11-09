@@ -1,19 +1,21 @@
 
+const Router = require('koa-router');
+const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
 
 
 // app/routes.js
-module.exports = function(routerk, passport) {
+function pas(passport) {
 
   require('../auth0.js')(passport); // pass passport for configuration  ./config/passport
 /*
     // HOME PAGE (with login links) ========
-    routerk.get('/', async function (ctx, next) { // function(req, res) {
+    routerk.get('/', async function (ctx, next) { // function(req, res)
         res.render('index.ejs'); // load the index.ejs file
     });
 */
     // LOGIN ===============================
     // show the login form
-    routerk.get('/login', async function (ctx, next) { // function(req, res) {
+    routerk.get('/login', async function (ctx, next) { // function(req, res)
         // render the page and pass in any flash data if it exists
 //        res.render('login.ejs', { message: req.flash('loginMessage') });
        console.log("msg from pass.js /login");
@@ -54,11 +56,13 @@ module.exports = function(routerk, passport) {
          failureFlash : true // allow flash messages
      }));
 };
+
+module.exports = routerk;
 // route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
+function isLoggedIn(ctx, next) {
     // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
+    if (ctx.isAuthenticated())
         return next();
     // if they aren't redirect them to the home page
     res.redirect('/');
-}
+};

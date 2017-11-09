@@ -10,7 +10,7 @@ console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://use
 //mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
 //mongoose.connect(config.get('mongo'), {useMongoClient: true});  // no updates
 /////mongoose.connection.openUri(dbUrl); //  mongoose@4.11
-//const passport = require('koa-passport');
+const passport = require('koa-passport');
 
 //const LocalStrategy = require('passport-local').Strategy;
 /////const LocalMongoose = require('passport-local-mongoose');

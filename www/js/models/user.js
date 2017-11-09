@@ -1,3 +1,15 @@
+/*
+const mongoose = require('mongoose')
+const userSchema = {
+  username: String,
+  password: String,
+  facebook_id: String,
+  twitter_id: String,
+  google_id: String
+}
+module.exports = mongoose.model('User', userSchema)
+*/
+
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 var bcrypt   = require('bcrypt-nodejs');

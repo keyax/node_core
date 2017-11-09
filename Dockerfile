@@ -94,10 +94,15 @@ RUN cd /home/node \
 && npm install --save mz \
 # && npm install --save jquery \
 # && npm install --save express \
+# && npm install --save formidable \
+# && npm install --save multer \
+# && npm install --save cookies \
+# && npm install --save cookie-parser \
 # && npm install --save express-session \
 # && npm install --save passport \
 # && npm install --save express-jwt \
  && npm install --save bluebird \
+ && npm install --save co \
  && npm install --save node-fetch \
  && npm install --save axios \
  && npm install --save xhr2 \
@@ -109,11 +114,19 @@ RUN cd /home/node \
 && npm install --save mongoose \
 # && npm install --save mongoose@4.10.8 \
 && npm install --save koa \
+&& npm install --save koa-convert \
+&& npm install --save koa-if \
 && npm install --save koa-compose \
+&& npm install --save koa-mount \
+&& npm install --save koa-router \
+&& npm install --save koa-combine-routers \
+&& npm install --save koa-route \
+ && npm install --save koa-rest-router \
+ && npm install --save koa-respond \
+ && npm install --save koa-send \
+ && npm install --save koa-static \
  && npm install --save koa-cookie \
  && npm install --save cookie \
- && npm install --save cookies \
- && npm install --save cookie-parser \
  && npm install --save koa-session \
 # && npm install --save koa-session2 \
  && npm install --save koa-socket-session \
@@ -140,15 +153,6 @@ RUN cd /home/node \
  && npm install --save jsonwebtoken \
  && npm install --save jwt-simple \
  # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
-&& npm install --save co \
-&& npm install --save koa-convert \
-&& npm install --save koa-router \
-&& npm install --save koa-route \
-&& npm install --save koa-mount \
- && npm install --save koa-rest-router \
- && npm install --save koa-respond \
- && npm install --save koa-send \
- && npm install --save koa-static \
 && npm install --save async-busboy \
 && npm install --save progress-stream \
 && npm install --save querystring \
@@ -160,9 +164,7 @@ RUN cd /home/node \
  && npm install --save koa-validate \
 # && npm install --save koa-validation \
 && npm install --save koa-formidable \
-&& npm install --save formidable \
 && npm install --save koa-multer \
-&& npm install --save multer \
  && npm install --save exiftool \
  && npm install --save jsonlint \
  && npm install --save json-parse-async \

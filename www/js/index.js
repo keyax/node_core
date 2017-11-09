@@ -58,14 +58,13 @@ const io = new IO({namespace: '/uploadz'});
 //koa deprecated Support for generators will be removed in v3.
 const convert = require('koa-convert');
 // ---------- override app.use method ----------
-const _use = appk.use                        // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
-
+const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
 appk.use = x => _use.call(appk, convert(x))
 // ---------- end ----------
 
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
-
+const Compose = require('koa-compose');
 const routek = require('koa-route');
 const Mount = require('koa-mount');
 const Static = require('koa-static');
@@ -377,7 +376,7 @@ appk.use(async (ctx, next) => {  // koa error handling
 //appk.use(cookiek("keyax57secretos")); // not a function
 
 // uid-safe vs uid2 vs node-uuid >>>> base64url.encode(crypto.randomBytes(length).toString('base64'))
-/* // star
+/* // comment-star
 // koa-session-store + koa-session-mongo
 appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
@@ -410,7 +409,7 @@ const CONFIGS = {
 const sesion = sessionkstore(CONFIGS);
 appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
   // or if you prefer all default config, just use => app.use(session(appk));
-*/// end star
+*/// end comment-star
 
 // koa-session-store + koa-session-mongoose
 appk.keys = dbadminqp.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
@@ -486,7 +485,6 @@ appk.use(async (ctx,next) => {
   //  if (ctx.path === '/favicon.ico') return;  // ignore favicon
   let n = ctx.session.views || 0;
     ctx.session.views = await ++n;
-    app.use(routek.get(rte, pets.hi));
     ctx.session.username = 'socketmetro';
     ctx.state.filesize = filesize;   //  socket.io no ctx
   console.log("cokie._sid:"+ctx.cookies.get("kyx:sesgoose"));  // undefined
@@ -561,23 +559,34 @@ appk.use(ctx => {
 //      routerk.use('/api2/v0/', api2.routes(), api2.allowedMethods());
 //appk.use(rooter);
 
-/*
-console.log("who.......................");
-console.log(require('./routes/index.js')); //(routerk, passport); // ./routes/index.js  default // module.exports = routerk.routes();
 
-require('./routes/pass.js')(routerk, passport); //
+//console.log("who.......................");
+//console.log(require('./routes/index.js')); //(routerk, passport); // ./routes/index.js  default // module.exports = routerk.routes();
+
+//require('./routes/pass.js')(routerk, passport); //
 //appk.use(require('./routes/pass.js').pass(routerk, passport));  // Object.<anonymous> // require is not a function
 // require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
-*/
+
 // independent routes + module.exports = routerk.routes();
 //appk.use(require('./routes/index.js')); // ./routes/index.js  default
 
-var routerk2 = require('./routes'); // ./routes/index.js  default
+routerk2 = require('./routes'); // ./routes/index.js  default
+//routerk2 = require('./routes/pass.js').pas(passport);
+
 //appk.use(routerk2.routes());
 //appk.use(routerk2.allowedMethods());
 appk
   .use(routerk2.routes())
   .use(routerk2.allowedMethods());
+
+routerk3 = require('./routes'); // ./routes/index.js  default
+  //routerk2 = require('./routes/pass.js').pas(passport);
+
+  //appk.use(routerk2.routes());
+  //appk.use(routerk2.allowedMethods());
+  appk
+    .use(routerk3.routes())
+    .use(routerk3.allowedMethods());
 
 //========================================================================
 ///function callback(req, res) {
@@ -693,8 +702,8 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'});
     socket.emit('hiserver', { hello: 'world baby '+socket.id });
     socket.on('hiclient', function (data) {
        console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
-       console.log(`with socket cookie: ${socket.request.headers.cookie}`);
-       console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`);
+       console.log(`with socket cookie: ${socket.request.headers.cookie}`); // previous socket.id
+       console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`); // previous socket.id
        var date = new Date();
            date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry
            var expires = "; expires="+date.toGMTString();
