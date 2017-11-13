@@ -68,7 +68,7 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
     // show the signup form
     routerk.get('/signup', function(ctx) {
         // render the page and pass in any flash data if it exists
-    ///    ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
+        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
     });
     // process the signup form
     // app.post('/signup', do all our passport stuff here);
