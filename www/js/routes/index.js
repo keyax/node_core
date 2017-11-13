@@ -57,7 +57,7 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
     // LOGIN ===============================
     // show the login form
 //    routerk.get('/logito', console.log('logito ok'));
-    routerk.get('/logito', async function (ctx, next) { // function(req, res)
+    routerk.get('/loginz', async function (ctx, next) { // function(req, res)
         // render the page and pass in any flash data if it exists
 //        res.render('login.ejs', { message: req.flash('loginMessage') });
        console.log("msg from pass.js /login");
@@ -68,7 +68,7 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
     // show the signup form
     routerk.get('/signup', function(ctx) {
         // render the page and pass in any flash data if it exists
-        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
+    ///    ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
     });
     // process the signup form
     // app.post('/signup', do all our passport stuff here);
@@ -92,9 +92,9 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
          failureFlash : true // allow flash messages
      }));
      // process the login form
-    routerk.post('/loginpass', passport.authenticate('local-login', {
-         successRedirect : '/login', // redirect to the secure profile section
-         failureRedirect : '/loginpass', // redirect back to the signup page if there is an error
+    routerk.post('/login', passport.authenticate('local-login', {
+         successRedirect : '/profile', // redirect to the secure profile section
+         failureRedirect : '/login', // redirect back to the signup page if there is an error
          failureFlash : true // allow flash messages
      }));
 
@@ -561,6 +561,8 @@ routerk.post('/xform', function (req, res, next) {
 // OK1
 appk.use(routerk.routes());
 appk.use(routerk.allowedMethods());
+
+return appk;
 };  //  ();
 //module.exports = routerx;
 // OK1

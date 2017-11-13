@@ -49,6 +49,7 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
 // expose this function to our app using module.exports
 module.exports = function(appk, passport) {
 var User            = require('./models/user');  // ../app/models/user   default  .js
+
 // =========================================================================
 // passport session setup ==================================================
 // =========================================================================
@@ -56,14 +57,22 @@ var User            = require('./models/user');  // ../app/models/user   default
 // passport needs ability to serialize and unserialize users out of session
 // used to serialize the user for the session
    passport.serializeUser(function(user, done) {
-     done(null, { username: user.username });  // done(null, user.id);
+     done(null, { username: user.username });
+  // done(null, user.id);
       });
 // used to deserialize the user
    passport.deserializeUser(function(id, done) {
       User.findById(id, function(err, user) {
       done(err, user);  //     done(null, user);
+//    User.findById(id, done);
       });
    });
+/*
+   const LocalStrategy = require('passport-local').Strategy
+   passport.use(new LocalStrategy(function(username, password, done) {
+     User.findOne({ username: username, password: password }, done);
+   }))
+**/
 
 const LocalStrategy = require('passport-local').Strategy;
 // =========================================================================
@@ -73,13 +82,13 @@ const LocalStrategy = require('passport-local').Strategy;
 // by default, if there was no name, it would just be called 'local'
    passport.use('local-signup', new LocalStrategy({
 // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
+        usernameField : 'username', //'email',
         passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
+//        passReqToCallback : true // allows us to pass back the entire request to the callback
         },
-        function(ctx, email, password, done) {
+        function(email, password, done) {
 // asynchronous // User.findOne wont fire unless data is sent back
-        process.nextTick(function() {
+  ////      process.nextTick(function() {
 // find a user whose email is the same as the forms email
 // we are checking to see if the user trying to login already exists
     User.findOne({ 'local.email' :  email }, function(err, user) {
@@ -101,7 +110,7 @@ const LocalStrategy = require('passport-local').Strategy;
             });
         }  // else
     });   // User.findOne
-  });    // process.nextTick
+///  });    // process.nextTick
 }));    // function // LocalStrategy // passport.use 'local-signup'
 
 // =========================================================================
@@ -109,13 +118,14 @@ const LocalStrategy = require('passport-local').Strategy;
 // =========================================================================
 // we are using named strategies since we have one for login and one for signup
 // by default, if there was no name, it would just be called 'local'
-passport.use('local-login', new LocalStrategy({
+passport.use('local-login', new LocalStrategy(
+  {
 // by default, local strategy uses username and password, we will override with email
-   usernameField : 'email',
+   usernameField : 'username', //'email',
    passwordField : 'password',
-   passReqToCallback : true // allows us to pass back the entire request to the callback
+//   passReqToCallback : true // allows us to pass back the entire request to the callback
    },
-   function(req, email, password, done) { // callback with email and password from our form
+   function(email, password, done) { // callback with email and password from our form
 // find a user whose email is the same as the forms email
 // we are checking to see if the user trying to login already exists
       User.findOne({ 'local.email' :  email }, function(err, user) {

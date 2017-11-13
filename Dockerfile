@@ -123,14 +123,14 @@ RUN cd /home/node \
 && npm install --save koa-validate \
 # && npm install --save koa-validation \
 # && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
-&& npm install --save ejs \
 && npm install --save async-busboy \
 && npm install --save progress-stream \
 && npm install --save querystring \
 && npm install --save qs \
-&& npm install --save json-parse-async \
 && npm install --save json-schema-ref-parser \
+&& npm install --save json-parse-async \
 && npm install --save jsonlint \
+&& npm install --save koa-ejs \
 && npm install --save jsonwebtoken \
 && npm install --save jwt-simple \
 && npm install --save koa-formidable \

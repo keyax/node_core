@@ -86,13 +86,14 @@ const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('
 appk.use = x => _use.call(appk, convert(x))
 // ---------- end ----------
 
-const csrf = require('koa-csrf');
+const CSRF = require('koa-csrf');
 const passport = require('koa-passport');
 //var User = require('./models/user');
 appk.proxy = true;  // koa passport trust proxy
 require('./auth0.js')(appk, passport); // require('./config/passport')(passport); // pass passport for configuration
 
 const socketio = require('socket.io');
+const siokAuth = require('socketio-auth');
 //const siok = socketio(serverk, {origins:'keyax.org:* http://www.keyax.org:* ws://keyax.org:*'}); // socketio(appk);
 //const siok = socketio.listen(serverk);
 const IO = require('koa-socket.io');
@@ -364,7 +365,7 @@ server.listen(parseInt(`${port}+100`), (err) => {
 });
 */
 
-/*
+
 appk.use(async (ctx, next) => {  // koa error handling
   try {
     await next();
@@ -377,7 +378,6 @@ appk.use(async (ctx, next) => {  // koa error handling
 // process.setMaxListeners(15); // require('events').EventEmitter.defaultMaxListeners = 15; // default 10 unlimited 0
   }
 });
-*/
 
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
@@ -479,18 +479,38 @@ appk.use(koasession(CONFIG, appk));
 //require('./auth.js');
 // const passport = require('koa-passport')
 //appk.use(abb(ctx.req));
+/*
 async function startApp() {
   await next();
   return sessionkstore.setup();
 }
-
+*/
 
 //appk.use(Cookies); // read cookies (needed for auth) // error : next is not a function // not found
-//appk.use(Parser) // get information from html forms // error : next is not a function // not found
+appk.use(bodyParser()); // get information from html forms // error : next is not a function // not found
+// appk.use(bodyParser);// ctx.onerror is not a function ... process._tickCallback
+/*
+appk.use(async ctx => {
+  // the parsed body will store in ctx.request.body
+  // if nothing was parsed, body will be an empty object {}
+  console.log("ctx.body ="+ctx.request.body);
+});
+*/
+/*
+app.use(new CSRF({    // add the CSRF middleware
+  invalidSessionSecretMessage: 'Invalid session secret',
+  invalidSessionSecretStatusCode: 403,
+  invalidTokenMessage: 'Invalid CSRF token',
+  invalidTokenStatusCode: 403,
+  excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
+  disableQuery: false
+}));
+*/
+///require('./auth')
 appk.use(passport.initialize());
 appk.use(passport.session());
 appk.use(flash()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
-/*
+
 appk.use(async (ctx, next) => {
   //ctx.state.varyin = 'vary';
   //  ctx.state.varyin.name = ctx.session.name;
@@ -509,7 +529,7 @@ appk.use(async (ctx, next) => {
   await next();  // next() corrects Not Found, await corrects OK
   return ctx;
 });
-*/
+
   /*
   async function process(next) {
     await next;
@@ -609,8 +629,8 @@ Combine([router10, router11]);
 // independent routes + module.exports = routerk.routes();
 // appk.use(require('./routes')); // ./routes/index.js  default  // OK2
 
-//require('./routes')(appk, passport); //
-require('./routes/pass')(appk, passport); //
+require('./routes')(appk, passport); //
+//require('./routes/pass')(appk, passport); //
 
 /*
 var routerk2 = require('./routes/index.js');
@@ -619,6 +639,15 @@ appk.use(routerk2.allowedMethods());
 //appk
 //  .use(routerk2.routes())
 //  .use(routerk2.allowedMethods());
+*/
+/* // https://segmentfault.com/q/1010000009716118
+app
+  .use(bodyParser)
+  .use(router.routes())
+  .use(router.allowedMethods())
+  .on('error', console.error)
+
+app.onerror = console.error
 */
 //========================================================================
 ///function callback(req, res) {
