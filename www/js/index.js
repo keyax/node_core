@@ -3,10 +3,11 @@
 //[ 'assert','buffer','child_process','cluster','console','constants','crypto','dgram','dns','domain','events',
 //  'fs','http','https','module','net','os','path','process','punycode','querystring','readline','repl',
 //  'stream','string_decoder','timers','tls','tty','url','util','v8','vm','zlib' ]
-const bluebird = require('bluebird');
-global.Promise = require('bluebird');
+//const bluebird = require('bluebird');
+//global.Promise = require('bluebird');
 //const co = require("bluebird").coroutine;
 const co = require("co");
+//const { spawn } = require('child_process')  // execute shell commands
 //var fs = Promise.promisifyAll(require("fs"));  // readFileAsync
 const fs = require('fs');
 const mzfs = require('mz/fs');
@@ -16,16 +17,50 @@ const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 //var fetch = require('node-fetch');
+//const Cors = require('koa2-cors');
 const xhr2 = require('xhr2');
 const assert = require('assert');
-var progress = require('progress-stream');
+const jwt = require('jsonwebtoken');
+
+const http = require('http');
+// const https = require('https');
+
+const Koa = require('koa');
+const send = require('koa-send'); //  ctx.send(201, { message: 'new beginnings!' });
+const respond = require('koa-respond');  // ctx.ok({ id: 123, name: 'Dat Boi' });  ctx.notFound({ message: 'Not found, boii' });
+const Static = require('koa-static');
+const Mount = require('koa-mount');
+const routek = require('koa-route');
+
+const Routerk = require('koa-router');
+const routerk = new Routerk(); // new{prefix: '/'}
+const Combine = require('koa-combine-routers');
+
+const Cookiek = require('koa-cookie'); // only parser
+//var Cookie = Cookiek(); // Cookiek is not a function
+const Cookies = require('cookies');
+//const cookieParse = require('cookie-parser'); // read cookies (needed for auth)
+//const bodyParse = require('body-parser');     // get information from html forms
+const bodyParser = require('koa-bodyparser');
+const Parser = require('koa-body');
+const Valid = require('koa-validate');
+const abb = require('async-busboy');
+const ejs = require('ejs');
+const progress = require('progress-stream');
+const jsparse = require('json-parse-async');
+const jsonref = require('json-schema-ref-parser');
+var Formis = require('koa-formidable');
+const Multer = require('koa-multer');
+const Logger = require('koa-logger');
+const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
+// const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
 
 const koasession = require('koa-session');
 const KSsession = require('koa-socket-session');
-const sessionkstore = require('koa-session-store');  //  or koa-generic-session
+const sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
 const sessionkmongo = require('koa-session-mongo');
-const mongoose = require('mongoose');
 const sessionkmongoose = require('koa-session-mongoose');
+const mongoose = require('mongoose');
 // const mongo = require('mongodb');
 const mongo = mongoose.mongo;
 const MongoClient = mongo.MongoClient; //mongoose.mongo.MongoClient.connect(uri, function (err, conn) {});
@@ -34,18 +69,30 @@ const MongoServer = mongo.Server;
 //const mongoAdapter = require('socket.io-mongodb'); // siok.adapter(mongoAdapter('mongodb://localhost:27017/socket-io'));
 //const mubsub = require('mubsub');
 
-
-const http = require('http');
-// const https = require('https');
-const Koa = require('koa');
 const appk = new Koa();  // const appk = Koa();
 const serverk  = http.createServer(appk.callback());  // can mount (express.app) // serverk.listen(8000);
 // const serverks  = https.createServer(appk.callback()); // serverks.listen(8443);
 const port =  8000 || process.argv[2]; // node server.js 8000 // pass parameter in command line
+
 const app = new Koa();  // const app = Koa();
 const server  = http.createServer(app.callback());  // can mount (express.app) // server.listen(8000);
-const socketio = require('socket.io');
 
+const Compose = require('koa-compose');
+const convert = require('koa-convert');  // appk.use(convert(legacyMiddleware))
+// appk.use(convert.compose(legacyMiddleware, modernMiddleware))
+// koa deprecated Support for generators will be removed in v3.
+// ---------- override app.use method ----------convert generator to promise & back ?
+const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
+appk.use = x => _use.call(appk, convert(x))
+// ---------- end ----------
+
+const csrf = require('koa-csrf');
+const passport = require('koa-passport');
+//var User = require('./models/user');
+appk.proxy = true;  // koa passport trust proxy
+require('./auth0.js')(appk, passport); // require('./config/passport')(passport); // pass passport for configuration
+
+const socketio = require('socket.io');
 //const siok = socketio(serverk, {origins:'keyax.org:* http://www.keyax.org:* ws://keyax.org:*'}); // socketio(appk);
 //const siok = socketio.listen(serverk);
 const IO = require('koa-socket.io');
@@ -53,45 +100,6 @@ const io = new IO({namespace: '/uploadz'});
 //const IO = require('koa-socket');
 //const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
 //io.attach(appk);
-
-
-//koa deprecated Support for generators will be removed in v3.
-const convert = require('koa-convert');
-// ---------- override app.use method ----------
-const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
-appk.use = x => _use.call(appk, convert(x))
-// ---------- end ----------
-
-const Routerk = require('koa-router');
-const routerk = new Routerk(); // new{prefix: '/'}
-const Compose = require('koa-compose');
-const routek = require('koa-route');
-const Mount = require('koa-mount');
-const Static = require('koa-static');
-//const Cors = require('koa2-cors');
-const abb = require('async-busboy');
-const bodyParser = require('koa-bodyparser');
-const Parser = require('koa-body');
-const Valid = require('koa-validate');
-var Formis = require('koa-formidable');
-const Multer = require('koa-multer');
-const Logger = require('koa-logger');
-const respond = require('koa-respond');
-const send = require('koa-send');
-const jsparse = require('json-parse-async');
-const jsonref = require('json-schema-ref-parser');
-const cookieParse = require('cookie-parser'); // read cookies (needed for auth)
-const bodyParse = require('body-parser');     // get information from html forms
-const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
-// const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
-const passport = require('passport');
-require('./auth0.js')(passport); // require('./config/passport')(passport); // pass passport for configuration
-appk.proxy = true;  // koa passport trust proxy
-
-const Cookies = require('cookies');
-const cookiek = require('koa-cookie'); // only parser
-//var cookie = cookiek();
-var jwt = require('jsonwebtoken');
 
 console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
 var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
@@ -178,6 +186,7 @@ const dbx = {
   jane: { name: 'jane', species: 'ferret' }
 };
 const pets = {
+  app1:{
   list: (ctx) => {
     const names = Object.keys(dbx);
     ctx.body = 'pets: ' + names.join(', ');
@@ -187,11 +196,12 @@ const pets = {
     if (!pet) return ctx.throw(404, 'cannot find that pet');
     ctx.body = pet.name + ' is a ' + pet.species;
     return;
-  },
+   },
   hi: async function (ctx, next) {
     await next();
     ctx.response.body = 'Hello';
-  },
+  }
+},
   dbc: async function (ctx, next) {
     try {
   var dbconn = require('./dbconnect.js');
@@ -331,14 +341,15 @@ ctx.body = await sqlconnect.querypr(sqlopts)
 
   }  // end sqlang()
 };  // end pets
+console.log('APPS> '+Object.keys(pets.app1));
 
-var rte= '/pets/pets'; var unit = pets.list;
+var rte= '/pets/pets'; var unit = pets.app1.list;
 //var uploadm = Multer({dest: '/img'});
-app.use(Mount('/pets/hi', pets.hi));
-app.use(routek.get('/pets/hello', pets.hi));
+app.use(Mount('/pets/hi', pets.app1.hi)); // Internal Serve Error>TypeError:Cannot read property 'middleware' of undefined
+app.use(routek.get('/pets/hello', pets.app1.hi)); // Not Found
 app.use(routek.get(rte, unit));
-app.use(routek.get('/pets/pets/:name', pets.show));
-unit = pets.hi;
+app.use(routek.get('/pets/pets/:name', pets.app1.show));
+unit = pets.app1.hi;
 ///app.use(routek.get(rte, pets.hi));
 app.use(routek.get('/pets/listad', pets.listados));
 app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
@@ -353,21 +364,20 @@ server.listen(parseInt(`${port}+100`), (err) => {
 });
 */
 
-//io.attach(appk);
-
+/*
 appk.use(async (ctx, next) => {  // koa error handling
   try {
     await next();
   } catch (err) {
     ctx.status = err.status || 500;
     ctx.body = err.message;
-    ctx.appk.emit('error', err, ctx);
-    console.log('errordb', err, ctx);
+//    ctx.emit('error', err, ctx);
+    console.log('ErrorKoa: ', err);
 // (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
 // process.setMaxListeners(15); // require('events').EventEmitter.defaultMaxListeners = 15; // default 10 unlimited 0
   }
 });
-
+*/
 
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
@@ -376,7 +386,7 @@ appk.use(async (ctx, next) => {  // koa error handling
 //appk.use(cookiek("keyax57secretos")); // not a function
 
 // uid-safe vs uid2 vs node-uuid >>>> base64url.encode(crypto.randomBytes(length).toString('base64'))
-/* // comment-star
+/*// comment-star
 // koa-session-store + koa-session-mongo
 appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
@@ -436,8 +446,7 @@ const CONFIGS = {
                        //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
     }
   };
-appk.use(sessionkstore(CONFIGS)); //{store: new sessionkmongoose()}
-
+appk.use(convert(sessionkstore(CONFIGS))); //{store: new sessionkmongoose()}
 /*
 //  koa-session + koa-socket-session + koa-socket.io
 const CONFIG = {
@@ -465,19 +474,24 @@ appk.use(koasession(CONFIG, appk));
 // or if you prefer all default config, just use => appk.use(koasession(appk));
 ///////appk.use( ... );  from koa-socket-session
 */
-/*
+
 // authentication
 //require('./auth.js');
 // const passport = require('koa-passport')
 //appk.use(abb(ctx.req));
-appk.use(cookieParse) // read cookies (needed for auth)
-appk.use(bodyParse) // get information from html forms
+async function startApp() {
+  await next();
+  return sessionkstore.setup();
+}
 
+
+//appk.use(Cookies); // read cookies (needed for auth) // error : next is not a function // not found
+//appk.use(Parser) // get information from html forms // error : next is not a function // not found
 appk.use(passport.initialize());
 appk.use(passport.session());
 appk.use(flash()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
-*/
-appk.use(async (ctx,next) => {
+/*
+appk.use(async (ctx, next) => {
   //ctx.state.varyin = 'vary';
   //  ctx.state.varyin.name = ctx.session.name;
   //   ctx.cookies.set()
@@ -495,7 +509,7 @@ appk.use(async (ctx,next) => {
   await next();  // next() corrects Not Found, await corrects OK
   return ctx;
 });
-
+*/
   /*
   async function process(next) {
     await next;
@@ -503,15 +517,15 @@ appk.use(async (ctx,next) => {
     console.log('processed');
   };
   */
+
 /*
 // passport config
-var User = require('./models/user');
 passport.use(new LocalStrategy(User.authenticate()));
 //  passport.use(User.createStrategy());
   passport.serializeUser(User.serializeUser());
   passport.deserializeUser(User.deserializeUser());
-*/
-/*
+
+
   passport.serializeUser(function(user, done) {
     done(null, user._id)
   })
@@ -519,16 +533,33 @@ passport.use(new LocalStrategy(User.authenticate()));
     User.findById(id, done);
   })
 */
-/*
-  // Require authentication for now
+/*  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  // Require authentication for now  // requireLogin
   appk.use(function(ctx, next) {
     if (ctx.isAuthenticated()) {
-      return next()
+       return next(); // await next();
     } else {
-//    ctx.body = "ctx.redirect('/')";
-    }
-  })
+       ctx.status = 401
+       ctx.body = {
+       errors: [{ title: 'Login required', status: 401 }]
+//     ctx.body = "ctx.redirect('/')";
+       }
+     }});
 */
+/*
+appk.use(async function(ctx, next) {  // requireLogin
+  if (ctx.isAuthenticated()) {
+    await next()
+  } else {
+    ctx.status = 401
+    ctx.body = {
+      errors: [{ title: 'Login required', status: 401 }]
+    }
+  }
+});
+*/
+//app.use(route.delete('/:id', mountDoom));
+
 
   /*
   appk.use(route.get('/app', function(ctx) {
@@ -563,31 +594,32 @@ appk.use(ctx => {
 //console.log("who.......................");
 //console.log(require('./routes/index.js')); //(routerk, passport); // ./routes/index.js  default // module.exports = routerk.routes();
 
-//require('./routes/pass.js')(routerk, passport); //
+/////////////////////////////////////////////require('./routes/pass.js')(appk, passport); //
 //appk.use(require('./routes/pass.js').pass(routerk, passport));  // Object.<anonymous> // require is not a function
 // require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
+/*
+var router10 = require('./routes')(appk); // OK1
+var router11 = require('./routes/pass')(appk, passport); // OK1P
+Combine([router10, router11]);
+**/
+//routerc = Combine([require('./routes')(appk)]);
+//appk.use(routerc);
+//appk.use(routerc.allowedMethods());
 
 // independent routes + module.exports = routerk.routes();
-//appk.use(require('./routes/index.js')); // ./routes/index.js  default
+// appk.use(require('./routes')); // ./routes/index.js  default  // OK2
 
-routerk2 = require('./routes'); // ./routes/index.js  default
-//routerk2 = require('./routes/pass.js').pas(passport);
+//require('./routes')(appk, passport); //
+require('./routes/pass')(appk, passport); //
 
-//appk.use(routerk2.routes());
-//appk.use(routerk2.allowedMethods());
-appk
-  .use(routerk2.routes())
-  .use(routerk2.allowedMethods());
-
-routerk3 = require('./routes'); // ./routes/index.js  default
-  //routerk2 = require('./routes/pass.js').pas(passport);
-
-  //appk.use(routerk2.routes());
-  //appk.use(routerk2.allowedMethods());
-  appk
-    .use(routerk3.routes())
-    .use(routerk3.allowedMethods());
-
+/*
+var routerk2 = require('./routes/index.js');
+appk.use(routerk2.routes());
+appk.use(routerk2.allowedMethods());
+//appk
+//  .use(routerk2.routes())
+//  .use(routerk2.allowedMethods());
+*/
 //========================================================================
 ///function callback(req, res) {
   //res = "HOyolanokati";

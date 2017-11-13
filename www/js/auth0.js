@@ -1,16 +1,38 @@
 // mapmeld
 //////////////////const passport = require('koa-passport')
-//////const mongoose = require('mongoose');
-/*
+
+const fs = require('fs');
+console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
+var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
+var dbadminqp = JSON.parse(dbadminq); // 0.150ms
+var record = JSON.stringify(dbadminqp.session); // 0.140ms
+console.timeEnd("fileread");
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
+
+const mongoose = require('mongoose');
 const dbUrl = `mongodb://${dbadminqp.dbuser.createUser}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
 console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
-*/
+//???mongoose.connect(config.get('mongo'), {useMongoClient: true});  // no updates
+
+//module.exports.connect = function(mongoUri, promiseLib){
+mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+const mongooseConn = mongoose.connect(dbUrl, {
+    useMongoClient: true//,
+//  promiseLibrary: bluebird // Deprecation issue again
+});
+mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('Mongoose has been connected');})
+       .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
+// Even though it's a promise, no need to worry about creating models immediately, as mongoose buffers requests until a connection is made
+//    return mongoDB
+//};
+
+
 /////const dbUrl = "mongodb://user:555777@192.168.1.2:27017/kyxtree";
 //mongoose.connect(dbUrl);  //  && npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //mongoose.createConnection(dbUrl); // Db.prototype.authenticate method will no longer be available
-//mongoose.connect(config.get('mongo'), {useMongoClient: true});  // no updates
 /////mongoose.connection.openUri(dbUrl); //  mongoose@4.11
-const passport = require('koa-passport');
+//const passport = require('koa-passport');
 
 //const LocalStrategy = require('passport-local').Strategy;
 /////const LocalMongoose = require('passport-local-mongoose');
@@ -23,9 +45,10 @@ const passport = require('koa-passport');
 // var flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
 // config/passport.js  // load all the things we need
 // load up the user model
-var User            = require('./models/user');  // ../app/models/user   default  .js
+//var User            = require('./models/user');  // ../app/models/user   default  .js
 // expose this function to our app using module.exports
-module.exports = function(passport) {
+module.exports = function(appk, passport) {
+var User            = require('./models/user');  // ../app/models/user   default  .js
 // =========================================================================
 // passport session setup ==================================================
 // =========================================================================
@@ -33,12 +56,12 @@ module.exports = function(passport) {
 // passport needs ability to serialize and unserialize users out of session
 // used to serialize the user for the session
    passport.serializeUser(function(user, done) {
-      done(null, user.id);
+     done(null, { username: user.username });  // done(null, user.id);
       });
 // used to deserialize the user
    passport.deserializeUser(function(id, done) {
       User.findById(id, function(err, user) {
-      done(err, user);
+      done(err, user);  //     done(null, user);
       });
    });
 
@@ -54,7 +77,7 @@ const LocalStrategy = require('passport-local').Strategy;
         passwordField : 'password',
         passReqToCallback : true // allows us to pass back the entire request to the callback
         },
-        function(req, email, password, done) {
+        function(ctx, email, password, done) {
 // asynchronous // User.findOne wont fire unless data is sent back
         process.nextTick(function() {
 // find a user whose email is the same as the forms email
@@ -64,7 +87,7 @@ const LocalStrategy = require('passport-local').Strategy;
         if (err) return done(err);
 // check to see if theres already a user with that email
         if (user) {
-            return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+            return done(null, false, ctx.flash('signupMessage', 'That email is already taken.'));
         } else {
 // if there is no user with that email // create the user
         var newUser            = new User();
@@ -100,10 +123,10 @@ passport.use('local-login', new LocalStrategy({
           if (err) return done(err);
 // if no user is found, return the message
           if (!user)
-              return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+              return done(null, false, ctx.flash('loginMessage', 'No user found.')); // routerkp is the way to set flashdata using connect-flash
 // if the user is found but the password is wrong
           if (!user.validPassword(password))
-              return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+              return done(null, false, ctx.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
 // all is well, return successful user
           return done(null, user);
       }); // User.findOne

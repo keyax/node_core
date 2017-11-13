@@ -1,33 +1,102 @@
+/*
 //module.exports = function(app, passport) {  // express
 //module.exports = function(passport) {
-
 const assert = require('assert');
 const path = require('path');
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
-const fs = require('fs');
-const fse = require('fs-extra');
 var progress = require('progress-stream');
 const util = require('util');
 const abb = require('async-busboy');
 const exif = require('exiftool');
-
-var Koa = require('koa');
-var appk = new Koa();
-const Router = require('koa-router');
-const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
 const bodyParser = require('koa-bodyparser');
 const passport = require('koa-passport');
 const Multer = require('koa-multer');
 
+var Koa = require('koa');
+var appk = new Koa();
+*/
+const fs = require('fs');
+const fse = require('fs-extra');
+// function rutas(appk) {  // OK1
+const Router = require('koa-router');
+
+module.exports = function(appk, passport) {
+  const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
+
+console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
+var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
+var dbadminqp = JSON.parse(dbadminq); // 0.150ms
+var record = JSON.stringify(dbadminqp.session); // 0.140ms
+console.timeEnd("fileread");
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
+
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-const dbUrl = "mongodb://172.17.0.1:27017/kyxtree";
-//const dbUrl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
-//const dbUrl = "mongodb://admin:555777@192.168.1.2:27017/kyxtree";
-const mongooseConn = mongoose.connection.openUri(dbUrl); //
-var User = require('./../models/user');
+const dbUrl = `mongodb://${dbadminqp.dbuser.createUser}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
+mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+const mongooseConn = mongoose.connect(dbUrl, {
+    useMongoClient: true//,
+//  promiseLibrary: bluebird // Deprecation issue again
+});
+mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('Mongoose has been connected');})
+       .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
+
+//var User = require('./../models/user');
+
+//require('../auth0.js')(appk, passport); // pass passport for configuration  ./config/passport
+/*
+    // HOME PAGE (with login links) ========
+    routerk.get('/', async function (ctx, next) { // function(req, res)
+        res.render('index.ejs'); // load the index.ejs file
+    });
+*/
+
+    // LOGIN ===============================
+    // show the login form
+//    routerk.get('/logito', console.log('logito ok'));
+    routerk.get('/logito', async function (ctx, next) { // function(req, res)
+        // render the page and pass in any flash data if it exists
+//        res.render('login.ejs', { message: req.flash('loginMessage') });
+       console.log("msg from pass.js /login");
+    });
+    // process the login form
+    // app.post('/login', do all our passport stuff here);
+    // SIGNUP ==============================
+    // show the signup form
+    routerk.get('/signup', function(ctx) {
+        // render the page and pass in any flash data if it exists
+        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
+    });
+    // process the signup form
+    // app.post('/signup', do all our passport stuff here);
+    // PROFILE SECTION =====================
+    // we will want this protected so you have to be logged in to visit
+    // we will use route middleware to verify this (the isLoggedIn function)
+    routerk.get('/profile', isLoggedIn, function(ctx) {
+        ctx.render('profile.ejs', {
+            user : req.user // get the user out of session and pass to template
+        });
+    });
+    // LOGOUT ==============================
+    routerk.get('/logout', function(ctx) {
+        ctx.logout();
+        ctx.redirect('/');
+    });
+    // process the signup form
+    routerk.post('/signup', passport.authenticate('local-signup', {
+         successRedirect : '/profile', // redirect to the secure profile section
+         failureRedirect : '/signup', // redirect back to the signup page if there is an error
+         failureFlash : true // allow flash messages
+     }));
+     // process the login form
+    routerk.post('/loginpass', passport.authenticate('local-login', {
+         successRedirect : '/login', // redirect to the secure profile section
+         failureRedirect : '/loginpass', // redirect back to the signup page if there is an error
+         failureFlash : true // allow flash messages
+     }));
 
 /*
 router.get('/', async (ctx, next) => {
@@ -71,7 +140,7 @@ routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON
 /////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
 // module.exports.who =
-routerk.post("/who", async function (ctx, next) {
+routerk.post("/who", async function (ctx) {
  try {
 ctx.body = ctx.session;
 } catch (err) {
@@ -123,7 +192,7 @@ return username;
 //, function (u) {console.log("results",u)}
 
 );  // end routerk.post("/login"
-
+/*
 // process the login form
 routerk.post('/loginlocal', passport.authenticate('local-login', {
         successRedirect : '/who', // redirect to the secure profile section
@@ -174,6 +243,7 @@ routerk.post('/logout', function(ctx) {
   ctx.session=null;
 //  ctx.redirect('/login');
 });
+*/
 /*
 routerk.get('/auth/facebook',
   passport.authenticate('facebook')
@@ -485,7 +555,23 @@ routerk.post('/xform', function (req, res, next) {
 //  }
 });
 */
-/////};
-module.exports = routerk;
-//module.exports = routerk.routes();
-//module.exports = routerk.allowedMethods();
+//await next();
+//return routerk;
+//module.exports = routerk;
+// OK1
+appk.use(routerk.routes());
+appk.use(routerk.allowedMethods());
+};  //  ();
+//module.exports = routerx;
+// OK1
+
+//module.exports = routerk.routes();  // OK2
+
+// route middleware to make sure a user is logged in
+function isLoggedIn(ctx, next) {
+// if user is authenticated in the session, carry on
+     if (ctx.isAuthenticated())
+         return next();
+// if they aren't redirect them to the home page
+     res.redirect('/');
+};
