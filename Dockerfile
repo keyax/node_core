@@ -13,8 +13,8 @@ RUN groupadd --gid 11000 node \
 
 # gpg keys listed at https://github.com/nodejs/node
 RUN ["/bin/bash", "-c",  "set -ex; \
-gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
-gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DD8F2338BAE7501E3DD5AC78C273792F7D83545D; \
+  gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
+  gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DD8F2338BAE7501E3DD5AC78C273792F7D83545D; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 56730D5401028683275BD23C23EFEFE93C4CFFFE; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys FD3A5288F042B6850C66B31F09FE44734EB7990E; \
@@ -41,7 +41,7 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B3866828
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.5.0
+ENV NODE_VERSION 8.9.1
 # LTS
 # ENV NODE_VERSION 6.11.3
 
