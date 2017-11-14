@@ -96,11 +96,11 @@ const socketio = require('socket.io');
 const siokAuth = require('socketio-auth');
 //const siok = socketio(serverk, {origins:'keyax.org:* http://www.keyax.org:* ws://keyax.org:*'}); // socketio(appk);
 //const siok = socketio.listen(serverk);
-const IO = require('koa-socket.io');
-const io = new IO({namespace: '/uploadz'});
-//const IO = require('koa-socket');
-//const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
-//io.attach(appk);
+//const IO = require('koa-socket.io');
+//const io = new IO({namespace: '/uploadz'});
+const IO = require('koa-socket-2');
+const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
+io.attach(appk);
 
 console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
 var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms

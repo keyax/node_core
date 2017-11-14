@@ -111,6 +111,7 @@ RUN cd /home/node \
 && npm install --save koa-static \
 && npm install --save koa-mount \
 && npm install --save koa-route \
+&& npm install --save koa-trie-router \
 && npm install --save koa-router \
 && npm install --save koa-combine-routers \
 && npm install --save koa-rest-router \
@@ -170,7 +171,7 @@ RUN cd /home/node \
 && npm install --save socketio-auth \
  && npm install --save koa-socket.io \
   && npm install --save koa-socket-session \
- && npm install --save koa-socket \
+ && npm install --save koa-socket-2 \
   && npm install --save koa-socket-passport \
 # && npm install --save koa.io \
 && npm install --save socket.io-mongodb \
