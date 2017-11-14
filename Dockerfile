@@ -19,7 +19,7 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C4F0DFFF4E8C1A8236409D
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 56730D5401028683275BD23C23EFEFE93C4CFFFE; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys FD3A5288F042B6850C66B31F09FE44734EB7990E; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B9AE9905FFD7803F25714661B63B535A4C206CA9; \
-gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1; \
+  gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 71DCFD284A79C3B38668286BC97EC7A07EDE3FC1; \
 gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 77984A986EBC2AA786BC0F66B01FBB92821C587A"]
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
