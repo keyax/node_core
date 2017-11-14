@@ -169,10 +169,10 @@ RUN cd /home/node \
  && npm install --save ws \
 && npm install --save socket.io \
 && npm install --save socketio-auth \
+&& npm install --save koa-socket-2 \
+ && npm install --save koa-socket-passport \
  && npm install --save koa-socket.io \
   && npm install --save koa-socket-session \
- && npm install --save koa-socket-2 \
-  && npm install --save koa-socket-passport \
 # && npm install --save koa.io \
 && npm install --save socket.io-mongodb \
  && npm install --save mubsub \
