@@ -6,7 +6,7 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.vendor="Keyax" \
       keyax.app="Nodejs 8.5.0" \
       keyax.app.ver="2.7"
-
+ 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 11000 node \
   && useradd --uid 11000 --gid node --shell /bin/bash --create-home node
@@ -175,10 +175,11 @@ RUN cd /home/node \
 && npm install --save koa-compose \
 && npm install --save koa-convert \
 && npm install --save koa-csrf \
+&& npm install --save email-verification \
+&& npm install --save bcrypt-nodejs \
 && npm install --save koa-passport \
 && npm install --save passport-local \
 && npm install --save passport-local-mongoose \
-&& npm install --save bcrypt-nodejs \
 && npm install --save passport-client-certificate \
 && npm install --save passport-jwt \
  && npm install --save passport-facebook \

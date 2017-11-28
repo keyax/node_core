@@ -1,4 +1,4 @@
-/*
+/* 
 //module.exports = function(app, passport) {  // express
 //module.exports = function(passport) {
 const assert = require('assert');
@@ -7,7 +7,6 @@ const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
 var progress = require('progress-stream');
-const util = require('util');
 const abb = require('async-busboy');
 const exif = require('exiftool');
 const bodyParser = require('koa-bodyparser');
@@ -19,12 +18,15 @@ var appk = new Koa();
 */
 const fs = require('fs');
 const fse = require('fs-extra');
+const util = require('util');
 // function rutas(appk) {  // OK1
 const Router = require('koa-router');
+const abb = require('async-busboy');
+const kbb = require('koa-busboy');
 
-module.exports = function(appk, passport) {
+/////////////////////////////////module.exports = function(appk, passport) {
   const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
-
+/*
 console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
 var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
 var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
@@ -41,9 +43,9 @@ const mongooseConn = mongoose.connect(dbUrl, {
     useMongoClient: true//,
 //  promiseLibrary: bluebird // Deprecation issue again
 });
-mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('Mongoose has been connected');})
+mongooseConn.then(db => {//db.createUser(dbadminqp.superadmin);// console.log('Mongoose has been connected from router');})
        .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
-
+*/
 //var User = require('./../models/user');
 
 //require('../auth0.js')(appk, passport); // pass passport for configuration  ./config/passport
@@ -53,11 +55,11 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
         res.render('index.ejs'); // load the index.ejs file
     });
 */
-
+/*
     // LOGIN ===============================
     // show the login form
 //    routerk.get('/logito', console.log('logito ok'));
-    routerk.get('/loginz', async function (ctx, next) { // function(req, res)
+    routerk.get('/loginp', async function (ctx, next) { // function(req, res)
         // render the page and pass in any flash data if it exists
 //        res.render('login.ejs', { message: req.flash('loginMessage') });
        console.log("msg from pass.js /login");
@@ -68,7 +70,8 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
     // show the signup form
     routerk.get('/signup', function(ctx) {
         // render the page and pass in any flash data if it exists
-        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') });
+        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') })
+           .catch(err => console.error(err)); // Unhandled promise rejection
     });
     // process the signup form
     // app.post('/signup', do all our passport stuff here);
@@ -86,18 +89,20 @@ mongooseConn.then(db => {/*db.createUser(dbadminqp.superadmin);*/ console.log('M
         ctx.redirect('/');
     });
     // process the signup form
+//  routerk.post('/signup', passport.authenticate('local', { badRequestMessage: 'insert message here' }));
     routerk.post('/signup', passport.authenticate('local-signup', {
-         successRedirect : '/profile', // redirect to the secure profile section
-         failureRedirect : '/signup', // redirect back to the signup page if there is an error
+         successRedirect : '/pets/pets', // redirect to the secure profile section
+         failureRedirect : '/', // redirect back to the signup page if there is an error
          failureFlash : true // allow flash messages
      }));
      // process the login form
-    routerk.post('/login', passport.authenticate('local-login', {
-         successRedirect : '/profile', // redirect to the secure profile section
-         failureRedirect : '/login', // redirect back to the signup page if there is an error
+
+    routerk.post('/loginpas', passport.authenticate('local-login', {
+         successRedirect : '/pets/hi', // redirect to the secure profile section
+         failureRedirect : '/', // redirect back to the signup page if there is an error
          failureFlash : true // allow flash messages
      }));
-
+*/
 /*
 router.get('/', async (ctx, next) => {
   ctx.body = 'Hello'
@@ -122,7 +127,7 @@ routerk.use(//"/login",
      url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
   //   db: "kyxtree",  //pets.dbc,
   //   collection: "sessions",
-  //   username: "yones",
+  //   email: "yones",
   //   password: "555777",
      expires: 10000*60*60*1})
    }
@@ -150,39 +155,38 @@ ctx.status = err.status || 500
 });
 
 //routerk.post("/login", async function (ctx, next) {await abb(ctx.req);},function (filds) {console.log("results",filds);})
-routerk.post("/login", async function (ctx, next) {
+routerk.post("/loginxx", async function (ctx, next) {
+  var User            = require('../models/user');  // ../app/models/user   default  .js
+
  try {
 const {fields} = await abb(ctx.req);  console.log(util.inspect({fields}));
-var username = fields.username;
+var email = fields.email;
 var password = fields.password;
-
-var userid = await User.findOne({username: username}, function (err, userid) {
+var userid = await User.findOne({'local.email': email}, function (err, userid) {
                  if (err) {console.log("error find:", err);
                            ctx.throw(400, 'name required', { user: user });}
-                 else {console.log('user found:',userid);}
-//               return userid;
+//                else {console.log('user found:',userid.local);}
                  });
-if (!userid || userid === null){
-   userid = {username: username, password: password};
+if (!userid || userid === null){userid  = {};
+   userid.local = {email: email, password: password};
 // userid = await User.create(new User(newUser));
-   await User.register(new User(userid), 'userid.password', function(err, newuser) {
+   await User.save(new User(userid), 'userid.local.password', function(err, newuser) {
                      if (err) {console.log("error register", err);} //return ctx.render('register', { user : user });
                      });
 }
-
-if (userid && userid.username === username && userid.password === password) {
+if (userid && userid.local.email === email && userid.local.password === password) {
          ctx.state.user = {};
-         ctx.state.user.username = username;
+         ctx.state.user.email = email;
          ctx.state.user.password = password;
          console.log('logos',ctx.state.user);
          }
 
-if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
-if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
+//if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
+//if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
 ctx.body = ctx.state.user;
 if (ctx.session){console.log("New session", ctx.session);}
-ctx.cookies.set("kyx:user", username);// = {resp: "login eureka!!"};
-return username;
+ctx.cookies.set("kyx:user", email);// = {resp: "login eureka!!"};
+return email;
 
   } catch (err) {
   ctx.body = { message: err.message };
@@ -227,7 +231,7 @@ routerk.post('/loginz', bodyParser(),
 routerk.post('/loginzz',Multer, function(ctx, next)
 { console.log ("request",ctx.body);
   ctx.state.user = {};
-  ctx.state.user.username = ctx.request.username;
+  ctx.state.user.email = ctx.request.email;
   ctx.state.user.password = ctx.request.password;
 
 if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
@@ -557,13 +561,13 @@ routerk.post('/xform', function (req, res, next) {
 */
 //await next();
 //return routerk;
-//module.exports = routerk;
+module.exports = routerk;
 // OK1
-appk.use(routerk.routes());
-appk.use(routerk.allowedMethods());
+///////////appk.use(routerk.routes());
+//////////////appk.use(routerk.allowedMethods());
 
-return appk;
-};  //  ();
+///return appk;
+//};  //  ();
 //module.exports = routerx;
 // OK1
 

@@ -32,8 +32,8 @@ const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
 
 function queryp(sqlopt, callback){
    if(!env_sql.pool) {env_sql.pool = mysql.createPool(env_sql.options);
-        //     if(err){throw new Error("Can't create connection!");return;};
-              };
+//                    if(err){throw new Error("Can't create connection!");return;};
+                     };
    console.log("env_sql.pool" + env_sql.pool);
    env_sql.pool.getConnection(function(err,conn){
       //POOL ==> Error: connect ETIMEDOUT  in Nodejs Net
@@ -50,7 +50,9 @@ function queryp(sqlopt, callback){
     //    }
     });
 };
-querypr = util.promisify(queryp);
+//querypr = util.promisify(queryp);
+//exports.queryp;
+exports.querypr = util.promisify(queryp);
 
 function open(){
     // Connection URL. This is where your mongodb server is running.
@@ -80,8 +82,6 @@ let db = {
 }
 module.exports = db;
 
-//exports.queryp;
-exports.querypr = util.promisify(queryp);
 /*
 exports.querypro = async function (ctx, next) {
     await querypr(ctx.state.sqlopts)
@@ -108,15 +108,15 @@ exports.querys = function(sqlopt, callback){
           //     if(err){throw new Error("Can't create connection!");return;};
                 };
     if(sqlcon.state === 'disconnected'){
-//     return respond(null, { status: 'fail', message: 'server down'});
-       sqlcon.connect(function(err){
+//    return respond(null, { status: 'fail', message: 'server down'});
+      sqlcon.connect(function(err){
           if(err){console.log('Error single connecting to Mysql Godaddy'+err);return;};
           console.log('Single Connection established Mysql Godaddy');
 //        On reload page => Error: Connection lost: The server closed the connection.
 //        events.js:182 throw er; // Unhandled 'error' event
           });
-          setInterval(function () { sqlcon.query('SELECT 1');}, 5000);
-          console.log(`db conexion get: ${sqlcon}`);
+      setInterval(function () { sqlcon.query('SELECT 1');}, 5000);
+      console.log(`db conexion get: ${sqlcon}`);
     };
 // callback driven driver
     sqlcon.query(sqlopt, function(err, rows, fields){

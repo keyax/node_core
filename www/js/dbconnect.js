@@ -1,16 +1,4 @@
-// dbconnect.js   myAwesomeDbModule.js
-// import { MongoClient } from 'mongodb';  //.mjs
-const dbadmin = process.env.DBADMIN;
-console.log(dbadmin);
-const util = require('util');
-const mongo = require('mongodb');
-const mongoClient = require('mongodb').MongoClient;
-var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//const dburl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
-//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//var conexion = null;
-var result = null;
-const mongoose = require('mongoose');
+// 'use strict';  // dbconnect.js
 /*
 the server/replSet/mongos options are deprecated,
 all their options are supported at the top level of the options object
@@ -21,27 +9,47 @@ forceServerObjectId,serializeFunctions,ignoreUndefined,raw,promoteLongs,bufferMa
 readPreference,pkFactory,promiseLibrary,readConcern,maxStalenessSeconds,loggerLevel,logger,
 promoteValues,promoteBuffers,promoteLongs,domainsEnabled,keepAliveInitialDelay,checkServerIdentity,validateOptions]
 */
-options.server.socketOptions = options.replset.socketOptions = { keepAlive: 120 };
-mongoose.connect(uri, options);
-
+//options.server.socketOptions = options.replset.socketOptions = { keepAlive: 120 };
 var options = {
-//    db: {
-      authSource: "kyxtree" //,
-//>>  native_parser: true,
+//db: {
+    authSource: "admin",
+//  native_parser: true,
 //      },
-//    poolSize: 10,
-//    socketOptions: {
-//      keepAlive: 120
-//      connectTimeoutMS: 500
-//    }
+    poolSize: 2,
+    socketOptions: {
+      keepAlive: 120
+      connectTimeoutMS: 500
+      }
     };
-//    'use strict';
 /*
 const
     constants = require('../core/constants'),
     mongoClient = require('mongodb').MongoClient;
 */
+// import { MongoClient } from 'mongodb';  //.mjs
 
+/* share connection multiple databases
+var mongodb = require("mongodb"),
+mongoClient = require('mongodb').MongoClient;
+
+mongoserver = new mongodb.Server(host, port, server_options),
+db_connector = new mongodb.Db(name, mongoserver, db_options);
+db_connector.open(callback);
+*/
+
+const dbadmin = process.env.DBADMIN;
+console.log(dbadmin);
+const util = require('util');
+const mongo = require('mongodb');
+const mongoClient = require('mongodb').MongoClient;
+var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+//const dburl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
+//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
+//var conexion = null;
+var result = null;
+
+const mongoose = require('mongoose');
+mongoose.connect(uri, options);
 function open(){
     // Connection URL. This is where your mongodb server is running.
     let url = dburl; //constants.MONGODB_URI;
