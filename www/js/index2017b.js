@@ -13,13 +13,12 @@ const assert = require('assert');
 const fs = require('fs');
 const mzfs = require('mz/fs');
 const path = require('path');
-var util = require('util');
+const util = require('util');
 //characters allowed in a URI are either reserved !*'();:@&=+$,/?#[] or unreserved A-Za-z0-9_.~- (% in percent-encoding)
 //REGEXP '[^]A-Za-z0-9_.~!*''();:@&=+$,/?#[%-]+' to find URL string with bad characters
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
-const qs = require('querystring');
 //var fetch = require('node-fetch');
 //const Cors = require('koa2-cors');
 const xhr2 = require('xhr2');
@@ -32,7 +31,7 @@ const serverk  = http.createServer(appk.callback());  // can mount (express.app)
 // const serverks  = https.createServer(appk.callback()); // serverks.listen(8443);
 appk.proxy = true;  // koa passport trust proxy
 const CSRF = require('koa-csrf');
-var passport = require('koa-passport');
+const passport = require('koa-passport');
 
 const app = new Koa();  // const app = Koa();
 const server  = http.createServer(app.callback());  // can mount (express.app) // server.listen(8000);
@@ -56,10 +55,10 @@ const Static = require('koa-static');
 const Mount = require('koa-mount');
 const routek = require('koa-route');
 
-const cookieParser = require('cookie-parser'); // read cookies (needed for auth)
-// const cookieParser = require('koa-cookie'); // only parser ctx.cookie <- {name:'abc',age:'20',token:'xyz'}
+const Cookiek = require('koa-cookie'); // only parser
 //var Cookie = Cookiek(); // Cookiek is not a function
 const Cookies = require('cookies');
+//const cookieParse = require('cookie-parser'); // read cookies (needed for auth)
 //const bodyParse = require('body-parser');     // get information from html forms
 const bodyParser = require('koa-bodyparser');
 const Parser = require('koa-body');
@@ -82,8 +81,8 @@ const jsonref = require('json-schema-ref-parser');
 var Formis = require('koa-formidable');
 const Multer = require('koa-multer');
 const Logger = require('koa-logger');
-const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
-//const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
+//const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
+const flash2 = require('koa-flash'); // +koa-session > this.session['koa-flash']
 
 const socketio = require('socket.io');
 const siokAuth = require('socketio-auth');
@@ -95,22 +94,31 @@ const IO = require('koa-socket-2');
 const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
 //io.attach(appk);
 
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
-//const mongooseConn = mongoose.connect(dbUrl, dbenv.optodm, dbenv.dbback);
-const Mongo = mongoose.mongo;  //const mongo =  require('mongodb');
-const MongoServer = Mongo.Server;
-const MongoClient = Mongo.MongoClient;
-//MongoClient.connect(uri, function (err, conn) {});
-const Db = Mongo.Db;
-const Bson = Mongo.BSON;  //var Bson = new bson.serialize();
+console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
+var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
+var dbadminqp = JSON.parse(dbadminq); // 0.150ms
+var record = JSON.stringify(dbadminqp.session); // 0.140ms
+console.timeEnd("fileread");
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
+const dbusr = dbadminqp.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
+const dbpwd = dbadminqp.dbsroot.pwd;
+const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
+const mongoport =  parseInt(`${dbadminqp.mongoport}`) || process.argv[3]; // node server.js 8000 // pass parameter in command line
+appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
 
-// const KoaSession = require('koa-session');
-// const KSsession = require('koa-socket-session');
-
-const sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
-const sessionkmongoose = require('koa-session-mongoose');
-// const sessionkmongo = require('koa-session-mongo');
+// console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0])); // 2.541ms
+/*
+console.time("fileread");  //  1173.343ms
+mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
+.then(function(dbadmin){return dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');}) // 0.252ms
+.then(function(dbadminq){return JSON.parse(dbadminq);}) // 0.191ms
+.then(function(dbadminqp){return JSON.stringify(dbadminqp[0]);}) // 0.149ms
+.then(function(record){console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record);}) // 7.609ms
+.then(()=>{console.timeEnd("fileread");})  //  1173.343ms
+.catch(error => console.error(error));
+//console.timeEnd("fileread");  //0.714ms
+*/
 var dbenv = {
   optodm: {  // ODM object data modeling with mongoose.js
     promiseLibrary: global.Promise,
@@ -128,7 +136,7 @@ var dbenv = {
   optcli: {
     promiseLibrary: global.Promise,
 //  promiseLibrary: bluebird // deprecated
-//  useMongoClient: true,  // nooot supported
+    useMongoClient: true,
     authSource: "admin",
     poolSize: 1,  // default 5  maxPoolSize
 //  socketOptions: {
@@ -163,32 +171,23 @@ var dbenv = {
   colls: {}     // end cback
 }; // end dbenv
 
-// console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0])); // 2.541ms
-/*
-console.time("fileread");  //  1173.343ms
-mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
-.then(function(dbadmin){return dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');}) // 0.252ms
-.then(function(dbadminq){return JSON.parse(dbadminq);}) // 0.191ms
-.then(function(dbadminqp){return JSON.stringify(dbadminqp[0]);}) // 0.149ms
-.then(function(record){console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record);}) // 7.609ms
-.then(()=>{console.timeEnd("fileread");})  //  1173.343ms
-.catch(error => console.error(error));
-//console.timeEnd("fileread");  //0.714ms
-*/
-console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
-var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
-var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
-var dbadminqp = JSON.parse(dbadminq); // 0.150ms
-var record = JSON.stringify(dbadminqp.session); // 0.140ms
-console.timeEnd("fileread");
-console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
-const dbusr = dbadminqp.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
-const dbpwd = dbadminqp.dbsroot.pwd;
-const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
-const mongoport =  parseInt(`${dbadminqp.mongoport}`) || process.argv[3]; // node server.js 8000 // pass parameter in command line
-appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
-//===================
+
 const dbUrl = `mongodb://${dbusr}:${dbpwd}@172.17.0.1:${mongoport}/kyxtree`; // ?authSource=admin`;  //  default /admin
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+//const mongooseConn = mongoose.connect(dbUrl, dbenv.optodm, dbenv.dbback);
+const Mongo = mongoose.mongo;  //const mongo =  require('mongodb');
+const MongoServer = Mongo.Server;
+const MongoClient = Mongo.MongoClient;
+//MongoClient.connect(uri, function (err, conn) {});
+const Db = Mongo.Db;
+const Bson = Mongo.BSON;  //var Bson = new bson.serialize();
+
+const koasession = require('koa-session');
+const KSsession = require('koa-socket-session');
+const sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
+const sessionkmongo = require('koa-session-mongo');
+const sessionkmongoose = require('koa-session-mongoose');
 /*
 // shell script create function
 use applix
@@ -583,27 +582,23 @@ appk.use(async (ctx, next) => {  // koa error handling
 //appk.use(cookiek("keyax57secretos")); // not a function
 
 // uid-safe vs uid2 vs node-uuid >>>> base64url.encode(crypto.randomBytes(length).toString('base64'))
-/*
+// comment-star
 // koa-session-store + koa-session-mongo
+/*
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
 const CONFIGS = {
     name: 'kyx:sess1',    // cookie name
     secret: "mysecretcode", //koa2-session-store
 //    store: "cookie",   // session storage layer - see below
       store: sessionkmongo.create({
-//        mongoose: dbenv.dbs.kyxoose,  //mongoose.connection,
-//        model: 'KoaSession',
-      connection: dbenv.dbs.applix,
-      db: "applix",  //pets.dbc,
-      collection: 'sessions',
-//         db: "kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
-//         url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-//         url: "mongodb://172.17.0.1:27017/kyxtree/sessions", //pets.dbc, // sessions,
-//         username: "",
-//         password: "",
-         expires: 60 * 60 * 24 * 14//, // 2 weeks is the default
-//       expirationTime: 60
-        }),
+//          db: "kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
+            url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
+//          url: "mongodb://172.17.0.1:27017/kyxtree/sessions", //pets.dbc, // sessions,
+            db: "kyxtree",  //pets.dbc,
+            collection: "sessions",
+//          username: "yones",
+//          password: "555777",
+            expirationTime: 60}),   // expires: 60*60*1
     cookie: {
       key: 'kyx:sess1', // (string) cookie key (default is koa:sess)
        // number || 'session' maxAge in ms (default is 1 days)
@@ -619,41 +614,39 @@ const CONFIGS = {
   };
 const sesion = sessionkstore(CONFIGS);
 appk.use(sesion); //, appk));   //cokiesz:{"views":16,"_sid":"AraFxFnUgS2skFR"}
+  // or if you prefer all default config, just use => app.use(session(appk));
+// end comment-star
 */
-// or if you prefer all default config, just use => app.use(session(appk));
-let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
 const CONFIGS = {
     name: 'kyxapp:sesgoose',    // cookie name
-//  secret: "mysecretcode", // appk.keys from swarm secrets  //  koa2-session-store
-    saveUninitialized: true, // false>needs set ctx.session.something=<something> /true>sets session any visitor
-    resave: true, // true>updates session as active even if not modified in request/false>in session store with touch
+//  secret: "mysecretcode", //koa2-session-store
 //  store: "cookie",   // session storage layer - see below
     store: new sessionkmongoose({
       collection: 'sessions',
       connection: dbenv.dbs.kyxoose,
-      expires: 24 * 60 * 60, // 1 day in seconds, 2 weeks is the default
+      expires: 60 * 60 * 24 * 14, // 2 weeks is the default
       model: 'KoaSession'
     }),
     cookie: {
 //    key: 'kyx:sesgoosec', // (string) cookie key (default is koa:sess)
-      maxAge:  3600000, // 1h in ms,  86400000, // 24*60*60*1000ms=1day
+      maxAge:  3600000, //86400000,//=60*60*24*1000ms
        // number || 'session' maxAge in ms (default is 1 days)
        //'session' will result in a cookie that expires when session/browser is closed
        // Warning: If a session cookie is stolen, this cookie will never expire
-//    expires: expiryDate,
       overwrite: true, // (boolean) overwrite existing cookie (default true)
-///      secureProxy: true,  // ->> UNAUTHENTICATED
       httpOnly: true,  // (boolean) httpOnly not access js (default true)
       signed: true,    // (boolean) signed using KeyGrip (default true)
-      rolling: false   // (boolean) true forces a session identifier cookie to be set on every response.
-// The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
+      rolling: false   // (boolean) Force a session identifier cookie to be set on every response.
+                       //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
     }
   };
+
 appk.use(Convert(sessionkstore(CONFIGS))); //{store: new sessionkmongoose()}
 
 /*
 //  koa-session + koa-socket-session + koa-socket.io
-const CONFIGP = {
+const CONFIG = {
   key: 'koa:session', // (string) cookie key (default is koa:sess)
   // (number || 'session') maxAge in ms (default is 1 days)
   // 'session' will result in a cookie that expires when session/browser is closed
@@ -672,17 +665,42 @@ const CONFIGP = {
 //    resave: true,
 //    saveUninitialized: true
 //});
-const session = KoaSession(CONFIGP, appk);
+// const session = KoaSession(CONFIG, app);
 //app.use(session);
-//appk.use(koasession(CONFIG, appk));
+appk.use(koasession(CONFIG, appk));
 // or if you prefer all default config, just use => appk.use(koasession(appk));
 ///////appk.use( ... );  from koa-socket-session
 */
+/*
+app.use(session({secret:'learningpassport', resave: true, saveUnitialized: true}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+*/
+// authentication
+//require('./auth.js');
+// const passport = require('koa-passport')
+//appk.use(abb(ctx.req));
 /*
 async function startApp() {
   await next();
   return sessionkstore.setup();
 }
+*/
+/*
+//appk.use(Cookies); // read cookies (needed for auth) // error : next is not a function // not found
+//////appk.use(bodyParser()); // get information from html forms // error : next is not a function // not found
+// appk.use(bodyParser);// ctx.onerror is not a function ... process._tickCallback
+appk.use(bodyParser({
+  onerror: function (err, ctx) {
+    ctx.throw('body parse error', 422);
+  }
+}));
+appk.use(async ctx => {
+  // the parsed body will store in ctx.request.body
+  // if nothing was parsed, body will be an empty object {}
+  console.log("ctx.body ="+ctx.request.body);
+});
 */
 /*
 app.use(new CSRF({    // add the CSRF middleware
@@ -694,70 +712,95 @@ app.use(new CSRF({    // add the CSRF middleware
   disableQuery: false
 }));
 */
-//appk.use(Cookies); // read cookies (needed for auth) // error : next is not a function // not found
+
+var User = require('./models/user');  // ../app/models/user   default  .js
+
+//require('./auth0');
+const LocalStrategy = require('passport-local').Strategy;
+// LOCAL LOGIN =============================================================
+// we are using named strategies since we have one for login and one for signup
+// by default, if there was no name, it would just be called 'local'
+passport.use('local', new LocalStrategy(     // 'local',  'local-login',
+  {
+// by default, local strategy uses username and password, we will override with email
+   usernameField : 'email',
+   passwordField : 'password',
+   passReqToCallback : true // allows us to pass back the entire request to the callback
+   },
+   function(email, password, done) { // callback with email and password from our form
+// find a user whose email is the same as the forms email
+// we are checking to see if the user trying to login already exists
+    console.log('emailz1:'+email+'password1'+password);
+
+try {
+      console.log('emailz:'+email+'password'+password);
+//const {fields} = await kbb(ctx.req);  console.log("MONGOOSE LOGIN: "); console.log(util.inspect({fields}));
+//var email = fields.email;
+//var password = fields.password;
+    User.findOne({ 'local.email' :  'test@keyax.info' }, function(err, user) {
+        console.log("pass login:");
+        console.log(util.inspect(user));
+// if there are any errors, return the error before anything else
+          if (err) return done(err);
+// if no user is found, return the message
+          if (!user) {  console.log("pass login:"+util.inspect(user));
+              return done(null, false, console.log('loginMessage'+'No user found.')); // routerkp is the way to set flashdata using connect-flash
+            }
+// if the user is found but the password is wrong
+          if (!user.validPassword(password))
+              return done(null, false, console.log('loginMessage'+'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+// all is well, return successful user
+      done(null, user);
+      }); // User.findOne
+
+    } catch (err) {
+    ctx.body = { message: err.message };
+    ctx.status = err.status || 500;
+    };
+}
+)); // 'local-login', new LocalStrategy
+///========================end auth0
+appk.use(bodyParser());
 //appk.use(bodyParser({//enableTypes: ['form', 'json'],
 //         onerror: function (err, ctx) {ctx.throw('body parse error', 422);}
 //     }));
 //enableTypes: parser will only parse when request type hits enableTypes, default is ['json', 'form']
-// 'json' <-> myHeaders.append('Content-Type', 'application/x-javascript');
+// 'json' <-> myHeaders.append('Content-Type', '');
 // 'form' 'urlencoded' <-> myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
 // 'text' <-> myHeaders.append('Content-Type', 'text/plain');
 // 'raw'  <-> myHeaders.append('Content-Type', 'application/octet-stream');
-////appk.use(bodyParser({extendTypes: {json: ['application/x-javascript'] } } ) );
-// will parse application/x-javascript type body as a JSON string
-appk.use(bodyParser({extendTypes: {json: ['application/x-javascript'] } } ) );
-// appk.use(bodyParser({extendTypes: {form: ['application/x-www-form-urlencoded'] } } ) );
-//appk.use(async (ctx) => {ctx.request.body = await qs.parse(ctx.request.rawBody); return ctx;}); // 404 not found routes
-
- require('./authpass');
-///========================begin authpass.js
-///========================end authpass.js
-// route middleware to make sure a user is logged in
-   function isLoggedIn(ctx, next) {
-// if user is authenticated in the session, carry on
-      if (ctx.isAuthenticated()) {console.log("AUTHENTICATED in isLoggedIn(ctx,next)"); return next();}
-// if they aren't redirect them to the home page
-      console.log("UNAUTHENTICATED in isLoggedIn(ctx,next)"); // res.redirect('/hy');
-   };
 appk.use(passport.initialize());
-appk.use(cookieParser()); // Parse Cookie header and populate ctx.cookies with an object keyed by the cookie names.
-appk.use(passport.session());  // needs de/serializeUser to store user in cookie
-appk.use(flash()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
+appk.use(passport.session());
+///appk.use(flash2()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
+/*
+appk.use(async (ctx) => {
+  //ctx.state.varyin = 'vary';
+  //  ctx.state.varyin.name = ctx.session.name;
+  //   ctx.cookies.set()
+//  ctx.body = await ctx.request.rawBody;
 
-appk.use(async (ctx, next) => {
-  const btick = "`";
-//process.stdout.write("\n"); // newline \n ,rewrite line \r = \x1B[0G in strict_mode = \033[0G in vt220 & windows
-  console.log("REQ: %s %s >> %s request.body: %o",ctx.request.method,ctx.request.url,ctx.request.type,ctx.request.body);
-  console.log("USR: email: %s > %s: %o",ctx.request.body.email,"ctx.session",ctx.session);
-// ctx.request.body only if JSON sent from FormData >> {email:'test@kyax.info',password:'666999'}
-///console.log('ctx.request.rawBody:> ',ctx.request.rawBody); // ctx.request.rawBody.email  -> undefined
-/*  -----------------------------16766162041707294557720081075
-  Content-Disposition: form-data; name="email"
-  test@keyax.info
-  -----------------------------16766162041707294557720081075
-  Content-Disposition: form-data; name="password"
-  555777
-  -----------------------------16766162041707294557720081075--*/
-//  console.log("qs.parse(ctx.request.rawBody)");
-//  console.log(qs.parse(ctx.request.rawBody));
-//{ '-----------------------------16766162041707294557720081075\r\nContent-Disposition: form-data; name': '"email"\r\n\r\ntest@keyax.info\r\n-----------------------------16766162041707294557720081075\r\nContent-Disposition: form-data; name="password"\r\n\r\n555777\r\n-----------------------------16766162041707294557720081075--\r\n' }
-//{ '{"email": "test@kyax.info", "password": "555777"}': '' }
-//=============================
-
-//  if (ctx.path === '/favicon.ico') return;  // ignore favicon
-    var n = ctx.session.views || 0;
+  //  if (ctx.path === '/favicon.ico') return;  // ignore favicon
+  let n = ctx.session.views || 0;
     ctx.session.views = await ++n;
-    ctx.body = await ctx.session.views;
+//   console.log("userview: "+ctx.request.rawBody); // ctx.session.username = 'socketmetro';
     ctx.state.filesize = filesize;   //  socket.io no ctx
-    console.log("VU cokie._sid:"+ctx.cookies.get("kyx:sesgoose"));  // undefined
-    console.log("VU ctx.socket:"+ctx.socket.id);  // {}
-///ctx.session = null;  //destroy session
-////
-  if (ctx.isAuthenticated()) {console.log("AUTHENTICATED in async views");}
-  else {console.log("UNAUTHENTICATED in async views");} //ctx.redirect('/hy');
-  await next();  // next() corrects Not Found, await corrects OK
-  return ctx;
-}); // end async views
+//  console.log("cokie._sid:"+ctx.cookies.get("kyx:sesgoose"));  // undefined
+  console.log("session.blob:"+JSON.stringify(ctx.session));  // {}
+  console.log("index2017b ctx.request:");
+  console.log('ctx.request:> ');
+  console.log(ctx.request);
+  console.log('ctx.request.type:> ');
+  console.log(ctx.request.type);
+  console.log('ctx.request.rawBody:> ');
+  console.log(ctx.request.rawBody);
+  ctx.body = ctx.request.rawBody;
+//???  console.log("ctx.socket:"+JSON.stringify(ctx.socket));  // {}
+  //appk.context.vary =  n + 'views'; //'varyin';
+  //ctx.session = null;  //destroy session
+  //    next();  // next() corrects Not Found, await corrects OK
+//  return ctx;
+});
+*/
   /*
   async function process(next) {
     await next;
@@ -766,6 +809,43 @@ appk.use(async (ctx, next) => {
   };
   */
 
+/*
+// passport config
+passport.use(new LocalStrategy(User.authenticate()));
+//  passport.use(User.createStrategy());
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
+
+
+  passport.serializeUser(function(user, done) {
+    done(null, user._id)
+  })
+  passport.deserializeUser(function(id, done) {
+    User.findById(id, done);
+  })
+*/
+/*//  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  // Require authentication for now  // requireLogin
+  appk.use(function(ctx, next) {
+    if (ctx.isAuthenticated()) {
+       return next(); // await next();
+    } else {
+       ctx.status = 401
+       ctx.body = {
+       errors: [{ title: 'Login required', status: 401 }]
+//     ctx.body = "ctx.redirect('/')";
+       }
+     }});
+*/
+//app.use(route.delete('/:id', mountDoom));
+
+
+  /*
+  appk.use(route.get('/app', function(ctx) {
+    ctx.type = 'html'
+    ctx.body = fs.createReadStream('views/app.html')
+  }))
+  */
 //appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
 //appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
 /*
@@ -782,17 +862,7 @@ appk.use(ctx => {
   ctx.session.filesize = filesize; //body = 'Hello World';
   return ctx;
 });*/
-
-
-
 //===========================routerk===================
-//app.use(route.delete('/:id', mountDoom));
-  /*
-  appk.use(route.get('/app', function(ctx) {
-    ctx.type = 'html'
-    ctx.body = fs.createReadStream('views/app.html')
-  }))
-  */
 
 /*
     // HOME PAGE (with login links) ========
@@ -819,81 +889,42 @@ appk.use(ctx => {
    });
 // process the signup form
 // app.post('/signup', do all our passport stuff here);
+// PROFILE SECTION =====================
+// we will want this protected so you have to be logged in to visit
+// we will use route middleware to verify this (the isLoggedIn function)
+   routerk.get('/profile', isLoggedIn, function(ctx) {
+        ctx.render('profile.ejs', {
+            user : req.user // get the user out of session and pass to template
+        });
+    });
+// LOGOUT ==============================
+   routerk.get('/logout', function(ctx) {
+        ctx.logout();
+        ctx.redirect('/');
+    });
 // process the signup form
 // routerk.post('/signup', passport.authenticate('local', { badRequestMessage: 'insert message here' }));
    routerk.post('/signupass', passport.authenticate('local-signup', {
-         successRedirect : '/profile', // redirect to the secure profile section
-         failureRedirect : '/logout', // redirect back to the signup page if there is an error
+         successRedirect : '/w3/who', // redirect to the secure profile section
+         failureRedirect : '/w3/', // redirect back to the signup page if there is an error
          failureFlash : false // allow flash messages
    }));
 // process the login form
-routerk.post('/loginpass', passport.authenticate('local-login', {
-         successRedirect : '/profile', // redirect to the secure profile section
-         failureRedirect : '/logout', // redirect back to the signup page if there is an error
-         failureFlash : true // allow flash messages
-}));  //  end POST loginpass
-// LOGOUT ==============================
-routerk.post('/logout',isLoggedIn, function(ctx, next) {
- ctx.body = "LOGOUT";
-       ctx.session.passport= {};
-//     ctx.session = "";   // ctx.session.destroy();  // is not a function
-//     ctx.state.user = {};  // used to share data btw midwares , nologout
-//     ctx.isAuthenticated = false;
-//     ctx.redirect('/');
-      next();
-},isLoggedIn);
+   routerk.post('/loginpass', passport.authenticate('local', {
+         successRedirect : 'http://keyax.org/index.html', // redirect to the secure profile section
+         failureRedirect : '/w3/sqldb/de', // redirect back to the signup page if there is an error
+         failureFlash : false // allow flash messages
+   }));
 
-    // PROFILE SECTION =====================
-    // we will want this protected so you have to be logged in to visit
-    // we will use route middleware to verify this (the isLoggedIn function)
-       routerk.get('/profile', isLoggedIn, function(ctx, next) { ctx.body = "PROFILE" ;
-      //   console.log("ctx.isAuthenticated"+ctx.isAuthenticated);
-          //  ctx.render('profile.ejs', {
-          //      user : req.user // get the user out of session and pass to template
-          //  });
-          next();
-        });
-    routerk.post("/who", async function (ctx,next) {  //  , isLoggedIn,
-         try {
-              if (ctx.isAuthenticated()){ console.log("passport authenticated in who !!");}
-              if (ctx.isUnauthenticated()){console.log("passport not authenticated in who !!")}
-//              ctx.body = await ctx.session; //ctx.state.user;
-              //if (ctx.session){console.log("New session", ctx.session);}
-              //ctx.cookies.set("kyx:user", email);// = {resp: "login eureka!!"};  // email is not defined
-  //      await next(); return ctx;
-        } catch (err) {
-        ctx.body = { message: err.message }
-        ctx.status = err.status || 500
-        };
-        ctx.body = await ctx.session; //ctx.state.user;
-  //      await next(); return ctx;
-        });
-
-routerk.get('/hi', async (ctx, next) => {
-  ctx.body = 'Hello';
-  next();
-})
-
-//  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 /*
-  // Require authentication for now  // requireLogin
-  appk.use(function(ctx, next) {
-    if (ctx.isAuthenticated()) { console.log("login ok user:"+ctx.passport.user);
-       return next(); // await next();
-    } else {
-       ctx.status = 401
-       ctx.body = {
-       errors: [{ title: 'Login required', status: 401 }]
-//     ctx.body = "ctx.redirect('/')";
-       }
-     }});
-*/
-routerk.get('/hola', async (ctx, next) => {
-  ctx.body = await 'Hello';
-  next();
+routerk.get('/', async (ctx, next) => {
+  ctx.body = 'Hello'
 })
+*/
 
-//=========================== routerk===================
+
+
+//===========================routerk===================
 
 //var rooter = require('./routes/index');
 //      rooter.use('/', rooter.routes(), rooter.allowedMethods());
@@ -901,10 +932,11 @@ routerk.get('/hola', async (ctx, next) => {
 //      routerk.use('/api2/v0/', api2.routes(), api2.allowedMethods());
 //appk.use(rooter);
 
+
 //console.log("who.......................");
 //console.log(require('./routes/index.js')); //(routerk, passport); // ./routes/index.js  default // module.exports = routerk.routes();
 
-////////require('./routes/pass.js')(appk, passport); //
+/////////////////////////////////////////////require('./routes/pass.js')(appk, passport); //
 //appk.use(require('./routes/pass.js').pass(routerk, passport));  // Object.<anonymous> // require is not a function
 // require('./app/routes.js')(app, passport); // Express: load our routes and pass in our app and fully configured passport
 /*
@@ -952,13 +984,26 @@ appk
 
 // catch all middleware, only land here if no other routing rules match
 // make sure it is added after everything else
-/*
+
 appk.use(function *(){
   this.body = 'Invalid URL!!!';
   // this.redirect('/someotherspot');  // or redirect etc
 });
-*/
-//=======================END ROUTERK =================================================
+
+
+// route middleware to make sure a user is logged in
+   function isLoggedIn(ctx, next) {
+// if user is authenticated in the session, carry on
+      if (ctx.isAuthenticated())
+            return next();
+// if they aren't redirect them to the home page
+      res.redirect('/');
+   };
+
+
+
+
+//========================================================================
 ///function callback(req, res) {
   //res = "HOyolanokati";
 /*  if (parseInt(req.headers['content-length']) > 1375347) {
@@ -1085,7 +1130,6 @@ serverk.on('error', function (err) {
 process.on('uncaughtException', function(e){
     console.log(e);
 });
-*/
 //===========================================================================
 serverk.listen(parseInt(`${nodeport}`), (err) => {
       if (err) {return console.log('something bad happened', err)}
@@ -1120,7 +1164,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'});
 //    socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
+*/
 
-
-//module.exports.appk = appk;
-//module.exports.app = app;
+module.exports.appk = appk;
+module.exports.app = app;

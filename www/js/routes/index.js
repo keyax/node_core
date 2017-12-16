@@ -1,6 +1,53 @@
-/* 
-//module.exports = function(app, passport) {  // express
-//module.exports = function(passport) {
+/*
+// remove route 2014 https://github.com/alexmingoia/koa-router/issues/88
+var router = new koaRouter(app);
+app.use(router.middleware()); // Note .middleware()
+// Later
+app.all(name, path, ...) // Make the route named for easier finding later
+// And even later
+var r = router.routes
+for(var i in r) {
+    if(r[i]['name'] == name) {
+        r.splice(i, 1); // Don't use delete, as it leaves a hole in the array and system crashes during subsequent routing
+        break;
+    }
+}
+
+// nested routers ===========================================
+sharedRouter.get('/hello', (ctx) => {
+    ctx.body = 'Hello World!';
+});
+rootRouter.use(sharedRouter.routes());
+rootRouter.use('/foo', sharedRouter.routes());
+rootRouter.use('/bar', sharedRouter.routes());
+app.use(rootRouter.routes());
+//  The resulting path would then be /bar/foo/hello
+
+//>>>>>>>>> add middleware ??? 2015 https://github.com/alexmingoia/koa-router/issues/106
+// you'll need to loop through router.stack.routes, registering same route more than once would throw an error
+var app = require('koa')(),
+    router = require('koa-router')();
+var Amiddleware = function*(){
+    console.log('I am A middleware');
+    this.body=42;
+};
+router.get('/test',one);
+//============================
+// eventual add middleware
+var Bmiddleware = function*(next){ console.log('I sit on top'); yield next; };
+//something like give me the koa-composed middleware for the verb V and path P
+var oldMiddleware = router.getMiddleware('get', '/test');
+router.get('/test', Bmiddleware, oldMiddleware);
+//==============================
+app.use(router.routes())
+   .use(router.allowedMethods());
+var server = require('http').Server(app.callback());
+server.listen(8080);
+// ================SAMPLES END ===================
+*/
+
+//module.exports = function(app, passport)   // express
+//module.exports = function  (passport)
 const assert = require('assert');
 const path = require('path');
 const url = require('url');
@@ -10,22 +57,23 @@ var progress = require('progress-stream');
 const abb = require('async-busboy');
 const exif = require('exiftool');
 const bodyParser = require('koa-bodyparser');
-const passport = require('koa-passport');
+//const passport = require('koa-passport');
 const Multer = require('koa-multer');
 
 var Koa = require('koa');
 var appk = new Koa();
-*/
+
 const fs = require('fs');
 const fse = require('fs-extra');
 const util = require('util');
 // function rutas(appk) {  // OK1
 const Router = require('koa-router');
-const abb = require('async-busboy');
+//const abb = require('async-busboy');
 const kbb = require('koa-busboy');
 
-/////////////////////////////////module.exports = function(appk, passport) {
-  const routerk = new Router();  // new routerk({prefix: '/corp1'});  //routerk.prefix('corp1')
+//module.exports = function(passport)
+  const routerk = new Router(); // ({prefix: '/w3'});  // new routerk({prefix: '/corp1'});
+//  routerk.prefix('/w3');
 /*
 console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
 var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
@@ -46,63 +94,67 @@ const mongooseConn = mongoose.connect(dbUrl, {
 mongooseConn.then(db => {//db.createUser(dbadminqp.superadmin);// console.log('Mongoose has been connected from router');})
        .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
 */
-//var User = require('./../models/user');
-
-//require('../auth0.js')(appk, passport); // pass passport for configuration  ./config/passport
+//var User = require('../models/user');
+////require('../auth0'); // pass passport for configuration  ./config/passport
+/*
+appk.use(bodyParser())
+require('../auth0');
+///appk.use(flash2()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
+appk.use(passport.initialize());
+appk.use(passport.session());
+*/
 /*
     // HOME PAGE (with login links) ========
     routerk.get('/', async function (ctx, next) { // function(req, res)
         res.render('index.ejs'); // load the index.ejs file
     });
 */
-/*
-    // LOGIN ===============================
-    // show the login form
-//    routerk.get('/logito', console.log('logito ok'));
-    routerk.get('/loginp', async function (ctx, next) { // function(req, res)
-        // render the page and pass in any flash data if it exists
-//        res.render('login.ejs', { message: req.flash('loginMessage') });
-       console.log("msg from pass.js /login");
+// LOGIN ===============================
+// show the login form
+//   routerk.get('/logito', console.log('logito ok'));
+     routerk.get('/loginp', async function (ctx, next) { // function(req, res)
+// render the page and pass in any flash data if it exists
+//   res.render('login.ejs', { message: req.flash('loginMessage') });
+     console.log("msg from pass.js /login");
     });
-    // process the login form
-    // app.post('/login', do all our passport stuff here);
-    // SIGNUP ==============================
-    // show the signup form
-    routerk.get('/signup', function(ctx) {
-        // render the page and pass in any flash data if it exists
-        ctx.render('signup.ejs', { message: ctx.flash('signupMessage') })
+// process the login form
+// app.post('/login', do all our passport stuff here);
+// SIGNUP ==============================
+// show the signup form
+   routerk.get('/signup', function(ctx) {
+// render the page and pass in any flash data if it exists
+   ctx.render('signup.ejs', { message: ctx.flash('signupMessage') })
            .catch(err => console.error(err)); // Unhandled promise rejection
-    });
-    // process the signup form
-    // app.post('/signup', do all our passport stuff here);
-    // PROFILE SECTION =====================
-    // we will want this protected so you have to be logged in to visit
-    // we will use route middleware to verify this (the isLoggedIn function)
-    routerk.get('/profile', isLoggedIn, function(ctx) {
+   });
+// process the signup form
+// app.post('/signup', do all our passport stuff here);
+// PROFILE SECTION =====================
+// we will want this protected so you have to be logged in to visit
+// we will use route middleware to verify this (the isLoggedIn function)
+   routerk.get('/profile', isLoggedIn, function(ctx) {
         ctx.render('profile.ejs', {
             user : req.user // get the user out of session and pass to template
         });
     });
-    // LOGOUT ==============================
-    routerk.get('/logout', function(ctx) {
+// LOGOUT ==============================
+   routerk.get('/logout', function(ctx) {
         ctx.logout();
         ctx.redirect('/');
     });
-    // process the signup form
-//  routerk.post('/signup', passport.authenticate('local', { badRequestMessage: 'insert message here' }));
-    routerk.post('/signup', passport.authenticate('local-signup', {
-         successRedirect : '/pets/pets', // redirect to the secure profile section
-         failureRedirect : '/', // redirect back to the signup page if there is an error
-         failureFlash : true // allow flash messages
-     }));
-     // process the login form
+// process the signup form
+// routerk.post('/signup', passport.authenticate('local', { badRequestMessage: 'insert message here' }));
+   routerk.post('/signupass', passport.authenticate('local-signup', {
+         successRedirect : '/w3/who', // redirect to the secure profile section
+         failureRedirect : '/w3/', // redirect back to the signup page if there is an error
+         failureFlash : false // allow flash messages
+   }));
+// process the login form
+   routerk.post('/loginpass', passport.authenticate('local', {
+         successRedirect : '/w3/sqldb/fr', // redirect to the secure profile section
+         failureRedirect : '/w3/sqldb/de', // redirect back to the signup page if there is an error
+         failureFlash : false // allow flash messages
+   }));
 
-    routerk.post('/loginpas', passport.authenticate('local-login', {
-         successRedirect : '/pets/hi', // redirect to the secure profile section
-         failureRedirect : '/', // redirect back to the signup page if there is an error
-         failureFlash : true // allow flash messages
-     }));
-*/
 /*
 router.get('/', async (ctx, next) => {
   ctx.body = 'Hello'
@@ -110,7 +162,6 @@ router.get('/', async (ctx, next) => {
 
 export default router
 */
-
 /*
 routerk.use((ctx,next) => {
 //  ctx.body = {"respuesta":"Hola amigos de Keyax router use"};  // second step
@@ -145,17 +196,23 @@ routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON
 /////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
 
 // module.exports.who =
-routerk.post("/who", async function (ctx) {
- try {
-ctx.body = ctx.session;
+routerk.post("/who", async function (ctx,next) {  //  , isLoggedIn,
+ try {  //  ctx.body = ctx.session;
+      if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
+      if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
+      ctx.body = ctx.state.user;
+      //if (ctx.session){console.log("New session", ctx.session);}
+//      ctx.cookies.set("kyx:user", email);// = {resp: "login eureka!!"};
+await next();
 } catch (err) {
 ctx.body = { message: err.message }
 ctx.status = err.status || 500
 };
 });
 
+
 //routerk.post("/login", async function (ctx, next) {await abb(ctx.req);},function (filds) {console.log("results",filds);})
-routerk.post("/loginxx", async function (ctx, next) {
+routerk.post("/loginpasx", async function (ctx, next) {
   var User            = require('../models/user');  // ../app/models/user   default  .js
 
  try {
@@ -196,12 +253,12 @@ return email;
 //, function (u) {console.log("results",u)}
 
 );  // end routerk.post("/login"
-/*
+
 // process the login form
-routerk.post('/loginlocal', passport.authenticate('local-login', {
+routerk.post('/login', passport.authenticate('local-login', {
         successRedirect : '/who', // redirect to the secure profile section
-        failureRedirect : '/login'//, // redirect back to the signup page if there is an error
-//        failureFlash : true // allow flash messages
+        failureRedirect : '/login', // redirect back to the signup page if there is an error
+        failureFlash : false // allow flash messages
 }));
 
 routerk.post('/loginy', async  function(ctx, next) {  //'/custom'
@@ -247,7 +304,7 @@ routerk.post('/logout', function(ctx) {
   ctx.session=null;
 //  ctx.redirect('/login');
 });
-*/
+
 /*
 routerk.get('/auth/facebook',
   passport.authenticate('facebook')
@@ -546,9 +603,8 @@ return ctx;
 routerk.post('/xform', function (req, res, next) {
 //  function processAllFieldsOfTheForm(req, res) {
       var form = new formidable.IncomingForm();
-
      form.parse(req, function (err, fields, files) {
-      //Store the data from the fields in your data store.
+//  Store the data from the fields in your data store.
      //The data store could be a file or database or any other store based
      //on your application.
         res.writeHead(201, {'content-type': 'text/plain'} );
@@ -561,23 +617,28 @@ routerk.post('/xform', function (req, res, next) {
 */
 //await next();
 //return routerk;
-module.exports = routerk;
+/* // catch remaining inexistent routes
+routerk.get(/(|^$)/, function* (next) { // <--- important that it is last
+    console.log('public: /(|^$)/');
+    this.body = 'public: /(|^$)/';
+});*/
+
+//module.exports = routerk;
 // OK1
 ///////////appk.use(routerk.routes());
 //////////////appk.use(routerk.allowedMethods());
 
 ///return appk;
-//};  //  ();
+//};  //  ();  // end export router
 //module.exports = routerx;
 // OK1
 
 //module.exports = routerk.routes();  // OK2
-
 // route middleware to make sure a user is logged in
-function isLoggedIn(ctx, next) {
+   function isLoggedIn(ctx, next) {
 // if user is authenticated in the session, carry on
-     if (ctx.isAuthenticated())
-         return next();
+      if (ctx.isAuthenticated())
+            return next();
 // if they aren't redirect them to the home page
-     res.redirect('/');
-};
+      res.redirect('/');
+   };

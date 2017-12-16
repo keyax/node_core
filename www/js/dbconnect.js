@@ -50,7 +50,7 @@ var result = null;
 
 const mongoose = require('mongoose');
 mongoose.connect(uri, options);
-function open(){
+function opens(){
     // Connection URL. This is where your mongodb server is running.
     let url = dburl; //constants.MONGODB_URI;
     return new Promise((resolve, reject)=>{
@@ -73,7 +73,7 @@ function close(db){
 }
 
 let db = {
-    open : open,
+    opens : opens,
     close: close
 }
 
