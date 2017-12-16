@@ -137,26 +137,27 @@ RUN cd /home/node \
 && npm install --save koa-ejs \
 && npm install --save koa-bodyparser \
 # && npm install --save body-parser \
-&& npm install --save koa-body \
-&& npm install --save koa-validate \
+  && npm install --save koa-json-body \
+  && npm install --save koa-body \
+  && npm install --save koa-validate \
 # && npm install --save koa-validation \
 # && npm install --save koa-better-body \ ERR! code ENOGIT  needs git ??
-&& npm install --save cookie-parser \
-&& npm install --save koa-cookie \
-&& npm install --save cookies \
-
 && npm install --save koa-busboy \
-  && npm install --save async-busboy \
-  && npm install --save koa-formidable \
-  && npm install --save koa-multer \
+   && npm install --save async-busboy \
+   && npm install --save koa-formidable \
+   && npm install --save koa-multer \
+
+&& npm install --save cookie-parser \
+   && npm install --save koa-cookie \
+   && npm install --save cookies \
+
 && npm install --save progress-stream \
-&& npm install --save koa-json-body \
-&& npm install --save json-parse-async \
 && npm install --save json-schema-ref-parser \
+&& npm install --save json-parse-async \
 && npm install --save jsonlint \
-&& npm install --save koa-logger \
 && npm install --save koa-connect-flash \
- && npm install --save koa-flash \
+   && npm install --save koa-flash \
+&& npm install --save koa-logger \
 
 && npm install --save qs \
 && npm install --save querystring \

@@ -56,11 +56,10 @@ const Static = require('koa-static');
 const Mount = require('koa-mount');
 const routek = require('koa-route');
 
-const cookieParser = require('cookie-parser'); // read cookies (needed for auth)
-// const cookieParser = require('koa-cookie'); // only parser ctx.cookie <- {name:'abc',age:'20',token:'xyz'}
-//var Cookie = Cookiek(); // Cookiek is not a function
-const Cookies = require('cookies');
 //const bodyParse = require('body-parser');     // get information from html forms
+//const jsbody = require('koa-json-body');  // only JSON in POST, PUT, PATCH
+//parse in every route -> app.use(jsbody({limit:'10kb',fallback:true})); app.use((ctx,next)=>{console.log(ctx.request.body)})
+//parse in users route -> app.post('/users', jsbody, (ctx, next) => { console.log(ctx.request.body) })
 const bodyParser = require('koa-bodyparser');
 const Parser = require('koa-body');
 const Valid = require('koa-validate');
@@ -84,6 +83,10 @@ const Multer = require('koa-multer');
 const Logger = require('koa-logger');
 const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
 //const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
+const cookieParser = require('cookie-parser'); // read cookies (needed for auth)
+// const cookieParser = require('koa-cookie'); // only parser ctx.cookie <- {name:'abc',age:'20',token:'xyz'}
+//var Cookie = Cookiek(); // Cookiek is not a function
+const Cookies = require('cookies');
 
 const socketio = require('socket.io');
 const siokAuth = require('socketio-auth');
