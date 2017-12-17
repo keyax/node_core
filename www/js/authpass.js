@@ -5,7 +5,7 @@ var passport = require('passport');
 //var jwtStrategy = require('passport-jwt').Strategy;
 
 var User = require('./models/user');  // ../app/models/user   default  .js
-/*
+
 User.findOne({ 'local.email': 'test@keyax.info' }, function (err, testUser) {
   if (!testUser) {
     console.log('test@keyax.info user did not exist; creating test user...')
@@ -19,7 +19,7 @@ User.findOne({ 'local.email': 'test@keyax.info' }, function (err, testUser) {
   }
   console.log("user found"+testUser);
 });
-*/
+
 // https://stackoverflow.com/questions/27637609/understanding-passport-serialize-deserialize
 // used to serialize the user for the session
 passport.serializeUser(function(user, done) {

@@ -440,13 +440,13 @@ app.use(new CSRF({    // add the CSRF middleware
   disableQuery: false
 }));
 */
-/*
+
 ///require('./auth')
 require('./auth0.js')(appk, passport); // require('./config/passport')(passport); // pass passport for configuration
 appk.use(passport.initialize());
 appk.use(passport.session());
 appk.use(flash()); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
-*/
+
 /*
 appk.use(async (ctx, next) => {
   //ctx.state.varyin = 'vary';

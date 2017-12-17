@@ -16,13 +16,13 @@ var passportLocalMongoose = require('passport-local-mongoose');
 var bcrypt   = require('bcrypt-nodejs');
 
 // define the schema for our user model
-var userSchema = mongoose.Schema({
+var Schema = mongoose.Schema;
+var userSchema = new Schema({
   local: {
     email: {type: String, required: true, unique: true },
-    password: {type: String, required: true }//,
-//    username: {type: String} //, required: true,
-//    certificate: String
-  }/*,
+    password: {type: String, required: true },
+    username: String,
+  },
   facebook         : {
       id           : String,
       token        : String,
@@ -33,14 +33,14 @@ var userSchema = mongoose.Schema({
       id           : String,
       token        : String,
       displayName  : String,
-      username     : String
+      name         : String
   },
   google           : {
       id           : String,
       token        : String,
       email        : String,
       name         : String
-  }*/
+  }
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -59,7 +59,7 @@ userSchema.methods.validPassword = function(password) {
 // create the model for users and expose it to our app
 //return appk.context.kyxoose().model('User', userSchem);
 //module.exports = appk.context.kyxoose.model('User', userSchem, "usersm");
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);  // , 'usuarios'
 
 /*
 var Schema = mongoose.Schema;
