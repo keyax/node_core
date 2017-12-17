@@ -158,23 +158,23 @@ RUN cd /home/node \
 && npm install --save koa-connect-flash \
    && npm install --save koa-flash \
 && npm install --save koa-logger \
-
 && npm install --save qs \
 && npm install --save querystring \
 && npm install --save koa-jwt \
 && npm install --save jsonwebtoken \
 && npm install --save jwt-simple \
-# && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
-  && npm install --save koa-basic-auth \
-   && npm install --save koa-session \
-# && npm install --save koa-session2 \
-  && npm install --save mongodb \
-  && npm install --save koa-session-mongo \
+#  && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
+   && npm install --save koa-basic-auth \
+#  && npm install --save mongoose@4.10.8 \
 && npm install --save mongoose \
-# && npm install --save mongoose@4.10.8 \
 && npm install --save koa-session-mongoose \
-&& npm install --save koa-session-store \
-# && npm install --save koa2-session-store \
+&& npm install --save koa-session \
+#  && npm install --save koa-session2 \
+#  && npm install --save koa-generic-session \
+&& npm install --save koa-generic-session-mongo \
+   && npm install --save mongodb \
+   && npm install --save koa-session-store \
+   && npm install --save koa-session-mongo \
 && npm install --save koa-if \
 && npm install --save koa-compose \
 && npm install --save koa-convert \

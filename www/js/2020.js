@@ -65,22 +65,19 @@ const jsonref = require('json-schema-ref-parser');
 var Formis = require('koa-formidable');
 const Multer = require('koa-multer');
 const Logger = require('koa-logger');
+const koaSession = require('koa-session');
 const    sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
+const sessionkmongoose = require('koa-session-mongoose'); // Schema is not a constructor (if after store)
 const    sessionkmongo = require('koa-session-mongo');
 // const KSsession = require('koa-socket-session');
 
 const mongoose = require('mongoose');
-const sessionkmongoose = require('koa-session-mongoose'); // Schema is not a constructor (if after store)
-const koaSession = require('koa-session');
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 //const mongooseConn = mongoose.connect(dbUrl, dbenv.optodm, dbenv.dbback);
-const Mongo = mongoose.mongo;
-//const Mongo = require('mongodb');
+const Mongo = mongoose.mongo;  //const mongo =  require('mongodb');
 const MongoServer = Mongo.Server;
 const MongoClient = Mongo.MongoClient;
 //MongoClient.connect(uri, function (err, conn) {});
-
-
 const Db = Mongo.Db;
 const Bson = Mongo.BSON;  //var Bson = new bson.serialize();
 const Koa = require('koa');
@@ -314,12 +311,9 @@ mongooseConn.then(db => {   //db.createUser(dbadminqp.superadmin);
 let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 //var User = require('./models/user');  // ../app/models/user   default  .js
 
-// koaSession = require('koa-session') + sessionkmongoose = ('koa-session-mongoose')
+// koa-session-store + koa-session-mongoose
 const CONFIGS = {
     name: 'kyx:sesgoose',    // cookie name
-//  TypeError: this._store.load is not a function
-    saveUninitialized: true, // false>needs set ctx.session.something=<something> /true>sets session any visitor
-    resave: true, // true>updates session as active even if not modified in request/false>in session store with touch
 //  secret: "mysecretcode", //koa2-session-store
 //  store: "cookie",   // session storage layer - see below
     store: new sessionkmongoose({
@@ -341,12 +335,12 @@ const CONFIGS = {
                        //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
     }
   };
-appk.use(koaSession(CONFIGS)); //{store: new sessionkmongoose()}
+appk.use(Convert(sessionkstore(CONFIGS))); //{store: new sessionkmongoose()}
 //appk.proxy = true;  // koa passport trust proxy
 
 /***************************************
 
-// koa-session-store + koa-session-mongo  ose
+// koa-session-store + koa-session-mongoose
 appk.keys = dbadminqp.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
 const CONFIGS = {
     name: 'kyxorg:sesgoose',    // cookie name
@@ -1158,7 +1152,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'});
 // Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
 // socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
     });
-/////    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
+    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;
 //  socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
 //  socket.broadcast.emit('progress', bytesReceived);
 //  });
