@@ -11,18 +11,21 @@ module.exports = mongoose.model('User', userSchema)
 */
 //const passport = require('koa-passport');
 const mongoose = require('mongoose');
+const Schema = require('mongoose').Schema;
 mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
 var passportLocalMongoose = require('passport-local-mongoose');
 var bcrypt   = require('bcrypt-nodejs');
-
 // define the schema for our user model
-var Schema = mongoose.Schema;
-var userSchema = new Schema({
+// var Schema = mongoose.Schema;  //  TypeError: Schema is not a constructor at new MongooseStore
+//var Schema = mongoose.Schema(); // remove new
+//var userSchema = new mongoose.Schema({
+
+var userSchema = Schema({
   local: {
     email: {type: String, required: true, unique: true },
     password: {type: String, required: true },
     username: String,
-  },
+  }/*,
   facebook         : {
       id           : String,
       token        : String,
@@ -40,7 +43,7 @@ var userSchema = new Schema({
       token        : String,
       email        : String,
       name         : String
-  }
+  }*/
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -55,11 +58,10 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
-
 // create the model for users and expose it to our app
 //return appk.context.kyxoose().model('User', userSchem);
 //module.exports = appk.context.kyxoose.model('User', userSchem, "usersm");
-module.exports = mongoose.model('User', userSchema);  // , 'usuarios'
+module.exports = mongoose.model('User', userSchema, "users");  // , 'usuarios'
 
 /*
 var Schema = mongoose.Schema;

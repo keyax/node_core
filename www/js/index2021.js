@@ -9,9 +9,9 @@
 const co = require("co");
 //const { spawn } = require('child_process')  // execute shell commands
 //var fs = Promise.promisifyAll(require("fs"));  // readFileAsync
+const assert = require('assert');
 const fs = require('fs');
 const mzfs = require('mz/fs');
-const assert = require('assert');
 const path = require('path');
 var util = require('util');
 //characters allowed in a URI are either reserved !*'();:@&=+$,/?#[] or unreserved A-Za-z0-9_.~- (% in percent-encoding)
@@ -25,22 +25,18 @@ const qs = require('querystring');
 const xhr2 = require('xhr2');
 const http = require('http');
 // const https = require('https');
-
+/*
 const Koa = require('koa');
 const appk = new Koa();  // const appk = Koa();
 const serverk  = http.createServer(appk.callback());  // can mount (express.app) // serverk.listen(8000);
 // const serverks  = https.createServer(appk.callback()); // serverks.listen(8443);
+appk.proxy = true;  // koa passport trust proxy
+const CSRF = require('koa-csrf');
+var passport = require('koa-passport');
+
 const app = new Koa();  // const app = Koa();
 const server  = http.createServer(app.callback());  // can mount (express.app) // server.listen(8000);
-const Compose = require('koa-compose');
-const Convert = require('koa-convert');  // appk.use(Convert(legacyMiddleware))
-// appk.use(Convert.compose(legacyMiddleware, modernMiddleware))
-// koa deprecated Support for generators will be removed in v3.
-// ---------- override app.use method ----------convert generator to promise & back ?
-const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
-appk.use = x => _use.call(appk, Convert(x))
-// ---------- end ----------
-
+*/
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 ///routerk.prefix('/');
@@ -69,28 +65,51 @@ const jsonref = require('json-schema-ref-parser');
 var Formis = require('koa-formidable');
 const Multer = require('koa-multer');
 const Logger = require('koa-logger');
+const    sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
+const    sessionkmongo = require('koa-session-mongo');
+// const KSsession = require('koa-socket-session');
 
 const mongoose = require('mongoose');
-const Mongoose = mongoose.Mongoose;
-Mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+const sessionkmongoose = require('koa-session-mongoose'); // Schema is not a constructor (if after store)
+const koaSession = require('koa-session');
+mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+//const mongooseConn = mongoose.connect(dbUrl, dbenv.optodm, dbenv.dbback);
 const Mongo = mongoose.mongo;
 //const Mongo = require('mongodb');
 const MongoServer = Mongo.Server;
 const MongoClient = Mongo.MongoClient;
+//MongoClient.connect(uri, function (err, conn) {});
+
+
 const Db = Mongo.Db;
 const Bson = Mongo.BSON;  //var Bson = new bson.serialize();
-const sessionkmongoose = require('koa-session-mongoose'); // Schema is not a constructor (if after store)
-//const    sessionkstore = require('koa-session-store');  //  fn* generator  or koa-generic-session
-//const    sessionkmongo = require('koa-session-mongo');
-const    sessionkstore = require('koa-generic-session');  //  fn* generator  or koa-generic-session
-const    sessionkmongo = require('koa-generic-session-mongo');
-
-const koaSession = require('koa-session');
-// const KSsession = require('koa-socket-session');
-
+const Koa = require('koa');
+const appk = new Koa();  // const appk = Koa();
+const serverk  = http.createServer(appk.callback());  // can mount (express.app) // serverk.listen(8000);
+// const serverks  = https.createServer(appk.callback()); // serverks.listen(8443);
+appk.proxy = true;  // koa passport trust proxy
 const CSRF = require('koa-csrf');
 var passport = require('koa-passport');
 
+const app = new Koa();  // const app = Koa();
+const server  = http.createServer(app.callback());  // can mount (express.app) // server.listen(8000);
+const Compose = require('koa-compose');
+const Convert = require('koa-convert');  // appk.use(Convert(legacyMiddleware))
+// appk.use(Convert.compose(legacyMiddleware, modernMiddleware))
+// koa deprecated Support for generators will be removed in v3.
+// ---------- override app.use method ----------convert generator to promise & back ?
+const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
+appk.use = x => _use.call(appk, Convert(x))
+// ---------- end ----------
+
+const render = require('koa-ejs');
+render(appk, {
+  root: path.join(__dirname, 'views'),
+  layout: 'layout.html',  // template
+  viewExt: '',
+  cache: false,
+  debug: false,
+});
 const flash = require('koa-connect-flash'); // +koa-generic-session > this.flash()
 //const flash = require('koa-flash'); // +koa-session > this.session['koa-flash']
 //////const cookieParser = require('cookie-parser'); // read cookies (needed for auth)
@@ -107,75 +126,25 @@ const siokAuth = require('socketio-auth');
 const IO = require('koa-socket-2');
 const io = new IO();  // const ks = new KS({namespace: '/uploadz'});
 //io.attach(appk);
-//const mongoAdapter = require('socket.io-mongodb'); // siok.adapter(mongoAdapter('mongodb://localhost:27017/socket-io'));
-//const mubsub = require('mubsub');
-const render = require('koa-ejs');
-render(appk, {
-  root: path.join(__dirname, 'views'),
-  layout: 'layout.html',  // template
-  viewExt: '',
-  cache: false,
-  debug: false,
-});
 
-appk.proxy = true;  // koa passport trust proxy
-let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-var filesize = 0;
-
-// Improve debugging
- process.on('unhandledRejection', (reason, p) => {
-     console.log('Unhandled Rejection at:', p, 'reason:', reason)
- })
-
-// const sqlconnect = require('./sqlconnect.js');   // pool or single
-var User      = require('./models/user').userw;  // ../app/models/user   default  .js
-var dbconx = require('./models/dbconnect.js');
-var dbadmin = dbconx.dbadmin();
-appk.keys = dbadmin.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
-const nodeport =  parseInt(`${dbadmin.nodeport}`) || process.argv[2] || 8000; // node server.js 8000 // pass parameter in command line
-var dbm = dbconx.opengoose();
-//var dbx = dbconx.openclip();
-
-//=================DATA HANDLING /models/dbconnect.js=======================
 /*
-console.time("fileread");  //  1173.343ms
-mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
-.then(function(dbadmin){return dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');}) // 0.252ms
-.then(function(dbadminq){return JSON.parse(dbadminq);}) // 0.191ms
-.then(function(dbadminqp){return JSON.stringify(dbadminqp[0]);}) // 0.149ms
-.then(function(record){console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record);}) // 7.609ms
-.then(()=>{console.timeEnd("fileread");})  //  1173.343ms
-.catch(error => console.error(error));
-//console.timeEnd("fileread");  //0.714ms
-// console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0])); // 2.541ms
+// shell script create function
+use applix
+db.system.js.save({ _id : "Addery" , value : function (x, y){ return x + y; } } );
+// shell script execute function
+use applix
+db.loadServerScripts(); Addery(70,6);
 */
-/*
-console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
-var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
-var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
-var dbadminqp = JSON.parse(dbadminq); // 0.150ms
-var record = JSON.stringify(dbadminqp.session); // 0.140ms
-console.timeEnd("fileread");
-console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
-const dbsroot = dbadminqp.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
-const dbsrootpwd = dbadminqp.dbsroot.pwd;
-const kyxown = dbadminqp.dbowner.createUser;  // dbowner(adm) dbuser(rw) in kyxtree
-const kyxownpwd = dbadminqp.dbowner.pwd;
-const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
-const mongoport =  parseInt(`${dbadminqp.mongoport}`) || process.argv[3]; // node server.js 8000 // pass parameter in command line
-appk.keys = dbadminqp.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
-*/
-/*
 var dbenv = {
   optodm: {  // ODM object data modeling with mongoose.js
     promiseLibrary: global.Promise,
 //  promiseLibrary: bluebird // deprecated
     useMongoClient: true,
     authSource: "admin",
-    poolSize: 2,  // default 5  maxPoolSize
+    poolSize: 1,  // default 5  maxPoolSize
 //  socketOptions: {
     keepAlive: 120,
-    connectTimeoutMS: 2000 //, 500
+    connectTimeoutMS: 1000 //, 500
 //  } //,
 //  uri_decode_auth:true,
 //  ssl: true,
@@ -185,24 +154,24 @@ var dbenv = {
 //  promiseLibrary: bluebird // deprecated
 //  useMongoClient: true,  // nooot supported
     authSource: "admin",
-    poolSize: 2,  // default 5  maxPoolSize
+    poolSize: 1,  // default 5  maxPoolSize
 //  socketOptions: {
-    keepAlive: 1200,
-    connectTimeoutMS: 2000 //, 500
+    keepAlive: 120,
+    connectTimeoutMS: 1000 //, 500
 //  } //,
 //  uri_decode_auth:true,
 //  ssl: true,
   },  // end opts
-  dbback: (err, db) => { //assert.equal(null, err);
+  dbback: (err, db) => { assert.equal(null, err);
         if (err) {
           console.log("MongoDb is not connected");
           }
-        if (db) {appk.context.kyxtree = dbenv.dbs.kyxtree = {} = db;
+        if (db) {dbenv.dbs.kyxtree = {} = db;
           console.log("MongoDb is connected to database: "+db);
           }
         return;
       },
-  collback: (err, db) => { //assert.equal(null, err);
+  collback: (err, db) => { assert.equal(null, err);
             if (err) {
               console.log("MongoDb coll is not connected");
               }
@@ -217,49 +186,48 @@ var dbenv = {
   dbs: {},
   colls: {}     // end cback
 }; // end dbenv
-*/
-
-
 /*
-const dbUrl = `mongodb://${dbsroot}:${dbsrootpwd}@172.17.0.1:${mongoport}/admin`; // default /admin
+console.time("fileread");  //  1173.343ms
+mzfs.readFile(process.env.DBADMIN, 'utf8')  // 1150.706ms
+.then(function(dbadmin){return dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');}) // 0.252ms
+.then(function(dbadminq){return JSON.parse(dbadminq);}) // 0.191ms
+.then(function(dbadminqp){return JSON.stringify(dbadminqp[0]);}) // 0.149ms
+.then(function(record){console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record);}) // 7.609ms
+.then(()=>{console.timeEnd("fileread");})  //  1173.343ms
+.catch(error => console.error(error));
+//console.timeEnd("fileread");  //0.714ms
+// console.log("DBADMIN:"+process.env.DBADMIN+'\n '+JSON.stringify(dbadminqp[0])); // 2.541ms
+*/
+console.time("fileread");   // mzfs. 0.342ms fs. 0.396ms  (0.111ms console.timeEnd)
+var dbadmin = fs.readFileSync(process.env.DBADMIN, 'utf8');  // mzfs. 0.212ms fs. 0.202ms
+var dbadminq = dbadmin.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
+var dbadminqp = JSON.parse(dbadminq); // 0.150ms
+var record = JSON.stringify(dbadminqp.session); // 0.140ms
+console.timeEnd("fileread");
+console.log("DBADMIN:"+process.env.DBADMIN+'\n '+record); // 2.810ms
+const dbusr = dbadminqp.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
+const dbpwd = dbadminqp.dbsroot.pwd;
+const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
+const mongoport =  parseInt(`${dbadminqp.mongoport}`) || process.argv[3]; // node server.js 8000 // pass parameter in command line
+appk.keys = dbadminqp.session.secrets; //["keyax57secretos"];  //salt key needed for cookie-signing
+const dbUrl = `mongodb://${dbusr}:${dbpwd}@172.17.0.1:${mongoport}/kyxtree?authSource=admin`; // default /admin
 // mongodb container service name instead ip 172.17.0.1, ? 10.0.0.3
-const mongooseConn = mongoose.createConnection(dbUrl, dbenv.optodm, dbenv.dbback);
 
-//appk.context.kyxoose = dbenv.dbs.kyxoose = {}
-var mygoose = async function () {
-      return await MongoClient.connect(dbUrl, dbenv.optodm);
-    }();
-*/
+try {
+var insread = async function (){
+  appk.context.kyxtree = dbenv.dbs.kyxtree = {}; dbenv.dbs.geo = {};
+  appk.context.kyxoose = dbenv.dbs.kyxoose = await mongoose.connect(dbUrl, dbenv.optodm);
+  dbenv.dbs.kyxtree = await MongoClient.connect(dbUrl, dbenv.optcli); //const dbtree = dbenv.dbs.kyxtree;
+//dbenv.dbs.kyxtree.command({ dropIndexes: "users", index: "*" });
+const mongooseConn = await mongoose.connection.openUri(dbUrl, {useMongoClient: true});
+const mongoConn = await MongoClient.connect(dbUrl, dbenv.opts); // , dbenv.collback
 
-/*
-appk.context.kyxtree = dbenv.dbs.kyxtree = {} = async function () {
-      return await MongoClient.connect(dbUrl, dbenv.optcli);
-    }
-*/
+//  if(!dbenv.dbs.geo || dbenv.dbs.geo == {}){dbenv.dbs.geo = await dbenv.dbs.kyxtree.collection("geo")}
+//  else{dbenv.dbs.geo = await dbenv.dbs.kyxtree.collection("geo")}  // is not a function
+  var resins = await dbenv.dbs.kyxtree.collection('geo').insertOne({geoid: "es/an/se/se"});
+  var resfind = await dbenv.dbs.kyxtree.collection('geo').findOne({"geoid": "es/an/se/se"});
+//  console.log("resins: ", resins, "\n>> resfind: ", resfind);
 
-/////////////////////////var insread = async function (ctx, next){
-/////////////////////////try {
-//  appk.context.kyxoose = dbenv.dbs.kyxoose = await Mongoose.connect(dbUrl, dbenv.optodm);
-  //appk.context.kyxtree = dbenv.dbs.kyxtree =
-//  MongoClient.connect(dbUrl, dbenv.optcli, dbback);
-//   appk.context.srvtree = dbenv.dbs.srvtree = await new MongoServer("172.17.0.1", mongoport, dbenv.optcli);
-//   appk.context.clitree = dbenv.dbs.clitree = await new MongoClient(MongoServer);
-//   appk.context.admin = dbenv.dbs.admin = await dbenv.dbs.server.open(dbUrl, dbenv.optcli, dbenv.dbback);
-//   appk.context.admin = dbenv.dbs.admin = await new MongoClient.connect(dbUrl, dbenv.optcli);
-//   appk.context.kyxtree = dbenv.dbs.kyxtree = await MongoClient.db("kyxtree");
-
-//   appk.context.kyxtree = dbenv.dbs.kyxtree = await dbenv.dbs.clitree.connect("admin", dbenv.dbback);
-// appk.context.kyxtree = dbenv.dbs.kyxtree = await MongoClient.connect(dbUrl, dbenv.optcli); //,dbenv.collback
-//   var resins = await dbenv.dbs.kyxtree.collection('geo').insertOne({geoid: "es/an/se/se"});
-//   var resfind = await dbenv.dbs.kyxtree.collection('geo').findOne({"geoid": "es/an/se/se"});
-//      console.log("resins: ", resins, "\n>> resfind: ", resfind);
-
-
-
-//let appkoose = await mongoose.connect(dbUrl, dbenv.optodm);
-//mongooseConn = await mongoose.connection.openUri(dbUrl, {useMongoClient: true});
-  //dbenv.dbs.kyxtree.command({ dropIndexes: "users", index: "*" });
-/*
 dbenv.dbs.applix = dbenv.dbs.kyxtree.db("applix");
 var applixsys = dbenv.dbs.applix.collection('system.js');  // Functions alias system.js collection
 //new Mongo.Code(); // Code { _bsontype: 'Code', code: undefined, scope: undefined }
@@ -276,15 +244,15 @@ let Adder = new Function('return ' + funy.value.code)();
 //var Adder = eval("var f = function(){ return "+funy.value.code+";}; f() ;") ;
 //var Adder = function (x, y){ return x + y; }; // const btick = "`";
 await console.log(Adder(50,7));
-*/
+appk.keys = dbadminqp.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
+
 //dbenv.dbs.kyxtree.close();
 //dbenv.dbs.applix.close();
-/////////////////////} catch (err) {
-//////////////////////console.log("Error try catch: ",err);
-// ctx.body = { messagedb: err.message } // ctx not defined
-// ctx.status = err.status || 500
-//////////////////////}
-//////////////////////}();
+}();
+} catch (err) {
+ ctx.body = { messagedb: err.message }
+ ctx.status = err.status || 500
+};
 
 /*
 var coll = dbenv.colls.geo;
@@ -300,132 +268,66 @@ coll.find({}, function(err, docs) {
 });*/
 //var geo = dbenv.colls.geo; //  dbtree.createCollection("geo");
 //geo.insert({"comment":"comentario de texto"});
+//&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
+//const mongooseConn = mongoose.connection.openUri(dbUrl, dbenv.opts);  // goto line 389 // specify Shard or replSet
+//const mongooseConn = mongoose.createConnection(dbUrl, dbenv.opts); // Db.prototype.authenticate method will no longer be available
+// Even though it's a promise, no need to worry about creating models immediately, as mongoose buffers requests until a connection is made
+//(node:118) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): MongoError: Authentication failed.
+//(node:118) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+//(node:118) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): MongoError: Authentication failed.
+//var dbtree = mongooseConn.openNewDB('applics');
+//console.log('dbtree'+dbtree);
+/**************
+MongoClient.connect(dbUrl, // ,{poolSize:10,ssl:true,uri_decode_auth:true},
+  function(err, dbx) { // assert.equal(null, err);
+  console.log("Connected correctly to mongodb server");
+// dbx.command(dbadminqp.dbuser);   // superadmin, dbadmin, dbuser
+//dbAdmin = dbx.admin();
+//================
+dbAdmin.addUser(dbadminqp.superadmin.createUser,dbadminqp.superadmin.pwd,{roles: dbadminqp.superadmin.roles})
+       .catch(err => {console.log('Error while trying to create user superadmin mongodb: '+err); });  // throw err;
+dbAdmin.addUser(dbadminqp.dbadmin.createUser,dbadminqp.dbadmin.pwd,{roles: dbadminqp.dbadmin.roles})
+       .catch(err => {console.log('Error while trying to create user dbadmin mongodb: '+err); });  // throw err;
+dbAdmin.addUser(dbadminqp.dbuser.createUser,dbadminqp.dbuser.pwd,{roles: dbadminqp.dbuser.roles})
+       .then(usr => console.log('Mongodb has been created:'+JSON.stringify(usr)))
+       .catch(err => {console.log('Error while trying to create user dbuser mongodb: '+err); });  // throw err;
+//====================
+//var geo = dbx.collection("geo");
+//console.log("geo: "+geo);
+//dbx.close();
+});
+**************/
 
+//const dbUrl = `mongodb://${dbadminqp.dbuser.createUser}:${dbadminqp.dbuser.pwd}@172.17.0.1:27017/kyxtree?authSource=admin`;
+//console.log("uri: "+dbUrl);  //mongoUri should be in the form of "mongodb://user:pass@url:port/dbname"
 
+//module.exports.connect = function(mongoUri, promiseLib){
 /*
 mongooseConn.then(db => {   //db.createUser(dbadminqp.superadmin);
+
                          console.log('Mongoose has been connected'+db);})
        .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
 */
-// var mongooseConn = MongoClient.connect(dbUrl, dbenv.optcli); // ,{poolSize:10,ssl:true,uri_decode_auth:true},
-//var mongooseConn = mongoose.createConnection(dbUrl, dbenv.optodm);
-//mongooseConn.then(db => {appgoose=db;console.log('Mongoose has been connected');})
-//       .catch(err => {console.log('Error while trying to connect with mongodb: '+err); });  // throw err;
+//const mongoAdapter = require('socket.io-mongodb'); // siok.adapter(mongoAdapter('mongodb://localhost:27017/socket-io'));
+//const mubsub = require('mubsub');
+// const sqlconnect = require('./sqlconnect.js');   // pool or single
+let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+//var User = require('./models/user');  // ../app/models/user   default  .js
 
-// Even though it's a promise, no need to worry about creating models immediately, as mongoose buffers requests until a connection is made
-//    return mongoDB
-//};
-
-/*
-async function startApp() {
-  await next();
-  return sessionkstore.setup();
-}
-*/
-
-//=================END DATA HANDLING /models/dbconnect.js=======================
-
-/*
-//var langs=["eng","spa","arb"];var sysmsgs={};langs.forEach((x)=>{sysmsgs[x]=kyxtree.lng.findOne({"lang":x,"id":"sysmsgs"}));
-var sysmsgs = {
-  eng:{"FileNotFound":"File not found"},
-  spa:{"FileNotFound":"Archivo no encontrado"},
-  arb:{"FileNotFound": "ملف غير موجود"}
-};
-var applbls = {
-  eng:{"Country": "country",
-       "Name": "name"},
-  spa:{"Country": "país",
-       "Name": "nombre" },
-  arb:{"Country": "دولة",
-       "Name": "إسم"}
-};
-*/
-/*
-//const appi = new Koa();  // const app = Koa();
-const a = new Koa();
-a.use(async function (ctx, next){
-  await next();
-  ctx.response.body = 'Hello friends!!';
-});
-appk.use(Mount('/helo', a));
-routerk.get('/hi', function (ctx) {
-// hello
-  // ctx.router available
-//const res = await ctx.response;
-  console.log("ctx.params:"+ctx.response);
-});
-*/
-//var conexion = null;
-var resultado = "";
-//=================ERROR HANDLING START KOA=======================
-appk.use(async (ctx, next) => {  // koa error handling
-  try {
-    await next();
-  } catch (err) {
-    ctx.status = err.status || 500;
-    ctx.body = err.message;
-//    ctx.emit('error', err, ctx);
-    console.log('ErrorKoa: ', err);
-// (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
-// process.setMaxListeners(15); // require('events').EventEmitter.defaultMaxListeners = 15; // default 10 unlimited 0
-  }
-});  //  end error middleware
-
-/*
-//  koaSession = require('koa-session');  sessionkmongoose = require('koa-session-mongoose');
-const CONFIGS = {
-//  store: "cookie",   // session storage layer - see below
-    store: new sessionkmongoose({
-      name: 'kyx:sessgoose',    // cookie name
-      connection: dbenv.dbs.kyxoose, // mongooseConn, // dbenv.dbs.kyxoose,
-      collection: 'sessions',
-      model: 'User',
-      expires: 24 * 60 * 60 // 1 day in seconds, 2 weeks is the default
-    })
-  };
-appk.use(koaSession(CONFIGS, appk)); //{store: new sessionkmongoose()}
-appk.use(Convert(koaSession(CONFIGS, appk))); //{store: new sessionkmongoose()}
-*/
-
-// sessionkstore = require('koa-session-store') + sessionkmongo ose = ('koa-session-mongo ose')
-console.log("dbadmin.dbUrl",dbadmin.dbUrl)
+// koaSession = require('koa-session') + sessionkmongoose = ('koa-session-mongoose')
 const CONFIGS = {
     name: 'kyx:sesgoose',    // cookie name
 //  TypeError: this._store.load is not a function
     saveUninitialized: true, // false>needs set ctx.session.something=<something> /true>sets session any visitor
-    resave: true, // true>updates session as active even if not modified in request/false>in session store with touch
+    resave: false, // true>updates session as active even if not modified in request/false>in session store with touch
 //  secret: "mysecretcode", //koa2-session-store
 //  store: "cookie",   // session storage layer - see below
-/*    store: sessionkmongo.create({
-       url: dbadmin.dbUrl,
-//     url: `mongodb://${dbsroot}:${dbsrootpwd}@172.17.0.1:10017/admin`, // auth in admin -> sessions in admin
-//       connection: dbx,
-  //     db: "admin",
-//     db: appk.context.kyxtree,
-//     collection: 'sessions',
-       expires: 60 * 60 * 24 * 14 // 2 weeks is the default
-*/
-  store: new sessionkmongoose({
-        connection: dbm, //mongooseConn, //appk.context.kyxoose, //mongooseConn,
-        collection: 'sessionz',
-        model: 'KoaSession',
-        expires: 60 * 60 * 24 * 14 // 2 weeks is the default
-
-/*
-    store: new sessionkmongoose({  //  TypeError: this._store.load is not a function
-      mongoose: mongooseConn, //appkoose, //mongoose.connect(dbUrl, dbenv.optodm), // appk.context.admoose,
-      model: User,
-      collection: 'sessions',
-//      name: 'KoaSession',
-      expires: 24 * 60 * 60 // in sec=1day // 2 weeks is the default
-  //     connection: dbenv.dbs.admoose.connect, // appk.context.kyxoose,  //  dbenv.dbs.kyxtree, //  mongooseConn,
-       mongoose: dbenv.dbs.admoose,
-        db: "kyxtree",
-        collection: 'sesions',
+    store: new sessionkmongoose({
+      connection: dbenv.dbs.kyxoose, //  mongooseConn,
+//      db: "kyxtree",
+      collection: 'sesiones',
       expires: 60 * 60 * 24 * 14   //, // 2 weeks is the default
-//      model: 'User'
-*/
+  //    model: 'User'
     }),
     cookie: {
       key: 'kyx:sesgoosec', // (string) cookie key (default is koa:sess)
@@ -436,12 +338,14 @@ const CONFIGS = {
       overwrite: true, // (boolean) overwrite existing cookie (default true)
       httpOnly: true,  // (boolean) httpOnly not access js (default true)
       signed: true,    // (boolean) signed using KeyGrip (default true)
-      rolling: false   // (boolean) Force a session identifier cookie to be set on every response.
+      rolling: true   // (boolean) Force a session identifier cookie to be set on every response.
                        //The expiration is reset to the original maxAge, resetting the expiration countdown. default is false
     }
   };
-appk.use(Convert(sessionkstore(CONFIGS)));
+appk.use(sessionkstore(CONFIGS));
 //appk.use(koaSession(CONFIGS, appk)); //{store: new sessionkmongoose()}
+appk.proxy = true;  // koa passport trust proxy
+
 /***************************************
 
 // koa-session-store + koa-session-mongo  ose
@@ -471,6 +375,7 @@ const CONFIGS = {
   };
 //appk.use(convert(sessionkstore(CONFIGS))); //{store: new sessionkmongoose()}
 
+//appk.proxy = true;  // koa passport trust proxy
 ************************************/
 
 /*
@@ -518,14 +423,317 @@ appk.use(Convert(sessionkstore(CONFIGS))); //, appk));   //cokiesz:{"views":16,"
 //appk.use(sessionkstore({store: sessionkmongo.create({url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions"})}));
 // or if you prefer all default config, just use => app.use(session(appk));
 
+/*
+//sessionkmongoose = require('koa-session-mongoose'); koaSession = require('koa-session');
+const CONFIGS = {
+//  store: "cookie",   // session storage layer - see below
+    store: new sessionkmongoose({
+      name: 'kyx:sessgoose',    // cookie name
+      connection: dbenv.dbs.kyxoose, // mongooseConn, // dbenv.dbs.kyxoose,
+      collection: 'sessions',
+      model: 'User',
+      expires: 24 * 60 * 60 // 1 day in seconds, 2 weeks is the default
+    })
+  };
+appk.use(Convert(koaSession(CONFIGS, appk))); //{store: new sessionkmongoose()}
+*/
+/*
+async function startApp() {
+  await next();
+  return sessionkstore.setup();
+}
+*/
+var filesize = 0;
+/*
+//var langs=["eng","spa","arb"];var sysmsgs={};langs.forEach((x)=>{sysmsgs[x]=kyxtree.lng.findOne({"lang":x,"id":"sysmsgs"}));
+var sysmsgs = {
+  eng:{"FileNotFound":"File not found"},
+  spa:{"FileNotFound":"Archivo no encontrado"},
+  arb:{"FileNotFound": "ملف غير موجود"}
+};
+var applbls = {
+  eng:{"Country": "country",
+       "Name": "name"},
+  spa:{"Country": "país",
+       "Name": "nombre" },
+  arb:{"Country": "دولة",
+       "Name": "إسم"}
+};
+*/
+/*
+//const appi = new Koa();  // const app = Koa();
+const a = new Koa();
+a.use(async function (ctx, next){
+  await next();
+  ctx.response.body = 'Hello friends!!';
+});
+appk.use(Mount('/helo', a));
+routerk.get('/hi', function (ctx) {
+// hello
+  // ctx.router available
+//const res = await ctx.response;
+  console.log("ctx.params:"+ctx.response);
+});
+*/
+//var dbconn = require('./dbconnect.js');
+//var conexion = null;
+var resultado = "";
 
+//koa-route
+const dbx = {
+  tobi: { name: 'tobi', species: 'ferret' },
+  loki: { name: 'loki', species: 'ferret' },
+  jane: { name: 'jane', species: 'ferret' }
+};
+const pets = {
+  app1:{
+  list: (ctx) => {
+    const names = Object.keys(dbx);
+    ctx.body = 'pets: ' + names.join(', ');
+  },
+  show: (ctx, name) => {
+    const pet = dbx[name];
+    if (!pet) return ctx.throw(404, 'cannot find that pet');
+    ctx.body = pet.name + ' is a ' + pet.species;
+    return;
+   },
+  hi: async function (ctx, next) {
+    await next();
+    ctx.response.body = 'Hello';
+  }
+},
+  dbc: async function (ctx, next) {
+    try {
+  var dbconn = require('./dbconnect.js');
+  let database = null;
+  await dbconn.opens()
+    .then((db)=>{
+        database = db;
+        console.log("db: "+stringify(db));
+        return db; //.collection('users');
+    })
+    .catch((err)=>{
+        console.error(err);
+    });
+    ctx.body = await resujs;
+} catch (err) {
+ ctx.body = { messagedb: err.message }
+ ctx.status = err.status || 500
+};
+},
+  listados: async function (ctx, next) {
+    try {
+         ctx.status = 200;
+         ctx.set("Access-Control-Allow-Origin", "*");
+         ctx.set("Access-Control-Allow-Credentials", "true");
+         ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+         ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  //     ctx.set("Content-Type", "application/json");
+         ctx.type="application/json";
+///         ctx.flushHeaders();
+      ////   ctx.body = {"respuesta":"Hola amigos de Keyax"};  /// first step  >> who
+    /*       const start = new Date();
+           return next().then(() => {const ms = new Date() - start;
+                          console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+                          console.log(`hi${JSON.stringify(ctx.response.body)}`);
+            });
+  */
+
+  //        await next();
+  //      ctx.state.rec = list(ctx, next);
+    var dbconn = require('./dbconnect.js');
+    let database = null;
+    await dbconn.opens()
+      .then((db)=>{
+          database = db;
+          console.log("db: "+db);
+          return db.collection('users');
+      })
+      .then((users)=>{
+          return users.findOne({age: {$eq: 22}})
+  //        return users.find({}).toArray(function(err, results){console.log(results);return results;}); // output all records
+      })
+      .then((resul)=>{//return result;
+//          resujs = JSON.stringify(resul);
+          resujs = resul;
+
+  //      await next();
+      ////  ctx.response.body = resul;
+      ////  ctx.state.resul = resujs;
+  //        console.log("then:"+JSON.stringify(result));
+  //      setTimeout(function () {
+          console.log("listad:xqr"+JSON.stringify(resujs)+"xqr");
+  //      }, 500)
+          database.close();
+          ctx.body = resujs;
+//          ctx.state.resul = resujs;
+  //        resultado = resul;
+
+        return resujs;
+        })
+      .catch((err)=>{
+          console.error(err);
+      });
+      ctx.body = await resujs;
+ } catch (err) {
+   ctx.body = { message_listados: err.message }
+   ctx.status = err.status || 500     // AssertionError [ERR_ASSERTION]: headers have already been sent
+ };
+//ctx.body = JSON.stringify({ status: 200, body: `${resujs}` });
+//ctx.status = 200;
+await next();
+ctx.body = resujs;   // ReferenceError: resujs is not defined  without ctx.flushHeaders();
+//ctx.state.dbs = resujs;
+  }, // end listados()
+
+sqlang: async function (ctx, langs, next) {
+  try {
+       ctx.status = 200;
+       ctx.set("Access-Control-Allow-Origin", "*");
+       ctx.set("Access-Control-Allow-Credentials", "true");
+       ctx.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS, POST, PUT");
+       ctx.set("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+//     ctx.set("Content-Type", "application/json");
+       ctx.type="application/json";
+       ctx.flushHeaders();
+
+console.log("ctx.response"+ JSON.stringify(ctx.request.url));
+//ctx.body = {"respuesta sqlang":"Hola amigos de Keyax"};  /// first step  >> who
+const sqlconnect = require('./sqlconnect.js');   // pool or single
+//  var dbconn = require('./dbconnect.js');
+var ling = ctx.request.url.slice(ctx.request.url.lastIndexOf('/')+1);
+console.log('%'+ling+'%');
+  var sqlopts = { 'sql' : `SELECT VALUE, LEXIC FROM AXIE WHERE SCOPE='@L:' AND LANGTO='eng' AND VALUE LIKE ?`,
+                  'values' :  ['%'+langs+'%'], 'timeout' : 40000 }; // '%_%'   40s
+  // const respo[rows, fields] = await sqlconn.execute(env_sql.options.sql)
+ctx.body = await sqlconnect.querypr(sqlopts)
+                 .then(rows => {//console.log("rowssqlpre:"+rows);  //undefined
+                    //////  ctx.body = rows; //JSON.stringify(rows);
+              //      ctx.send(rows);
+                      console.log("rowssql:"+JSON.stringify(ctx.body));   //OOOOOOOKKKKKK
+            /*          // temporary data holder
+                      const body = [];
+                      // on every content chunk, push it to the data array
+                      response.on('data', (chunk) => body.push(chunk));
+                      // we are done, resolve promise with those joined chunks
+                      response.on('end', () => resolve(body.join('')));
+       */
+    //            return ctx;
+                return rows;
+              //  next();
+              })
+//             .then((ctx) => {ctx.body = rows;})
+      // .then(JSON.stringify)
+           .catch(err => function (err) {console.log("Promise Rejected");});
+  /*    sqlconnect.queryp(sqlopts, function(err, rows, fields){
+      var temp=JSON.stringify(rows);
+      var manager = JSON.parse(temp)[0];
+      console.log(rows);
+      ctx.body = temp;
+  //   res.send(manager);
+     });*/
+// await next();
+
+} catch (err) {
+  ctx.body = { messagesql: err.message }
+  ctx.status = err.status || 500
+};
+
+  }  // end sqlang()
+};  // end pets
+
+console.log('APPS> '+Object.keys(pets.app1));
+
+var rte= '/pets/pets'; var unit = pets.app1.list;
+//var uploadm = Multer({dest: '/img'});
+app.use(Mount('/pets/hi', pets.app1.hi)); // Internal Serve Error>TypeError:Cannot read property 'middleware' of undefined
+app.use(routek.get('/pets/hello', pets.app1.hi)); // Not Found
+app.use(routek.get(rte, unit));
+app.use(routek.get('/pets/pets/:name', pets.app1.show));
+unit = pets.app1.hi;
+///app.use(routek.get(rte, pets.hi));
+app.use(routek.get('/pets/listad', pets.listados));
+app.use(routek.get('/pets/sqlang/:langs', pets.sqlang));
+//app.use(routek.post('/pets/uploadm', uploadm.single('avatar')));
+
+//server.listen(nodeport+100); // app.listen(8100);
+//console.log('listening on port 8100');
+/*
+server.listen(parseInt(`${port}+100`), (err) => {
+      if (err) {return console.log('app something bad happened', err)}
+      console.log(`app server is listening on port: ${port}`)
+});
+*/
+/*
+var appone = {login: async function (ctx, next) {
+  var User            = require('./models/user');  // ../app/models/user   default  .js
+ try {
+      var {fields} = await abb(ctx.req);  console.log(util.inspect({fields}));
+      var email = fields.email;
+      var password = fields.password;
+  var userdoc = await User.findOne({'local.email': email}, function (err, userdok) {
+                 if (err) {console.log("error find:", err);
+                           ctx.throw(400, 'name required', { user: user });}
+                 else {console.log('user found:',userdok);}
+                 return userdok;
+                 });
+  if (!userdoc || userdoc === null){userdoc = {};
+   userdoc.local = {email: email, password: password};
+   var newuser = new User(userdoc);
+   await newuser.save(function (err) { if (err) return handleError(err);});
+// .save client side read full doc,write atomic diff => find+insert/update => .pre .post middleware
+// userdox = await User.create(userdoc_array,   // call n times .save with validators,hooks
+// userdox = await User.update({age:{$gt:18}},{multi:true,upsert: true} // mongoose => mongodb
+// userdox = await User.users.insert(userdoc_array, // bulk faster native driver
+//                      function(err,userdoq_array){if(err) return handleError(err);});
+//   await User.register(userdoc, 'userid.local.password', function(err, userdoq) {
+//                     if (err) {console.log("error register", err);}
+//                     return ctx.render('register', { user : user });
+//                     });
+}
+
+if (userdoc && userdoc.local.email === email && userdoc.local.password === password) {
+         ctx.state.user = {};
+         ctx.state.user.email = email;
+         ctx.state.user.password = password;
+         console.log('logos',ctx.state.user);
+         }
+//if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
+//if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
+if (ctx.session){console.log("New session", ctx.session);}
+ctx.cookies.set("kyx:user",JSON.stringify({"email": email,"passhash": password}));// = {resp: "login eureka!!"};
+console.log("kyx:user"+JSON.parse(ctx.cookies.get("kyx:user")));
+ctx.body = ctx.state.user;  // response to browser
+// return email;
+  } catch (err) {
+  ctx.body = { messagelogin: err.message };
+  ctx.status = err.status || 500;
+  };
+}  // end /login
+}  // end appone
+*/
+//const mount2 = require('koa-mount');
+//appk.use(mount2.post('/login', appone.login));
+
+appk.use(async (ctx, next) => {  // koa error handling
+  try {
+    await next();
+  } catch (err) {
+    ctx.status = err.status || 500;
+    ctx.body = err.message;
+//    ctx.emit('error', err, ctx);
+    console.log('ErrorKoa: ', err);
+// (node:1075) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 timeout listeners added. Use emitter.setMaxListeners() to increase limit
+// process.setMaxListeners(15); // require('events').EventEmitter.defaultMaxListeners = 15; // default 10 unlimited 0
+  }
+});
 
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
 ////appk.use(require('body-parser').urlencoded({ extended: true }));
 
 //appk.use(cookiek("keyax57secretos")); // not a function
-
+/*
 app.use(new CSRF({    // add the CSRF middleware
   invalidSessionSecretMessage: 'Invalid session secret',
   invalidSessionSecretStatusCode: 403,
@@ -534,7 +742,7 @@ app.use(new CSRF({    // add the CSRF middleware
   excludedMethods: [ 'GET', 'HEAD', 'OPTIONS' ],
   disableQuery: false
 }));
-
+*/
 //appk.use(Cookies); // read cookies (needed for auth) // error : next is not a function // not found
 //appk.use(bodyParser({//enableTypes: ['form', 'json'],
 //         onerror: function (err, ctx) {ctx.throw('body parse error', 422);}
@@ -561,20 +769,9 @@ appk.use(bodyParser({extendTypes: {json: ['application/x-javascript'] } } ) );
       console.log("UNAUTHENTICATED in isLoggedIn(ctx,next)"); // res.redirect('/hy');
    };
 appk.use(passport.initialize());
-//appk.use(cookieParser(secret)); // Parse Cookie header and populate ctx.cookies with an object keyed by the cookie names.
+//appk.use(cookieParser()); // Parse Cookie header and populate ctx.cookies with an object keyed by the cookie names.
 appk.use(passport.session());  // needs de/serializeUser to store user in cookie
 appk.use(Convert(flash())); // use connect-flash for flash messages stored in session // app. koa deprecated Support for generators
-
-  /*
-  async function process(next) {
-    await next;
-    await function (done) { setTimeout(done, 5000); };
-    console.log('processed');
-  };
-  */
-
-//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
-//appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
 
 appk.use(async (ctx, next) => {
   const btick = "`";
@@ -610,7 +807,16 @@ appk.use(async (ctx, next) => {
   await next();  // next() corrects Not Found, await corrects OK
   return ctx;
 }); // end async views
+  /*
+  async function process(next) {
+    await next;
+    await function (done) { setTimeout(done, 5000); };
+    console.log('processed');
+  };
+  */
 
+//appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
+//appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(x = ctx.cookies.get()));});
 /*
 // logger
 appk.use(async (ctx, next) => {
@@ -625,6 +831,8 @@ appk.use(ctx => {
   ctx.session.filesize = filesize; //body = 'Hello World';
   return ctx;
 });*/
+
+
 
 //===========================routerk===================
 //app.use(route.delete('/:id', mountDoom));
@@ -940,7 +1148,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'};
 .on('connection', function (socket){
 //  socket.join('room1');  //  socket.leave('room1');  // default Socket#id
 //  socket.broadcast.in('room1').emit('hiserver', { hello: 'world baby '+socket.id });
-    socket.emit('hiserver', { hello: ` world baby: ${socket.id}` });
+    socket.emit('hiserver', { hello: 'world baby '+socket.id });
     socket.on('hiclient', function (data) {
        console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
        console.log(`with socket cookie: ${socket.request.headers.cookie}`); // previous socket.id
@@ -960,21 +1168,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'};
 //    socket.disconnect();
 //    socket.disconnect('unauthorized');
 //    socket.close();
+
+
 //module.exports.appk = appk;
 //module.exports.app = app;
-/*var siok = require('socket.io')(serverkio);
-siok.on('connection', function (socket){
-    socket.emit('news', { hello: 'world baby'+socket.id });
-    socket.on('myevent', function (data) {
-       console.log('data:'+data);
-       console.log(`connected socket news FF!${JSON.stringify(data)}`);
-    });
-     socket.emit('news',socket.id);
-     socket.on('upload', function (msg) {filesize=msg; console.log("msg:",msg);
-//         socket.broadcast.emit('progress', bytesReceived);
-     });
-  });
-////      socket.disconnect();
-//    socket.disconnect('unauthorized');
-//    socket.close();
-*/

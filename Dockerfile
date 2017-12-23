@@ -162,8 +162,8 @@ RUN cd /home/node \
 && npm install --save mongoose \
 && npm install --save koa-session-mongoose \
 && npm install --save koa-session \
-#  && npm install --save koa-session2 \
-#  && npm install --save koa-generic-session \
+  && npm install --save koa-session2 \
+  && npm install --save koa-generic-session \
 && npm install --save koa-generic-session-mongo \
  && npm install --save mongodb \
  && npm install --save koa-session-store \

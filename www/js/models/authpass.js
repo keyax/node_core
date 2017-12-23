@@ -84,12 +84,12 @@ passport.use('local-signup', new LocalStrategy({
 },
 function verifyCallback(ctx,email,password,done) {
   console.log('LocalStrategy signup email:',email);
-  try { ctx.session = "";
+  try { // ctx.session = "";
     User.findOne({ "local.email" : email }, function(err, passUser) {
 // if there are any errors, return the error before anything else
 ///     if (err) return done(err);
        if (err) {
-         if(err.code == 11000) ctx.session = "";
+         if(err.code == 11000) console.log("ERROR#: ",err);
          res.send(err);
        }
 // check to see if theres already a user with that email
