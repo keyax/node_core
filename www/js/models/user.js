@@ -24,7 +24,7 @@ var userSchema = Schema({
   local: {
     email: {type: String, required: true, unique: true },
     password: {type: String, required: true },
-    username: String,
+    username: {type: String, index: false, unique: false}
   }/*,
   facebook         : {
       id           : String,
@@ -44,7 +44,7 @@ var userSchema = Schema({
       email        : String,
       name         : String
   }*/
-});
+},{ autoIndex: false });
 
 userSchema.plugin(passportLocalMongoose);
 
@@ -58,11 +58,12 @@ userSchema.methods.generateHash = function(password) {
 userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
+userSchema.set('autoIndex', false);
+
 // create the model for users and expose it to our app
 //return appk.context.kyxoose().model('User', userSchem);
 //module.exports = appk.context.kyxoose.model('User', userSchem, "usersm");
 module.exports = mongoose.model('User', userSchema, "users");  // , 'usuarios'
-
 /*
 var Schema = mongoose.Schema;
 var User = new Schema({

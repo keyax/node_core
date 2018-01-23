@@ -108,243 +108,7 @@ appk.use(passport.session());
         res.render('index.ejs'); // load the index.ejs file
     });
 */
-// LOGIN ===============================
-// show the login form
-//   routerk.get('/logito', console.log('logito ok'));
-     routerk.get('/loginp', async function (ctx, next) { // function(req, res)
-// render the page and pass in any flash data if it exists
-//   res.render('login.ejs', { message: req.flash('loginMessage') });
-     console.log("msg from pass.js /login");
-    });
-// process the login form
-// app.post('/login', do all our passport stuff here);
-// SIGNUP ==============================
-// show the signup form
-   routerk.get('/signup', function(ctx) {
-// render the page and pass in any flash data if it exists
-   ctx.render('signup.ejs', { message: ctx.flash('signupMessage') })
-           .catch(err => console.error(err)); // Unhandled promise rejection
-   });
-// process the signup form
-// app.post('/signup', do all our passport stuff here);
-// PROFILE SECTION =====================
-// we will want this protected so you have to be logged in to visit
-// we will use route middleware to verify this (the isLoggedIn function)
-   routerk.get('/profile', isLoggedIn, function(ctx) {
-        ctx.render('profile.ejs', {
-            user : req.user // get the user out of session and pass to template
-        });
-    });
-// LOGOUT ==============================
-   routerk.get('/logout', function(ctx) {
-        ctx.logout();
-        ctx.redirect('/');
-    });
-// process the signup form
-// routerk.post('/signup', passport.authenticate('local', { badRequestMessage: 'insert message here' }));
-   routerk.post('/signupass', passport.authenticate('local-signup', {
-         successRedirect : '/w3/who', // redirect to the secure profile section
-         failureRedirect : '/w3/', // redirect back to the signup page if there is an error
-         failureFlash : false // allow flash messages
-   }));
-// process the login form
-   routerk.post('/loginpass', passport.authenticate('local', {
-         successRedirect : '/w3/sqldb/fr', // redirect to the secure profile section
-         failureRedirect : '/w3/sqldb/de', // redirect back to the signup page if there is an error
-         failureFlash : false // allow flash messages
-   }));
 
-/*
-router.get('/', async (ctx, next) => {
-  ctx.body = 'Hello'
-})
-
-export default router
-*/
-/*
-routerk.use((ctx,next) => {
-//  ctx.body = {"respuesta":"Hola amigos de Keyax router use"};  // second step
-    next();
-});
-*/
-///routerk.use("/uploads", Formis());
-/*
-routerk.use(//"/login",
-(ctx) => {
-      sessionkstore(
-    {store: sessionkmongo.create({
-  //  db: kyxtree", //"mongodb://user:555777@192.168.1.2:27017/kyxtree", //pets.dbc, // sessions,
-     url: "mongodb://user:555777@192.168.1.2:27017/kyxtree/sessions", //pets.dbc, // sessions,
-  //   db: "kyxtree",  //pets.dbc,
-  //   collection: "sessions",
-  //   email: "yones",
-  //   password: "555777",
-     expires: 10000*60*60*1})
-   }
-  // ,appk
-)
-//  await next();
-//ctx.cookies.set('sessiond', 123456);
-//ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));
-//appk.use(sessionk(appk));
-}
-);
-
-routerk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:"+JSON.stringify(ctx.session.username));});
-*/
-/////routerk.use(async (ctx) => {console.log("cookies:"+ cookiek(ctx));}); //cookie parser
-
-// module.exports.who =
-routerk.post("/who", async function (ctx,next) {  //  , isLoggedIn,
- try {  //  ctx.body = ctx.session;
-      if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
-      if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
-      ctx.body = ctx.state.user;
-      //if (ctx.session){console.log("New session", ctx.session);}
-//      ctx.cookies.set("kyx:user", email);// = {resp: "login eureka!!"};
-await next();
-} catch (err) {
-ctx.body = { message: err.message }
-ctx.status = err.status || 500
-};
-});
-
-
-//routerk.post("/login", async function (ctx, next) {await kbb(ctx.req);},function (filds) {console.log("results",filds);})
-routerk.post("/loginpasx", async function (ctx, next) {
-  var User            = require('../models/user');  // ../app/models/user   default  .js
-
- try {
-const {fields} = await kbb(ctx.req);  console.log(util.inspect({fields}));
-var email = fields.email;
-var password = fields.password;
-var userid = await User.findOne({'local.email': email}, function (err, userid) {
-                 if (err) {console.log("error find:", err);
-                           ctx.throw(400, 'name required', { user: user });}
-//                else {console.log('user found:',userid.local);}
-                 });
-if (!userid || userid === null){userid  = {};
-   userid.local = {email: email, password: password};
-// userid = await User.create(new User(newUser));
-   await User.save(new User(userid), 'userid.local.password', function(err, newuser) {
-                     if (err) {console.log("error register", err);} //return ctx.render('register', { user : user });
-                     });
-}
-if (userid && userid.local.email === email && userid.local.password === password) {
-         ctx.state.user = {};
-         ctx.state.user.email = email;
-         ctx.state.user.password = password;
-         console.log('logos',ctx.state.user);
-         }
-
-//if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
-//if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
-ctx.body = ctx.state.user;
-if (ctx.session){console.log("New session", ctx.session);}
-ctx.cookies.set("kyx:user", email);// = {resp: "login eureka!!"};
-return email;
-
-  } catch (err) {
-  ctx.body = { message: err.message };
-  ctx.status = err.status || 500;
-  };
-}
-//, function (u) {console.log("results",u)}
-
-);  // end routerk.post("/login"
-
-// process the login form
-routerk.post('/login', passport.authenticate('local-login', {
-        successRedirect : '/who', // redirect to the secure profile section
-        failureRedirect : '/login', // redirect back to the signup page if there is an error
-        failureFlash : false // allow flash messages
-}));
-
-routerk.post('/loginy', async  function(ctx, next) {  //'/custom'
-   //await kbb(ctx.req);
-  return passport.authenticate('local', function(user, info, status) {
-    if (user === false) {
-      ctx.status = 401
-      ctx.body = { success: false }
-//      ctx.throw(401)
-    } else {
-      ctx.body = { success: true };
-      return ctx.login(user);
-    }
-  })(ctx, next)
-
-//console.log("auth:", ctx.isAuthenticated);
-});
-
-// POST /login
-routerk.post('/loginz', bodyParser(),
-  passport.authenticate('local', {
-    successRedirect: '/pets/pets',
-    failureRedirect: '/'
-  })
-);
-
-routerk.post('/loginzz',Multer, function(ctx, next)
-{ console.log ("request",ctx.body);
-  ctx.state.user = {};
-  ctx.state.user.email = ctx.request.email;
-  ctx.state.user.password = ctx.request.password;
-
-if (ctx.isAuthenticated()){ console.log("passport authenticated!!");}
-if (ctx.isUnauthenticated()){console.log("passport not authenticated!!")}
-}
-);
-
-
-routerk.post('/logout', function(ctx) {
-  ctx.logout();
-  if (ctx.isAuthenticated()){ console.log("logout:passport authenticated!!");}
-  if (ctx.isUnauthenticated()){console.log("logout:passport not authenticated!!")}
-  ctx.session=null;
-//  ctx.redirect('/login');
-});
-
-/*
-routerk.get('/auth/facebook',
-  passport.authenticate('facebook')
-)
-routerk.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {
-    successRedirect: '/app',
-    failureRedirect: '/'
-  })
-)
-routerk.get('/auth/twitter',
-  passport.authenticate('twitter')
-)
-routerk.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {
-    successRedirect: '/app',
-    failureRedirect: '/'
-  })
-)
-routerk.get('/auth/google',
-  passport.authenticate('google')
-)
-routerk.get('/auth/google/callback',
-  passport.authenticate('google', {
-    successRedirect: '/app',
-    failureRedirect: '/'
-  })
-)
-// Require authentication for now
-appk.use(function(ctx, next) {
-  if (ctx.isAuthenticated()) {
-    return next()
-  } else {
-    ctx.redirect('/')
-  }
-})
-routerk.get('/app', function(ctx) {
-  ctx.type = 'html'
-  ctx.body = fs.createReadStream('views/app.html')
-})
-*/
 
 
 routerk.post("/uploadf", async function (ctx, next) {
@@ -412,7 +176,7 @@ yo.on('connect', function (socket) { console.log("sockrouter connected");
 */
 let filesize = await ctx.state.filesize;
 //socket.on('upload', async function (msg) {filesize = msg; console.log("msg:",msg);});
-console.log('filesizerouter:'+JSON.stringify(ctx.session));
+console.log('filesizerouter:',ctx.state.filesize);
 const {fields} = await kbb(ctx.req, {
     onFile: function(fieldname, file, filename, encoding, mimetype) {
             //uploadFilesToS3(file);
@@ -507,7 +271,7 @@ console.log(util.inspect({files, fields}));
 */
 
 //  console.log("filelist:"+fields.filelist);
-  ctx.body = await {resp: "eureka!!"+ filesize};
+  ctx.body = await {resp: "eureka!!"+ ctx.state.filesize};
 return ctx;
 } catch (err) {
 ctx.body = { message: err.message }
@@ -622,7 +386,7 @@ routerk.get(/(|^$)/, function* (next) { // <--- important that it is last
     this.body = 'public: /(|^$)/';
 });*/
 
-//module.exports = routerk;
+module.exports = routerk;
 // OK1
 ///////////appk.use(routerk.routes());
 //////////////appk.use(routerk.allowedMethods());

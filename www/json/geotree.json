@@ -1,90 +1,174 @@
-kyxtree.geo   (db.coll)
-db.geo.createIndex("map": "2dsphere");
-db.geo.createIndex("geo": 1);
-
-var geos =
-{"geo":"world","world":{"data":{"lang":"eng"},"division": ["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar","as","at","au","aw",
-"ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv","bw","by","bz","ca",
-"cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de","dj","dk","dm","do",
-"dz","ec","ee","eg","er","es","et","eu","fi","fj","fk","fm","fo","fr","ga","gb","gd","ge","gf","gg","gh","gi",
-"gl","gm","gn","gp","gq","gr","gs","gt","gu","gw","gy","hk","hm","hn","hr","ht","hu","id","ie","il","im","in",
-"io","iq","ir","is","it","je","jm","jo","jp","ke","kg","kh","ki","km","kn","kp","kr","kw","ky","kz","la","lb",
-"lc","li","lk","lr","ls","lt","lu","lv","ly","ma","mc","md","me","mg","mh","mk","ml","mm","mn","mo","mp","mq",
-"mr","ms","mt","mu","mv","mw","mx","my","mz","na","nc","ne","nf","ng","ni","nl","no","np","nr","nu","nz","om",
-"pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs","ru","rw","sa","sb",
-"sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","su","sv","sy","sz","tc","td","tf","tg",
-"th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy","uz","va","vc","ve",
-"vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]},"data":{}};
-
-//geos.data={};
-geos.world.division.forEach((x)=>{geos.world[x]={data:{}};});
-// geos.division.forEach(function(x){geos[x]={};});
-// for(var i= 0; i < geos.division.length; i++){geos[geos.division[i]]={};}
-// for (var x in geos.division) {geos[geos.division[x]]={};}
-var w = "world", c = "es", lng="spa";
-geos[w][c].data.lang=lng;
-geos[w][c].division=["an","ba","ct","ex"];
-geos[w][c].division.forEach((r)=>{geos[w][c][r]={data:{}};});
-geos[w][c].ct.data.lang=["cat"];
-console.log(geos);
-
 //iterate json object
 Object.keys(obj).forEach((key, index) => { console.log(key);});
-Object.keys(obj).map(e => console.log(`key=${e}  value=${obj[e]}`));
+   Object.keys({ first: "John", last: "Doe" })  >>  [ 'first', 'last' ]
+Object.keys(obj).map(key => console.log(`key=${key}  value=${obj[key]}`));
 Object.entries(obj).forEach(([key, value]) => ...)
 
-{"world_language":
-  {"tree":"language",
-   "dat":"lng",
-   "es":{"lng":"spa","cat":{"lng":"cat"},"bas":{"lng":"eus"}}
-   "ma":{"lng":"arb zgh"},
-   "ae":{},
-   "af":{}
- }
+{"geo":"wrld/data","data":{"language":  ["spa", "cat", "bas"],  // ["fra(latn_support)", "arb", "zgh"]
+                           "spa":       {"level":"país","name":"España","oficial":"Reino de España","capital":"","currency":"euro"},
+
+                           "zip": "45","phone": "954","currency":"€","numbers":[",",".","0","9"],"date":"dd/mm/yyyy"
+                           "area":      {"unit":"km2",      "set":999,  "count":999},
+                           "population":{"unit":"habitant", "set":999,  "count":999},
+                           "income":    {"unit":"$",        "set":999,  "count":999},
+                           "age":       {"unit":"year",     "set":[99], "count":[99]
+                           }
 }
-{"geo":"lng","":"world/language/es","val":"spa"}
-{"key":"world/language/es/cat","val":"cat"}
 
-{"geo":"wrld", "division": ["afri","amer","asia","euro","ocea", "other"]}
-{"geo":"wrld/afri", "division": ["ac","ao","bf","bi","bj","bw","cd","cf","cg","ci","cm","cv","dj","dz","eg","er",
-"et","ga","gh","gm","gn","gq","gw","hm","ke","km","lr","ls","ly","ma","mg","ml","mr","mu","mw","mz","na","ne",
-"ng","re","rw","sc","sd","sh","sl","sn","so","st","sz","td","tg","tn","tz","ug","yt","za","zm","zw"]}
-{"geo":"wrld/amer", "division": ["ag","ai","an","aq","ar","as","aw","bb","bm","bo","br","bs","bz","ca","cl","co",
-"cr","cu","dm","do","ec","fk","gd","gf","gl","gp","gs","gt","gy","hn","ht","jm","kn","ky","lc","mq","ms","mx",
-"ni","pa","pe","pm","pr","py","sv","tc","tf","tt","us","uy","vc","ve","vg","vi"]}
-{"geo":"wrld/asia", "division": ["ae","af","am","az","bd","bh","bn","bt","by","cc","cn","cx","dk","ee","ge","hk",
-"id","il","in","io","iq","ir","jo","jp","kg","kh","kp","kr","kw","kz","la","lb","lk","mm","mn","mo","mv","my",
-"np","om","ph","pk","ps","qa","ru","sa","sg","sr","su","sy","th","tj","tl","tm","tp","tr","tw","uz","vn","ye"]}
-{"geo":"wrld/euro", "division": ["ad","al","at","ax","ba","be","bg","ch","cy","cz","de","es","eu","fi","fo","fr",
-"gb","gg","gi","gr","hr","hu","ie","im","is","it","je","li","lt","lu","lv","mc","md","me","mk","mt","nl","no",
-"pl","pt","ro","rs","se","si","sj","sk","sm","ua","uk","va","yu"]}
-{"geo":"wrld/ocea", "division": ["au","bv","ck","fj","fm","gu","ki","mh","mp","nc","nf","nr","nu","nz","pf","pg",
-"pn","pw","sb","tk","to","tv","vu","wf","ws"]}
-{"geo":"wrld/other", "division": []}  // inserts "ac": "" and fills
+kyxtree.geo   (db.coll)
+db.geo.createIndex({"map": "2dsphere"}); // only indexes docs containing map field (text 2dsphere geoHaystack default sparse)
+db.geo.createIndex({"geo":1,"road":"text","road_estate":"text","road_apart":"text"},{name:"road",sparse:true})//$text autocomplete
+db.geo.createIndex({"geo":1,"activity": 1})
+db.geo.find({geo:{$regex:/^es\/an\/se/i, $options:'m'}})   //'m' multiline string 'x' ignore blanks #comments\n
+===============
+var geos =
+{"colid":"geo/ini","tree":"geo/divs","divs":["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar",
+"as","at","au","aw","ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv",
+"bw","by","bz","ca","cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de",
+"dj","dk","dm","do","dz","ec","ee","eg","er","es","et","eu","fi","fj","fk","fm","fo","fr","ga","gb","gd","ge",
+"gf","gg","gh","gi","gl","gm","gn","gp","gq","gr","gs","gt","gu","gw","gy","hk","hm","hn","hr","ht","hu","id",
+"ie","il","im","in","io","iq","ir","is","it","je","jm","jo","jp","ke","kg","kh","ki","km","kn","kp","kr","kw",
+"ky","kz","la","lb","lc","li","lk","lr","ls","lt","lu","lv","ly","ma","mc","md","me","mg","mh","mk","ml","mm",
+"mn","mo","mp","mq","mr","ms","mt","mu","mv","mw","mx","my","mz","na","nc","ne","nf","ng","ni","nl","no","np",
+"nr","nu","nz","om","pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs",
+"ru","rw","sa","sb","sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","su","sv","sy","sz",
+"tc","td","tf","tg","th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy",
+"uz","va","vc","ve","vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]}
+// filter by country groups  "level":"adm0" <=> "ttag":"country"
+{"colid":"geo/ini","tree":"geo/cont","level":"cont","divs": ["afri","amer","asia","euro","ocea","other"]}
+{"col":"geo/ini","tree":"geo/afri","level":"adm0","divs": ["ac","ao","bf","bi","bj","bw","cd",
+  "cf","cg","ci","cm","cv","dj","dz","eg","er","et","ga","gh","gm","gn","gq","gw","hm","ke","km","lr","ls",
+  "ly","ma","mg","ml","mr","mu","mw","mz","na","ne","ng","re","rw","sc","sd","sh","sl","sn","so","st","sz",
+  "td","tg","tn","tz","ug","yt","za","zm","zw"]}
+{"colid":"geo/ini","tree":"geo/amer","level":"adm0","divs": ["ag","ai","an","aq","ar","as","aw",
+  "bb","bm","bo","br","bs","bz","ca","cl","co","cr","cu","dm","do","ec","fk","gd","gf","gl","gp","gs","gt",
+  "gy","hn","ht","jm","kn","ky","lc","mq","ms","mx","ni","pa","pe","pm","pr","py","sv","tc","tf","tt","us",
+  "uy","vc","ve","vg","vi"]}
+{"colid":"geo/ini","tree":"geo/asia","level":"adm0","divs":["ae","af","am","az","bd","bh","bn",
+  "bt","by","cc","cn","cx","dk","ee","ge","hk","id","il","in","io","iq","ir","jo","jp","kg","kh","kp","kr",
+  "kw","kz","la","lb","lk","mm","mn","mo","mv","my","np","om","ph","pk","ps","qa","ru","sa","sg","sr","su",
+  "sy","th","tj","tl","tm","tp","tr","tw","uz","vn","ye"]}
+{"colid":"geo/ini","tree":"geo/euro","level":"adm0","divs": ["ad","al","at","ax","ba","be","bg",
+  "ch","cy","cz","de","es","eu","fi","fo","fr","gb","gg","gi","gr","hr","hu","ie","im","is","it","je","li",
+  "lt","lu","lv","mc","md","me","mk","mt","nl","no","pl","pt","ro","rs","se","si","sj","sk","sm","ua","uk",
+  "va","yu"]}
+{"colid":"geo/ini","tree":"geo/ocea","level":"adm0","divs": ["au","bv","ck","fj","fm","gu","ki",
+  "mh","mp","nc","nf","nr","nu","nz","pf","pg","pn","pw","sb","tk","to","tv","vu","wf","ws"]}
+{"col":"geo/ini","tree":"geo/wrld/other","level":"adm0","divs":[]} // inserts "ac":"" and fills
 
-{"geo":"es","zone_type":"country","division":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
-{"geo":"es/an","zone_type":"region","division":["se","ca","al","ma"],    "map":{"type":"MultiPolygon","coordinates":[]}}
-{"geo":"es/an/se","zone_type":"province","division":["sevi","dosh","cast"],"map":{"type":"MultiPolygon","coordinates":[]}}    // nivel provincial
-{"geo":"es/an/se/sevi","zone_type":"city","map":{"type":"MultiPolygon","coordinates":[]}} // localidad  city level // esri SHP shapefiles use multi geometry
-{"geo":"es/an/se/sevi","road":{"spa":"Avenida Las Palmeras+urban>zone.spa"},"map":{"type":"MultiPolygon","coordinates":[]}}
-{"geo":"es/an/se/sevi","road_estate":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"estate":"80+estate.zone.spa",
-      "aparts":["buildingA"+"type(apartment|room|office|shop)"+"number"],"map":{"type":"MultiPolygon","coordinates":[]}} // estate level kit
+{"colid":"geo/ini","tree":"intl/un","level":"adm0","divs":["es","fr","uk",....]}
+{"colid":"geo/ini","axie":"intl/un","lng":"eng","wrd":"United Nations"}
+
+{"colid":"geo/ini","tree":"geo/es","url":"","level":"adm0","divs":["es","fr","uk",....]}
+{"colid":"geo/es","url":"","zone":"adm1","divs":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
+
+var ccdat = {"cod":{},"dat":{},"lng":{"gen":[],"reg":[]},"eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}}
+var geo=
+{"colid":"geo/ini","tree":"geo/wrld","level":"adm0"};geos.divs.forEach((cc)=>{geo[cc]=ccdat};}); // "level":"adm0"
+{"colid":"geo/ini","tree":"geo/wrld","level":"adm0","ac":"","ad":"","es":""}
+// for(var i= 0; i < geos.divs.length; i++){geos[geo.divs[i]]=ccdat;}  // continue label; break label;
+// for (var x in geo.divs) {geos[geo.divs[x]]={};}
+////var a = Array.apply(null, Array(3));a.map(function (x, i) { return i });
+// iterate arrays: Never use for...in iterates over array indices & property keys or foreach...in (only Firefox)
+var c = "es", l="spa";    geos[w][c].dat.lng=l;
+geos[c].divs=["an","ba","ct","ex"]; geos[w][c].divs.forEach((r)=>{geos[w][c][r]={"dat":{}};});
+geos[c].ct.dat.lang=["cat"];        console.log(geos);
+
+{"colid":"geo/ini","tree":"geo/wrld","level":"adm0",
+  "ma":{"cod":{},"dat":{},"lng":{"gen":["arb","zgh","fra"],"reg":["rif","has","ary/ma/north"]},
+     "eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}
+     "fra":{"com":"Maroc","ofi":"Royaume du Maroc","dem":"marocain","cap":"Rabat",
+            "adm0":"pays","adm1":"region","adm2":"wilaya","adm3":"province"}   },
+  "es":{"cod":{},"dat":{},"lng":{"gen":["spa","cat"],"reg":[]},
+     "eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}
+     "spa":{"com":"España","ofi":"Reino de España","dem":"español","cap":"Madrid",
+            "adm0":"país","adm1":"autonomía","adm2":"provincia","adm3":"ciudad"}   }
+  } // geo/wrld/es/lng => {"gen":["spa","cat"],"reg":[]}
+// geo/wrld/es/spa/com=>"España" // general=official=native regional=local // lng/ini docs in native languages
+{"col":"geo/ini",    "tree":"geo/wrld/nat",    "axies":["es/spa"],    "words":[""]} }
+{"col":"geo/ini",    "tree":"geo/wrld/nat/com","axies":["es/spa/com"],"words":["España"]} }
+{"col":"geo/lng/spa","list":"geo/wrld/nat/com","axie":  "es/spa/com", "word":  "España", "ttag":"adm0"}
+{"col":"geo/lng/spa","axie":"geo/es", "lang":"flt","word":"España",    "ttag":"adm0"}
+{"col":"geo/lng/spa","axie":"lng/spa","lang":"flt","word":"castellano","ttag":"lng"} //lng/xxx & col_id==axie >> "tree":"lng/glbl/nat ive"
+{"colid":"geo/wrld/ma/eng","axie":"lng/spa","lang":"flt","word":"castellano","ttag":"lng"} //lng/xxx & col_id==axie >> "tree":"lng/glbl/nat ive"
+
+var langs =  // "ipa" "ipr" ipa arabic
+{"col":"geo/ini","tree":"lng/divs","divs": ["aar","abk","afr","aka","amh","arb","arg","asm","ava",
+"ave","aym","aze","bak","bam","bel","ben","bih","bis","bod","bos","bre","bul","cat","ces","cha","che","chu",
+"chv","cor","cos","cre","cym","dan","deu","div","dzo","ell","eng","eng","epo","est","eus","ewe","fao","fas",
+"fij","fin","fra","fry","ful","gla","gle","glg","glv","grn","guj","hat","hau","hbs","heb","her","hin","hmo",
+"hrv","hun","hye","ibo","ido","iii","iku","ile","ina","ind","ipk","isl","ita","jav","jpn","kal","kan","kas",
+"kat","kau","kaz","khm","kik","kin","kir","kom","kon","kor","kua","kur","lao","lat","lav","lim","lin","lit",
+"ltz","lub","lug","mah","mal","mar","mkd","mlg","mlt","mol","mon","mri","msa","mya","nau","nav","nbl","nde",
+"ndo","nep","nld","nno","nob","nor","nya","oci","oji","ori","orm","oss","pan","pli","pol","por","pus","que",
+"roh","ron","run","rus","sag","san","sin","slk","slv","sme","smo","sna","snd","som","sot","spa","sqi","srd",
+"srp","ssw","sun","swa","swe","tah","tam","tat","tel","tgk","tgl","tha","tir","ton","tsn","tso","tuk","tur",
+"twi","uig","ukr","urd","uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}}
+var lang=  // "glb" all langs "flt" flattened tree // "nat" national=native=official=general "reg" regional=local
+{"col":"geo/ini","tree":"lng"};langs.divs.forEach((x)=>{lang[x]="";});
+{"col":"geo/ini","tree":"lng/nat","aar":"","abk":"","arb":""}
+{"col":"geo/ini","tree":"lng/nat","spa":{"spa":"castellano"}} // geo/ini docs in native languages
+{"col":"geo/ini","tree":"lng/eng","spa":{"eng":"spanish"}}  // collection lng/ini lng/eng in all servers
+{"col":"geo/lng/eng","list":"lng/eng","axies":["lng/spa"],"words":["spanish"]}
+kyxtree.geo  //  kyxtree.lng  (db.coll)
+db.lng.createIndex("axie":1,"id":1,"col":1);
+db.lng.findOne({"col":"lng/spa","tree":"lng/glb","axie":"geo/es"})  //  db.spa.findOne({"axie":"/geo/wrld"})
+
+{"col":"geo/ini","tree":"lng/euro/divs","divs":["spa","fra","por"]}  //  filter
+//{"col":"geo/ini","tree":"lng/euro", "spa":"","fra":"","por":""}
+{"col":"geo/ini","tree":"lng/lat/divs","divs": ["spa","fra","ita","por","deu","eng"]} // language family
+
+{"col":"lng/xxx",    "list":"app/modul/srv", "axies":[],       "wrds":[]}
+{"col":"lng/xxx",    "list":"app/modul/cli", "axies":[],       "wrds":[]}}
+{"col":"lng/xxx",    "list":"sector/list",   "axies":[],       "wrds":[]}
+{"col":"lng/spa",    "list":"basic/common",  "axies":["house"],"wrds":["casa"]}
+{"col":"lng/spa/mx", "sector":"basic",       "axie":"car",     "wrd":"carro"}
+{"col":"lng/zgh/rif","sector":"marine/slang","axie":"fish",    "wrd":"iselman"}
+
+{"col":"geo/ini","zone":"geo/lng/zgh","divs":["ma","dz"],"map":[],"sector":"basic","auth":"IRCAM","url":"http://zgh.ircam.ma/api"}
+{"col":"geo/ini","zone":"geo/lng/rif","divs":["ma","dz"],"map":[]}
+
+tree+level+divs>zone axie ttag
+// "scope zone level > world/continent/adm0=country/adm1=region/adm2=province/adm3=city/district/road/estate/apart"
+{"col":"geo/lng/eng","wrld":"world","cont":"continent","dist":"district","road":"road","estate":"estate","apart":"appartment"}
+
+{"col":"geo/es","url":"","zone":"adm0","divs":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
+{"col":"geo/es/an","url":"","zone":"adm1","divs":["se","ca","al","ma"],"map":{"type":"MultiPolygon","coordinates":[]}}
+{"col":"geo/es/an/se","url":"","zone":"adm2","divs":["sevi","dosh","cast"],"map":{"type":"MultiPolygon","coordinates":[]}} // nivel provincial
+{"col":"geo/es/an/se/sevi","url":"","zone":"adm3","map":{"type":"MultiPolygon","coordinates":[]}} // localidad  city level // esri SHP shapefiles use multi geometry
+{"col":"geo/es/an/se/sevi","zone":"urban","lng":"spa","word":"Urbanización Sol A","map":[]}
+{"col":"geo/es/an/se/sevi","zone":"urban","lng":"spa","word":"Pabellones Varela Edif.A", "map":[]}
+{"col":"geo/es/an/se/sevi","zone":"admin","divs":["centro","triana","remedios","cartuja"],"maps":[]} //distrito,demarcacion
+{"col":"geo/es/an/se/sevi","zone":"post","divs":["45001","45002","45003"],"maps":[]}  // nivel callejero
+{"col":"geo/es/an/se/sevi","zone":"health","divs":["centrosalud1","centrosalud2","centrosalud3"],"maps":[]}// map map_head
+{"col":"geo/es/an/se/sevi","zone":"education","divs":["colegio1","colegio2","colegio3"],"maps":[]}// map map_head
+{"col":"geo/es/an/se/sevi","zone":"police","divs":["comisaria1","comisaria2","comisaria3"],"maps":[]}
+{"col":"geo/es/an/se/sevi","zone":"road","road":{"lng":"spa","word":"Avenida Las Palmeras"},"map":{"type":"MultiPolygon","coordinates":[]}}
+{"col":"geo/es/an/se/sevi","zone":"estate",:{"lng":"spa","word":"Avenida Las Palmeras+urban.spa"},"estate":"80+estate.spa",
+      "aparts":["buildingA"+"type(apartment|room|office|shop)"+"number"],"map":{"type":"MultiPolygon","coordinates":[]}} // kit
 copy estates to corporate db and populate customer data
-{"geo":"es/an/se/sevi","road_apart":{"spa":"Avenida Las Palmeras+urban.zone.spa"},"estate":"80,82+estate.zone.spa",
-      "apart":{"buildingA"+"office"+"4B1" },"anchors":[{"waterp":{},"cnss":{}}],"map":{},
+{"col":"geo/es/an/se/sevi","zone":"address","road":{"spa":"Avenida Las Palmeras+urban.spa"},"estate":"80,82+estate.spa",
+      "apart":{"edif.A 4B1"},"anchors":[{"waterp":{},"cnss":{}}],"map":{},
       "activity":"app/waterp/amendis","banner":[{"spa":"José Pérez Pérez"}], + family_data account_data
       "activity":"health/head",    "banner":[{"spa":"Centro de Salud Minerva"}],
       "activity":"health/pharmacy","banner":[{"spa":"Farmacia Los Molinos"}]
-}
-{"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Urbanización Sol A"}, "map":[]}
-{"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Pabellones Varela"}, "map":[]}
-{"geo":"es/an/se/sevi","zone":{"type":"urban","spa":"Pabellones Varela"}, "building":"A", "map":[]}
-{"geo":"es/an/se/sevi","zone_type":"admin","division":["centro","triana","remedios","cartuja"],"maps":[]} //distrito,demarcacion
-{"geo":"es/an/se/sevi","zone_type":"post","division":["45001","45002","45003"],"maps":[]}  // nivel callejero
-{"geo":"es/an/se/sevi","zone_type":"health","division":["centrosalud1","centrosalud2","centrosalud3"],"maps":[]}// map map_head
-{"geo":"es/an/se/sevi","zone_type":"education","division":["colegio1","colegio2","colegio3"],"maps":[]}// map map_head
-{"geo":"es/an/se/sevi","zone_type":"police","division":["comisaria1","comisaria2","comisaria3"],"maps":[]}
-//hospital, gestoria, restaurante, hotel, mercado                         // nivel servicios
+}  //  hospital, gestoria, restaurante, hotel, mercado  // nivel servicios
+
+{"col":"lng/eng","tree":"verb,adj,adv,name/animal,","axie":{"root":"","deriv":"","conj":"tpo,gen,num"},
+          "root":["فعل","عمل","حرك","شعر"]["feel","act","move","work"],
+          "name":[thing, person, animal, insect, microorg, vegetal]}
+          "sector":[personal,administration,health,education,culture,commerce,industry,economy,services], //1ry,2ry,3ry
+
+// AXIZE, DOMIZE : generic, specific app
+"sector_corp_app"  html css js(routes,querys) json axie
+tratags  owner, geotime, sector, theme, channel, procedure, //profession,tool,machine
+// colors,alphabet,numbers,animals,objects,actions,foods,school,health,culture,songs,books,webs,biz
+// descriptor>sector:health/subject:nutrition/theme:fruits/level:info/age:10+/lang:eng url:fruits.mp4/typdoc:video/start:60s/end:90s provider:keyax/owner:public/user:yones
+// descriptor>sector:movie/subject:tom&jerry/theme:mouse_trap/level:view/age:3+/lang:eng url:mousetrap.mp4/typdoc:video/start:0s/end:180s provider:keyax/owner:public/user:yones
+{"todo": "entertainment, advice, culture, education levels,..."}
+{"todo": "functional trees,continuous integration & management analytics for corps, municipal admins & govs."}
+{"todo": "admin-citizen: public & private channels for information,procedures,communication, declarations,claims,votes,..."}
+{"geo":"wrld","vote":"summer day light saving?Y/N" ,"unit":"voter", "valued":999, "calculed":{"yes": 999, "no": 999}}}
 
 http://rextester.com/l/nodejs_online_compiler
 http://www.webtoolkitonline.com/javascript-tester.html
@@ -103,74 +187,6 @@ https://dataist.wordpress.com/2011/11/25/tutorial-how-to-extract-street-coordina
 http://www.qgis.org/en/site/forusers/alldownloads.html#debian-ubuntu
 sudo add-apt-repository ppa:ubuntugis/ppa
 sudo apt-get update
-
-kyxtree.geo   (db.coll)
-db.geo.createIndex({"map": "2dsphere"}); // only indexes docs containing map field (text 2dsphere geoHaystack default sparse)
-db.geo.createIndex({"geo":1,"road":"text","road_estate":"text","road_apart":"text"},{name:"road",sparse:true})//$text autocomplete
-db.geo.createIndex({"geo": 1, "activity": 1})
-db.geo.find({geo:{$regex:/^es\/an\/se/i, $options:'m'}})   //'m' multiline string 'x' ignore blanks #comments\n
-
-{"geo":"wrld/data","data":{"language":  ["spa", "cat", "bas"],  // ["fra(latn_support)", "arb", "zgh"]
-                           "spa":       {"level":"país","name":"España","oficial":"Reino de España","capital":"","currency":"euro"},
-                           "zip": "45","phone": "954","currency":"€","numbers":[",",".","0","9"],"date":"dd/mm/yyyy"
-                           "area":      {"unit":"km2",      "valued":999,  "calculed":999},
-                           "population":{"unit":"habitant", "valued":999,  "calculed":999},
-                           "income":    {"unit":"$",        "valued":999,  "calculed":999},
-                           "age":       {"unit":"year",     "valued":[99], "calculed":[99]
-                           }
-}
-
-{"geo":"wrld/levels", "data": "world/continent/country/region/province/city/district/road/estate/apart"}
-{"geo":"intl/un","zone_type":"country_union","division":["es","fr","uk",....]}
-{"geo":"intl/nato","zone_type":"country_union","division":["es","fr","uk",....]}
-{"geo":"lang/rif","zone_type":"country_union","division":["ma","dz"],"map":[]}
-
-{"todo": "entertainment, advice, culture, education levels,..."}
-{"todo": "functional trees,continuous integration & management analytics for corps, municipal admins & govs."}
-{"todo": "admin-citizen: public & private channels for information,procedures,communication, declarations,claims,votes,..."}
-{"geo":"wrld","vote":"summer day light saving?Y/N" ,"unit":"voter", "valued":999, "calculed":{"yes": 999, "no": 999}}}
-
-var langs =
-{"lng":"global","global":{"division": ["aar","abk","afr","aka","amh","arb","arg","asm","ava","ave","aym","aze","bak",
-"bam","bel","ben","bih","bis","bod","bos","bre","bul","cat","ces","cha","che","chu","chv","cor","cos","cre",
-"cym","dan","deu","div","dzo","ell","eng","eng","epo","est","eus","ewe","fao","fas","fij","fin","fra","fry",
-"ful","gla","gle","glg","glv","grn","guj","hat","hau","hbs","heb","her","hin","hmo","hrv","hun","hye","ibo",
-"ido","iii","iku","ile","ina","ind","ipk","isl","ita","jav","jpn","kal","kan","kas","kat","kau","kaz","khm",
-"kik","kin","kir","kom","kon","kor","kua","kur","lao","lat","lav","lim","lin","lit","ltz","lub","lug","mah",
-"mal","mar","mkd","mlg","mlt","mol","mon","mri","msa","mya","nau","nav","nbl","nde","ndo","nep","nld","nno",
-"nob","nor","nya","oci","oji","ori","orm","oss","pan","pli","pol","por","pus","que","roh","ron","run","rus",
-"sag","san","sin","slk","slv","sme","smo","sna","snd","som","sot","spa","sqi","srd","srp","ssw","sun","swa",
-"swe","tah","tam","tat","tel","tgk","tgl","tha","tir","ton","tsn","tso","tuk","tur","twi","uig","ukr","urd",
-"uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}}
-
-langs.global.division.forEach((x)=>{langs.global[x]={}});
-console.log(langs);
-{"lng": "latn", "division": ["spa","fra","ita","por","deu","eng"]}
-
-kyxtree.axie   (db.coll)
-db.lng.createIndex("lng": 1, axie: 1);
-db.lng.findOne({"lng": "spa","axie": "geo/es"})
-{"lng": "spa", "axie": "lng/glbl",      "lang": "tree","tree": {"global":{"fra":{"spa":"francés"},"spa":{"spa":"castellano"}}}}
-{"lng": "spa", "axie": "geo/es",        "lang": "flat","word": "España"}  << {"geo":"es"
-{"lng": "fra", "axie": "geo/es",        "lang": "flat","word": "Espagne"}
-{"lng": "spa", "axie": "geo/es/oficial",               "word": "Reino de España"}
-{"lng": "spa", "axie": "geo/es/region", "lang": "flat","word": "Autonomía"}
-{"lng": "spa", "axie": "name",          "lang": "eng", "word": "nombre","sector":"",}
-{"lng": "spa", "axie": "Spain",         "lang": "eng", "word":"España", "sector":"name country",} //profession,tool,machine
-{"lng": "spa", "axie": "lion",          "lang": "eng", "word": "león",  "sector":"name animal"}
-
-"sector_corp_app"  html css js(routes,querys) json axie
-
-// AXIZE, DOMIZE : generic, specific app
-{"axie":"/global","division":[asl, verb, name, adjective, adverb, pronoun, particle, phrase]}
-{"axie":"/global/asl","division":[خرج, فعل]}
-{"axie":"/global/name","division":[thing, person, animal, insect, microorg, vegetal]}
-{"axie":"/global/sector","division":[personal,administration,health,education,culture,commerce,industry,economy,services]} #primary,2ry,3ry\n
-
-tags  owner, geotime, sector, theme, channel, procedure,
-
-kyxtree.spa  (db.coll)
-db.spa.findOne({"axie":"/geo/wrld"})
 
 https://www.reddit.com/r/linux/comments/54uxvq/why_do_so_many_oss_projects_use_hunspell_when/
 Also: Apparently hunspell is called hunspell because originally it only did Hungarian,

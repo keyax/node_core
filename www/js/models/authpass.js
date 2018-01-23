@@ -4,7 +4,7 @@ var util = require('util');
 var passport = require('passport');
 //var jwtStrategy = require('passport-jwt').Strategy;
 
-var User = require('./models/user');  // ../app/models/user   default  .js
+var User = require('./user');  // ../app/models/user   default  .js
 
 User.findOne({ 'local.email': 'test@keyax.info' }, function (err, testUser) {
   if (!testUser) {
@@ -12,6 +12,7 @@ User.findOne({ 'local.email': 'test@keyax.info' }, function (err, testUser) {
     let pwd = "555777";
     testUser = new User({
       'local.email': 'test@keyax.info',
+      'local.username': 'test@keyax.info',
       'local.password': ''
       });
     testUser.local.password = testUser.generateHash(pwd);
@@ -67,6 +68,7 @@ try {
 }
 //      all is well, return successful user
 console.log("Found user: ",passUser.local.email);
+    ctx.session.passport["email"]=passUser.local.email;
     done(null, passUser);
   }); // end User.findOne
     } catch (err) { // email not found -> RangeError: Maximum call stack size exceeded -> browser url: 404 Not Found
