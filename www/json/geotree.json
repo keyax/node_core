@@ -21,79 +21,8 @@ db.geo.createIndex({"geo":1,"road":"text","road_estate":"text","road_apart":"tex
 db.geo.createIndex({"geo":1,"activity": 1})
 db.geo.find({geo:{$regex:/^es\/an\/se/i, $options:'m'}})   //'m' multiline string 'x' ignore blanks #comments\n
 ===============
-var geos =
-{"colid":"geo/ini","tree":"geo/divs","divs":["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar",
-"as","at","au","aw","ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv",
-"bw","by","bz","ca","cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de",
-"dj","dk","dm","do","dz","ec","ee","eg","er","es","et","eu","fi","fj","fk","fm","fo","fr","ga","gb","gd","ge",
-"gf","gg","gh","gi","gl","gm","gn","gp","gq","gr","gs","gt","gu","gw","gy","hk","hm","hn","hr","ht","hu","id",
-"ie","il","im","in","io","iq","ir","is","it","je","jm","jo","jp","ke","kg","kh","ki","km","kn","kp","kr","kw",
-"ky","kz","la","lb","lc","li","lk","lr","ls","lt","lu","lv","ly","ma","mc","md","me","mg","mh","mk","ml","mm",
-"mn","mo","mp","mq","mr","ms","mt","mu","mv","mw","mx","my","mz","na","nc","ne","nf","ng","ni","nl","no","np",
-"nr","nu","nz","om","pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs",
-"ru","rw","sa","sb","sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","su","sv","sy","sz",
-"tc","td","tf","tg","th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy",
-"uz","va","vc","ve","vg","vi","vn","vu","wf","ws","ye","yt","yu","za","zm","zw"]}
-// filter by country groups  "level":"adm0" <=> "ttag":"country"
-{"colid":"geo/ini","tree":"geo/cont","level":"cont","divs": ["afri","amer","asia","euro","ocea","other"]}
-{"col":"geo/ini","tree":"geo/afri","level":"adm0","divs": ["ac","ao","bf","bi","bj","bw","cd",
-  "cf","cg","ci","cm","cv","dj","dz","eg","er","et","ga","gh","gm","gn","gq","gw","hm","ke","km","lr","ls",
-  "ly","ma","mg","ml","mr","mu","mw","mz","na","ne","ng","re","rw","sc","sd","sh","sl","sn","so","st","sz",
-  "td","tg","tn","tz","ug","yt","za","zm","zw"]}
-{"colid":"geo/ini","tree":"geo/amer","level":"adm0","divs": ["ag","ai","an","aq","ar","as","aw",
-  "bb","bm","bo","br","bs","bz","ca","cl","co","cr","cu","dm","do","ec","fk","gd","gf","gl","gp","gs","gt",
-  "gy","hn","ht","jm","kn","ky","lc","mq","ms","mx","ni","pa","pe","pm","pr","py","sv","tc","tf","tt","us",
-  "uy","vc","ve","vg","vi"]}
-{"colid":"geo/ini","tree":"geo/asia","level":"adm0","divs":["ae","af","am","az","bd","bh","bn",
-  "bt","by","cc","cn","cx","dk","ee","ge","hk","id","il","in","io","iq","ir","jo","jp","kg","kh","kp","kr",
-  "kw","kz","la","lb","lk","mm","mn","mo","mv","my","np","om","ph","pk","ps","qa","ru","sa","sg","sr","su",
-  "sy","th","tj","tl","tm","tp","tr","tw","uz","vn","ye"]}
-{"colid":"geo/ini","tree":"geo/euro","level":"adm0","divs": ["ad","al","at","ax","ba","be","bg",
-  "ch","cy","cz","de","es","eu","fi","fo","fr","gb","gg","gi","gr","hr","hu","ie","im","is","it","je","li",
-  "lt","lu","lv","mc","md","me","mk","mt","nl","no","pl","pt","ro","rs","se","si","sj","sk","sm","ua","uk",
-  "va","yu"]}
-{"colid":"geo/ini","tree":"geo/ocea","level":"adm0","divs": ["au","bv","ck","fj","fm","gu","ki",
-  "mh","mp","nc","nf","nr","nu","nz","pf","pg","pn","pw","sb","tk","to","tv","vu","wf","ws"]}
-{"col":"geo/ini","tree":"geo/wrld/other","level":"adm0","divs":[]} // inserts "ac":"" and fills
-
-{"colid":"geo/ini","tree":"intl/un","level":"adm0","divs":["es","fr","uk",....]}
-{"colid":"geo/ini","axie":"intl/un","lng":"eng","wrd":"United Nations"}
-
-{"colid":"geo/ini","tree":"geo/es","url":"","level":"adm0","divs":["es","fr","uk",....]}
-{"colid":"geo/es","url":"","zone":"adm1","divs":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
-
-var ccdat = {"cod":{},"dat":{},"lng":{"gen":[],"reg":[]},"eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}}
-var geo=
-{"colid":"geo/ini","tree":"geo/wrld","level":"adm0"};geos.divs.forEach((cc)=>{geo[cc]=ccdat};}); // "level":"adm0"
-{"colid":"geo/ini","tree":"geo/wrld","level":"adm0","ac":"","ad":"","es":""}
-// for(var i= 0; i < geos.divs.length; i++){geos[geo.divs[i]]=ccdat;}  // continue label; break label;
-// for (var x in geo.divs) {geos[geo.divs[x]]={};}
-////var a = Array.apply(null, Array(3));a.map(function (x, i) { return i });
-// iterate arrays: Never use for...in iterates over array indices & property keys or foreach...in (only Firefox)
-var c = "es", l="spa";    geos[w][c].dat.lng=l;
-geos[c].divs=["an","ba","ct","ex"]; geos[w][c].divs.forEach((r)=>{geos[w][c][r]={"dat":{}};});
-geos[c].ct.dat.lang=["cat"];        console.log(geos);
-
-{"colid":"geo/ini","tree":"geo/wrld","level":"adm0",
-  "ma":{"cod":{},"dat":{},"lng":{"gen":["arb","zgh","fra"],"reg":["rif","has","ary/ma/north"]},
-     "eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}
-     "fra":{"com":"Maroc","ofi":"Royaume du Maroc","dem":"marocain","cap":"Rabat",
-            "adm0":"pays","adm1":"region","adm2":"wilaya","adm3":"province"}   },
-  "es":{"cod":{},"dat":{},"lng":{"gen":["spa","cat"],"reg":[]},
-     "eng":{"com":"","ofi":"","dem":"","cap":"","adm0":"","adm1":"","adm2":"","adm3":""}
-     "spa":{"com":"España","ofi":"Reino de España","dem":"español","cap":"Madrid",
-            "adm0":"país","adm1":"autonomía","adm2":"provincia","adm3":"ciudad"}   }
-  } // geo/wrld/es/lng => {"gen":["spa","cat"],"reg":[]}
-// geo/wrld/es/spa/com=>"España" // general=official=native regional=local // lng/ini docs in native languages
-{"col":"geo/ini",    "tree":"geo/wrld/nat",    "axies":["es/spa"],    "words":[""]} }
-{"col":"geo/ini",    "tree":"geo/wrld/nat/com","axies":["es/spa/com"],"words":["España"]} }
-{"col":"geo/lng/spa","list":"geo/wrld/nat/com","axie":  "es/spa/com", "word":  "España", "ttag":"adm0"}
-{"col":"geo/lng/spa","axie":"geo/es", "lang":"flt","word":"España",    "ttag":"adm0"}
-{"col":"geo/lng/spa","axie":"lng/spa","lang":"flt","word":"castellano","ttag":"lng"} //lng/xxx & col_id==axie >> "tree":"lng/glbl/nat ive"
-{"colid":"geo/wrld/ma/eng","axie":"lng/spa","lang":"flt","word":"castellano","ttag":"lng"} //lng/xxx & col_id==axie >> "tree":"lng/glbl/nat ive"
-
 var langs =  // "ipa" "ipr" ipa arabic
-{"col":"geo/ini","tree":"lng/divs","divs": ["aar","abk","afr","aka","amh","arb","arg","asm","ava",
+{"colid":"lng/ini","tree":"lng/divs","divs": ["aar","abk","afr","aka","amh","arb","arg","asm","ava",
 "ave","aym","aze","bak","bam","bel","ben","bih","bis","bod","bos","bre","bul","cat","ces","cha","che","chu",
 "chv","cor","cos","cre","cym","dan","deu","div","dzo","ell","eng","eng","epo","est","eus","ewe","fao","fas",
 "fij","fin","fra","fry","ful","gla","gle","glg","glv","grn","guj","hat","hau","hbs","heb","her","hin","hmo",
@@ -103,34 +32,134 @@ var langs =  // "ipa" "ipr" ipa arabic
 "ndo","nep","nld","nno","nob","nor","nya","oci","oji","ori","orm","oss","pan","pli","pol","por","pus","que",
 "roh","ron","run","rus","sag","san","sin","slk","slv","sme","smo","sna","snd","som","sot","spa","sqi","srd",
 "srp","ssw","sun","swa","swe","tah","tam","tat","tel","tgk","tgl","tha","tir","ton","tsn","tso","tuk","tur",
-"twi","uig","ukr","urd","uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}}
+"twi","uig","ukr","urd","uzb","ven","vie","vol","wln","wol","xho","yid","yor","zgh","zha","zho","zul"]}
 var lang=  // "glb" all langs "flt" flattened tree // "nat" national=native=official=general "reg" regional=local
-{"col":"geo/ini","tree":"lng"};langs.divs.forEach((x)=>{lang[x]="";});
-{"col":"geo/ini","tree":"lng/nat","aar":"","abk":"","arb":""}
-{"col":"geo/ini","tree":"lng/nat","spa":{"spa":"castellano"}} // geo/ini docs in native languages
-{"col":"geo/ini","tree":"lng/eng","spa":{"eng":"spanish"}}  // collection lng/ini lng/eng in all servers
-{"col":"geo/lng/eng","list":"lng/eng","axies":["lng/spa"],"words":["spanish"]}
+{"colid":"lng/ini","tree":"lng"};langs.divs.forEach((x)=>{lang[x]="";});
+{"colid":"lng/ini","tree":"lng","aar":"","abk":"","arb":""}
+{"colid":"lng/ini","tree":"lng/nat","spa":{"spa":"castellano"}} // geo/ini docs in native languages
+{"colid":"lng/ini","tree":"lng/eng","spa":{"eng":"spanish"}}  // collection lng/ini lng/eng in all servers
+{"colid":"lng/eng","list":"lng/eng","axies":["lng/spa"],"words":["spanish"]}
+
+{"colid":"lng/ini","tree":"lng/lat/divs","divs": ["spa","fra","ita","por","deu","eng"]} // language family
+
+{"colid":"lng/ini","tree":"lng/euro/divs","divs":["spa","fra","por"]}  //  filter
+//{"colid":"lng/ini","tree":"lng/euro", "spa":"","fra":"","por":""}
+
+var geos =
+{"colid":"geo/ini","tree":"geo/wrld/divs","divs":["ac","ad","ae","af","ag","ai","al","am","an","ao","aq","ar",
+"as","at","au","aw","ax","az","ba","bb","bd","be","bf","bg","bh","bi","bj","bm","bn","bo","br","bs","bt","bv",
+"bw","by","bz","ca","cc","cd","cf","cg","ch","ci","ck","cl","cm","cn","co","cr","cu","cv","cx","cy","cz","de",
+"dj","dk","dm","do","dz","ec","ee","eg","er","es","et","fi","fj","fk","fm","fo","fr","ga","gd","ge",
+"gf","gg","gh","gi","gl","gm","gn","gp","gq","gr","gs","gt","gu","gw","gy","hk","hm","hn","hr","ht","hu","id",
+"ie","il","im","in","io","iq","ir","is","it","je","jm","jo","jp","ke","kg","kh","ki","km","kn","kp","kr","kw",
+"ky","kz","la","lb","lc","li","lk","lr","ls","lt","lu","lv","ly","ma","mc","md","me","mg","mh","mk","ml","mm",
+"mn","mo","mp","mq","mr","ms","mt","mu","mv","mw","mx","my","mz","na","nc","ne","nf","ng","ni","nl","no","np",
+"nr","nu","nz","om","pa","pe","pf","pg","ph","pk","pl","pm","pn","pr","ps","pt","pw","py","qa","re","ro","rs",
+"ru","rw","sa","sb","sc","sd","se","sg","sh","si","sj","sk","sl","sm","sn","so","sr","st","sv","sy","sz",
+"tc","td","tf","tg","th","tj","tk","tl","tm","tn","to","tp","tr","tt","tv","tw","tz","ua","ug","uk","us","uy",
+"uz","va","vc","ve","vg","vi","vn","vu","wf","ws","ye","yt","za","zm","zw"]} // "eu" "su" "gb" "yu"
+// filter by country groups  "level":"adm0" <=> "ttag":"country"
+{"colid":"geo/ini","tree":"geo/cont","level":"cont","divs": ["afri","amer","asia","euro","ocea","other"]}
+{"colid":"geo/ini","tree":"geo/afri","level":"adm0","divs": ["ac","ao","bf","bi","bj","bw","cd",
+  "cf","cg","ci","cm","cv","dj","dz","eg","er","et","ga","gh","gm","gn","gq","gw","hm","ke","km","lr","ls",
+  "ly","ma","mg","ml","mr","mu","mw","mz","na","ne","ng","re","rw","sc","sd","sh","sl","sn","so","st","sz",
+  "td","tg","tn","tz","ug","yt","za","zm","zw"]}
+{"colid":"geo/ini","tree":"geo/amer","level":"adm0","divs": ["ag","ai","an","aq","ar","as","aw",
+  "bb","bm","bo","br","bs","bz","ca","cl","co","cr","cu","dm","do","ec","fk","gd","gf","gl","gp","gs","gt",
+  "gy","hn","ht","jm","kn","ky","lc","mq","ms","mx","ni","pa","pe","pm","pr","py","sv","tc","tf","tt","us",
+  "uy","vc","ve","vg","vi"]}
+{"colid":"geo/ini","tree":"geo/asia","level":"adm0","divs":["ae","af","am","az","bd","bh","bn",
+  "bt","cc","cn","cx","ge","hk","id","il","in","io","iq","ir","jo","jp","kg","kh","kp","kr",
+  "kw","kz","la","lb","lk","mm","mn","mo","mv","my","np","om","ph","pk","ps","qa","ru","sa","sg","sr",
+  "sy","th","tj","tl","tm","tp","tr","tw","uz","vn","ye"]}  // "su"="ru"
+{"colid":"geo/ini","tree":"geo/euro","level":"adm0","divs": ["ad","al","at","ax","ba","be","bg","by","ch",
+  "cy","cz","de","dk","ee","es","fi","fo","fr","gb","gg","gi","gr","hr","hu","ie","im","is","it","je","li","lt",
+  "lu","lv","mc","md","me","mk","mt","nl","no","pl","pt","ro","rs","ru","se","si","sj","sk","sm","ua","va"]} // eu gb=uk yu
+{"colid":"geo/ini","tree":"geo/ocea","level":"adm0","divs": ["au","bv","ck","fj","fm","gu","ki",
+  "mh","mp","nc","nf","nr","nu","nz","pf","pg","pn","pw","sb","tk","to","tv","vu","wf","ws"]}
+{"col":"geo/ini","tree":"geo/plus","level":"adm0","divs":[]} // inserts "ac":"" and fills
+
+var eurocom = ["AT","BE","BG","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HR","HU",
+               "IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK","UK"];
+var eunocom = ["AD","AL","AX","BA","BY","CH","FO","GG","GI","IM","IS","JE","LI","MC",
+               "MD","ME","MK","NO","RS","RU","SJ","SM","UA","VA","XK"];
+var conts =
+[{"cont":"afri","part":"north","divs":["DZ","EG","EH","LY","MA","SD","TN"]},
+ {"cont":"afri","part":"west", "divs":["AO","CF","CM","CD","CG","GA","GQ","SS","ST","TD"]},
+ {"cont":"afri","part":"east", "divs":["BI","KM","DJ","ER","ET","IO","KE","MG","MZ","MU","MW","YT","RE","RW","SO","SC","TZ","UG","ZM","ZW"]},
+ {"cont":"afri","part":"south","divs":["BW","LS","NA","SZ","ZA"]}
+ {"cont":"amer","part":"north","divs":["BM","CA","GL","PM","UM","US"]},
+ {"cont":"amer","part":"centr","divs":["BZ","CR","GT","HN","MX","NI","PA","SV"]},
+ {"cont":"amer","part":"carib","divs":["AW","AI","AG","BS","BL","BB","CU","CW","KY","DM","DO","GP","GD","HT","JM","KN","LC","MF","MS","MQ","PR","SX","TC","TT","VC","VG","VI"],
+ {"cont":"amer","part":"south","divs":["AR","BO","BR","CL","CO","EC","FK","GF","GY","PE","PY","GS","SR","UY","VE"]},
+ {"cont":"asia","part":"west", "divs":["AE","AM","AZ","BH","GE","IQ","IL","JO","KW","LB","OM","PS","QA","SA","SY","TR","YE"]},
+ {"cont":"asia","part":"centr","divs":["KZ","KG","TJ","TM","UZ"]},
+ {"cont":"asia","part":"east", "divs":["CN","HK","JP","KR","MO","MN","KP","TW"]},
+ {"cont":"asia","part":"south","divs":["AF","BD","BT","IN","IR","LK","MV","NP","PK"]},
+ {"cont":"asia","part":"seast","divs":["BN","ID","KH","LA","MM","MY","PH","SG","TH","TL","VN"]},
+ {"cont":"euro","part":"north","divs":["AX","DK","EE","FI","FO","GB","GG","IM","IE","IS","JE","LT","LV","NO","SJ","SE"]},
+ {"cont":"euro","part":"west", "divs":["AT","BE","CH","DE","FR","LI","LU","MC","NL"]},
+ {"cont":"euro","part":"east", "divs":["BG","BY","CY","CZ","HU","XK","MD","PL","RO","RU","SK","UA"]},
+ {"cont":"euro","part":"south","divs":["AL","AD","BA","ES","GI","GR","HR","IT","MK","MT","ME","PT","SM","RS","SI","VA"]},
+ {"cont":"ocea","part":"australia","divs":["AU","CC","CX","NF","NZ"]},
+ {"cont":"ocea","part":"melanesia","divs":["FJ","NC","PG","SB","VU"]},
+ {"cont":"ocea","part":"polynesia","divs":["AS","CK","NU","PN","PF","TK","TO","TV","WF","WS"]},
+ {"cont":"ocea","part":"micronesia","divs":["FM","GU","KI","MH","MP","NR","PW"]},
+ {"cont":"antartica","part":"","divs":["AQ","TF","BV","HM"]}
+]
+
+{"colid":"geo/ini","tree":"intl","axie":"intl/un","url":"","zone":"adm0","divs":["es","fr","uk",....]}
+{"colid":"lng/eng","tree":"intl","axie":["intl/un"],"wrd":["United Nations"]}
+
+{"colid":"geo/wrld/es","url":"","zone":"adm1","divs":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
+
+var geo=
+{"colid":"geo/ini","tree":"geo/wrld","zone":"adm0"};geos.divs.forEach((cc)=>{geo[cc]=ccdat};});
+{"colid":"geo/ini","tree":"geo/wrld","zone":"adm0","ac":"","ad":"","es":""}
+// for(var i= 0; i < geos.divs.length; i++){geos[geo.divs[i]]=ccdat;}  // continue label; break label;
+// for (var x in geo.divs) {geos[geo.divs[x]]={};}
+////var a = Array.apply(null, Array(3));a.map(function (x, i) { return i });
+// iterate arrays: Never use for...in iterates over array indices & property keys or foreach...in (only Firefox)
+var c = "es", l="spa";    geos[w][c].dat.lng=l;
+geos[c].divs=["an","ba","ct","ex"]; geos[w][c].divs.forEach((r)=>{geos[w][c][r]={"dat":{}};});
+geos[c].ct.dat.lang=["cat"];        console.log(geos);
+
 kyxtree.geo  //  kyxtree.lng  (db.coll)
-db.lng.createIndex("axie":1,"id":1,"col":1);
-db.lng.findOne({"col":"lng/spa","tree":"lng/glb","axie":"geo/es"})  //  db.spa.findOne({"axie":"/geo/wrld"})
-
-{"col":"geo/ini","tree":"lng/euro/divs","divs":["spa","fra","por"]}  //  filter
-//{"col":"geo/ini","tree":"lng/euro", "spa":"","fra":"","por":""}
-{"col":"geo/ini","tree":"lng/lat/divs","divs": ["spa","fra","ita","por","deu","eng"]} // language family
-
-{"col":"lng/xxx",    "list":"app/modul/srv", "axies":[],       "wrds":[]}
-{"col":"lng/xxx",    "list":"app/modul/cli", "axies":[],       "wrds":[]}}
-{"col":"lng/xxx",    "list":"sector/list",   "axies":[],       "wrds":[]}
-{"col":"lng/spa",    "list":"basic/common",  "axies":["house"],"wrds":["casa"]}
-{"col":"lng/spa/mx", "sector":"basic",       "axie":"car",     "wrd":"carro"}
-{"col":"lng/zgh/rif","sector":"marine/slang","axie":"fish",    "wrd":"iselman"}
-
-{"col":"geo/ini","zone":"geo/lng/zgh","divs":["ma","dz"],"map":[],"sector":"basic","auth":"IRCAM","url":"http://zgh.ircam.ma/api"}
-{"col":"geo/ini","zone":"geo/lng/rif","divs":["ma","dz"],"map":[]}
+db.geo.createIndex("axie":1,"id":1,"col":1);
+db.geo.findOne({"col":"lng/spa","tree":"lng/glb","axie":"geo/es"})  //  db.spa.findOne({"axie":"/geo/wrld"})
 
 tree+level+divs>zone axie ttag
 // "scope zone level > world/continent/adm0=country/adm1=region/adm2=province/adm3=city/district/road/estate/apart"
-{"col":"geo/lng/eng","wrld":"world","cont":"continent","dist":"district","road":"road","estate":"estate","apart":"appartment"}
+{"colid":"geo/ini","tree":"","wrld":"world","cont":"continent","dist":"district","road":"road","estate":"estate","apart":"appartment"}
+
+var cc = {"colid":"geo/wrld/","tree":"geo/wrld","zone":"adm0","cont":"region","part":"subregion","bord":"borders",
+          "lock":"landlocked","latlng":"latlng","area":0,"map":{"type":"MultiPolygon","coordinates":[]},
+          "url":"","tld":"","cca2":"","cca3":"","cioc":"","ccn3":"","curr":"currency","fon":"callingCode",
+          "lng":[],"dia":[],"divs":[],"alts":"altSpellings",     "axie":"???","ttag":"???",
+              "eng":{"com":"common","ofi":"official","dem":"demonym","cap":"capital","adm":[""]}}
+
+var ccma = {"colid":"geo/wrld/MA","tree":"geo/wrld","zone":"adm0","cont":"region","part":"subregion","bord":"borders",
+          "lock":"landlocked","latlng":"latlng","area":0,"map":{"type":"MultiPolygon","coordinates":[]},
+          "url":"","tld":"","cca2":"","cca3":"","cioc":"","ccn3":"","curr":"currency","fon":"callingCode",
+          "lng":["arb","zgh","fra"],"dia":["rif","has","ary/ma/north"],"divs":[],"alts":"altSpellings",
+              "eng":{"com":"common","ofi":"official","dem":"demonym","cap":"capital","adm":[""]}}
+              "fra":{"com":"Maroc","ofi":"Royaume du Maroc","dem":"marocain","cap":"Rabat",
+                     "adm":["pays","region","wilaya","province"]} }
+
+// native=official=general dialect=regional=local // lng/ini docs in native languages
+var lngnat= ["spa","fra","eng"]   //   filter : nat >> filter : euro >>
+
+{"colid":"lng/spa",    "list":"geo/wrld/com",   "axies":["es"],    "wrds":["España"]}
+{"colid":"lng/spa",    "list":"geo/wrld/es/adm","axies":["adm1"],  "wrds":["autonomía"]}
+{"colid":"lng/xxx",    "list":"app/modul/srv",  "axies":[],        "wrds":[]}
+{"colid":"lng/xxx",    "list":"app/modul/cli",  "axies":[],        "wrds":[]}}
+{"colid":"lng/xxx",    "list":"sector/list",    "axies":[],        "wrds":[]}
+{"colid":"lng/spa",    "list":"basic/common",   "axies":["house"], "wrds":["casa"]}
+{"colid":"lng/spa/mx", "list":"basic",          "axie":"car",      "wrd":"carro"}
+{"colid":"lng/zgh/rif","list":"marine/slang",   "axie":"fish",     "wrd":"iselman"}
+
+{"col":"geo/ini","zone":"geo/lng/zgh","divs":["ma","dz"],"map":[],"sector":"basic","auth":"IRCAM","url":"http://zgh.ircam.ma/api"}
+{"col":"geo/ini","zone":"geo/lng/rif","divs":["ma","dz"],"map":[]}
 
 {"col":"geo/es","url":"","zone":"adm0","divs":["an","m","cat","can","gal","bas","ext","ara","cas"],"map":{"type":"MultiPolygon","coordinates":[]}}
 {"col":"geo/es/an","url":"","zone":"adm1","divs":["se","ca","al","ma"],"map":{"type":"MultiPolygon","coordinates":[]}}
@@ -159,6 +188,7 @@ copy estates to corporate db and populate customer data
           "name":[thing, person, animal, insect, microorg, vegetal]}
           "sector":[personal,administration,health,education,culture,commerce,industry,economy,services], //1ry,2ry,3ry
 
+//col tree list axie map "ttag":["transport","auto"],"ipa":[""],"aud":[""],"vid":[""],"pic":[""]
 // AXIZE, DOMIZE : generic, specific app
 "sector_corp_app"  html css js(routes,querys) json axie
 tratags  owner, geotime, sector, theme, channel, procedure, //profession,tool,machine

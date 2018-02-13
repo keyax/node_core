@@ -40,7 +40,6 @@ const Convert = require('koa-convert');  // appk.use(Convert(legacyMiddleware))
 const _use = appk.use   // Application.appk.use.x [as use] >> appk.use(require('./routes/pass.js')(routerk, passport)); // Object.<anonymous>
 appk.use = x => _use.call(appk, Convert(x))
 // ---------- end ----------
-
 const Routerk = require('koa-router');
 const routerk = new Routerk(); // new{prefix: '/'}
 ///routerk.prefix('/');
@@ -99,9 +98,10 @@ render(appk, {
   cache: false,
   debug: false,
 });
-/*
+
  const mongoose = require('mongoose');
  mongoose.Promise = global.Promise; //Warning: Mongoose: mpromise (mongoose's default promise library) is deprecated
+/*
  const Mongoose = mongoose.Mongoose;
  // const Mongo = mongoose.mongo;
  const Mongo = require('mongodb');
@@ -119,13 +119,45 @@ var dbenv = dbconx.dbenv();
 var dbadmin = dbconx.dbadmin();
 appk.keys = dbadmin.session.secrets; // ["keyax57secretos"];  //salt key needed for cookie-signing
 const nodeport =  parseInt(`${dbadmin.nodeport}`) || process.argv[2] || 8000; // node server.js 8000 // pass parameter in command line
-const dbsroot = dbadmin.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
-const dbsrootpwd = dbadmin.dbsroot.pwd;
-var countries = dbconx.countries();
-//var dbx = dbconx.openasync();
-var dbx = dbconx.openclip();
-//var dbg = dbx.db("kyxtree");
-//dbg.createCollection("geo");
+//const dbsroot = dbadmin.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
+//const dbsrootpwd = dbadmin.dbsroot.pwd;
+
+var dbinit = require('./models/dbinit.js');
+var tosave = dbinit.tosave();
+//console.log("lngnat: ",dbinit.lngnat());console.log("lngeng: ",dbinit.lngeng()); console.log("lngfra: ",dbinit.lngfra());
+//console.log("ccslng: ",dbinit.ccslng());//console.log("lngccs: ",dbinit.lngccs());
+
+/////dbconx.insert([dbinit.lngnat(),dbinit.lngeng(),dbinit.lngfra(),dbinit.lngccs(),dbinit.ccslng()]);
+//dbconx.insert([dbinit.lngccs(),dbinit.ccslng()]);
+/*
+(async (tree) => {
+try { if(!dbenv.dbcon) dbenv.dbcon = await dbconx.openasync();
+      let colgeo = dbenv.dbcon.db("kyxtree").collection("geo");
+      let result = await colgeo.insert(tree);
+      console.log("resul>",result,"<resul"); dbconx.close();
+    } catch(err){ console.log("error open db: ",err) }
+})(lngnat);
+*/
+/*
+(function insert(tree){
+    let dbcon = null, coll = null;
+    dbconx.openclip()  //      dbconx.opencli()
+    .then((dbx)=>{ return dbx; })
+    .then((dbco)=>{ return dbco.db("kyxtree") })
+    .then((dbase)=>{ return dbase.collection("geo"); })
+    .then((geos)=>{ return geos.insert(tree) })
+    .then((result)=>{ console.log("resul>",result,"<resul"); dbconx.close(); })
+    .catch((err)=>{ console.error(err) })
+})(lngnat);
+*/
+
+function resolveAfter2Seconds() { return new Promise(resolve => { setTimeout(() => { resolve('resolved'); }, 2000); });
+                                }
+async function asyncCall() { console.log('calling');
+                             var result = await resolveAfter2Seconds();
+                             console.log(result);  // expected output: "resolved"
+                            }
+asyncCall();
 
 var dbo = dbconx.dbgoosep();  //  needs to be opened for passport authentication
 const sessionkmongoose = require('koa-session-mongoose'); // Schema is not a constructor (if after store)
@@ -136,7 +168,7 @@ const    sessionkmongo = require('koa-session-mongo');
 const koaSession = require('koa-session'); // instead koa-generic-session
 // const KSsession = require('koa-socket-session');
 
-//=================DATA HANDLING /models/dbconnect.js=======================
+//=====================DATA HANDLING /models/dbconnect.js=======================
 //=================END DATA HANDLING /models/dbconnect.js=======================
 process.setMaxListeners(20); //eventemitter.setMaxListeners(75);
 appk.proxy = true;  // koa passport trust proxy
@@ -147,8 +179,22 @@ var filesize = 0;
  process.on('unhandledRejection', (reason, p) => {
      console.log('Unhandled Rejection at:', p, 'reason:', reason)
  })
-
-
+// Execute commands in clean exit
+ process.on('exit', function () { console.log('Exiting ...');
+                                  if (null != db) { db.close(); }
+                                  // close other resources here
+                                  setTimeout(function() { console.log('This will not run!'); }, 0);
+                                  console.log('About to exit....bye');
+                                });
+// happens when you press Ctrl+C
+ process.on('SIGINT', function () { console.log( '\nGracefully shutting down from  SIGINT (Crtl-C)' );
+                                    process.exit();
+                                  });
+// usually called with kill
+ process.on('SIGTERM', function () { console.log('Parent SIGTERM detected (kill)'); //  ps aux | grep node >> kill pid
+//                                   exit cleanly
+                                     process.exit(0);
+                                   });
 /*
 //var langs=["eng","spa","arb"];var sysmsgs={};langs.forEach((x)=>{sysmsgs[x]=kyxtree.lng.findOne({"lang":x,"id":"sysmsgs"}));
 var sysmsgs = {
@@ -165,7 +211,6 @@ var applbls = {
        "Name": "إسم"}
 };
 */
-
 var keyaxapp = require('./keyaxapp');
 appk.use(Mount('/', keyaxapp));
 
@@ -229,14 +274,14 @@ const CONFIGS = {
 //  secret: "mysecretcode", //koa2-session-store
 //  store: "cookie",   // session storage layer - see below
     store: new sessionkmongoose({
-      connection: mongooseConn.connection, //dbgoosep, //.connection, //mongooseConn, //  dbm, // without .connection   Schema is not a constructor
+      connection: dbo.connection, // without .connection   Schema is not a constructor
 //    connection: mongoose.connect(dbadmin.dbUrl, dbenv.optodm, dbenv.dbback), //dbm, //mongooseConn, //appk.context.kyxoose, //mongooseConn,
 //    collection: 'sessions',
-      model: "KoaSession",  // User,
+//      model: "KoaSession",  // User,
       expires: 60 * 60 * 24 * 14 // 2 weeks is the default
     }),
     cookie: {
-      key: 'kyx:sesgoose', // (string) cookie key (default is koa:sess)
+      key: 'kyx:sesgoosecookie', // (string) cookie key (default is koa:sess)
       maxAge:  3600000, //86400000,//=60*60*24*1000ms
        // number || 'session' maxAge in ms (default is 1 days)
        //'session' will result in a cookie that expires when session/browser is closed
@@ -251,7 +296,6 @@ const CONFIGS = {
 appk.use(koaSession(CONFIGS, appk));
 //appk.use(Convert(sessionkstore(CONFIGS)));
 */
-
 ////appk.use(require('cookie-parser')());  // read cookies (needed for auth)
 //appk.use(require('body-parser')());    // get information from html forms  // deprecated undefined extended
 ////appk.use(require('body-parser').urlencoded({ extended: true }));

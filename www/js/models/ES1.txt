@@ -1,0 +1,21 @@
+Community	HASC	ISO	NUTS	GEC	Rs	Population	Area(km.²)	Area(mi.²)	Capital	Gentilic	Language
+Andalusia 	ES.AN	AN	ES61	SP51	h	8,371,270 	87,268	33,694	Seville	andaluz
+Aragon 	ES.AR	AR	ES24	SP52	l	1,344,509 	47,669	18,405	Zaragoza	aragonés
+Asturias 	ES.AS	AS	ES12	SP34	l	1,075,183 	10,565	4,079	Oviedo	asturiano
+Balearic Islands 	ES.PM	IB	ES53	SP07	l	1,100,503 	5,014	1,936	Palma de Mallorca	balear	Catalan
+Basque Country 	ES.PV	PV	ES21	SP59	h	2,185,393 	7,261	2,803	Vitoria-Gasteiz	vasco	Basque
+Canary Islands 	ES.CN	CN	ES70	SP53	h	2,082,655 	7,273	2,808	Santa Cruz de Tenerife	canario
+Cantabria 	ES.CB	CB	ES13	SP39	l	592,542 	5,289	2,042	Santander	cántabro	
+Castile and Leon 	ES.CL	CL	ES41	SP55	l	2,540,188 	94,147	36,350	Valladolid	castellanoleonés
+Castile-La Mancha	ES.CM	CM	ES42	SP54	l	2,106,331 	79,226	30,589	Toledo	castellanomanchego
+Catalonia 	ES.CT	CT	ES51	SP56	h	7,519,843 	31,930	12,328	Barcelona	catalán	Catalan
+Ceuta 	ES.CE	CE	ES63	SP61		83,517 	18	7	Ceuta	ceutí
+Extremadura 	ES.EX	EX	ES43	SP57	l	1,104,499 	41,602	16,063	Mérida	extremeño
+Galicia 	ES.GA	GA	ES11	SP58	h	2,772,928 	29,434	11,365	Santiago de Compostela	gallego	Galician
+La Rioja 	ES.LO	RI	ES23	SP27	l	321,173 	5,034	1,944	Logroño	riojano
+Madrid 	ES.MD	MD	ES30	SP29	l	6,421,874 	7,995	3,087	Madrid	madrileño
+Melilla 	ES.ML	ML	ES64	SP62		81,323 	14	5	Melilla	melillense
+Murcia 	ES.MU	MC	ES62	SP31	l	1,462,128 	11,317	4,370	Murcia	murciano
+Navarra 	ES.NA	NC	ES22	SP32	h	640,129 	10,421	4,024	Pamplona	navarro	Basque
+Valencia 	ES.VC	VC	ES52	SP60	h	5,009,931 	23,305	8,998	Valencia	valenciano	Valencian
+19 divisions 	46,815,916	504,782	194,897

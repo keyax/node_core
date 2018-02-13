@@ -26,18 +26,10 @@ const dbsroot = dbadminqp.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
 const dbsrootpwd = dbadminqp.dbsroot.pwd;
 const kyxown = dbadminqp.dbowner.createUser;  // dbowner(adm) dbuser(rw) in kyxtree
 const kyxownpwd = dbadminqp.dbowner.pwd;
-const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
+//const nodeport =  parseInt(`${dbadminqp.nodeport}`) || process.argv[2]; // node server.js 8000 // pass parameter in command line
 const mongoport =  parseInt(`${dbadminqp.mongoport}`) || process.argv[3]; // node server.js 8000 // pass parameter in command line
 dbadminqp.dbUrl = `mongodb://${dbsroot}:${dbsrootpwd}@172.17.0.1:${mongoport}`; // /admin?authSource=admin`; // default /admin
 //dbadminqp.dbUrl = `mongodb%3A%2F%2F${dbsroot}%3A${dbsrootpwd}%40172.17.0.1:${mongoport}%2Fkyxtree%3FauthSource%3Dadmin`; // default /admin
-
-var countries = fs.readFileSync(path.join(__dirname,'./')+'countriesunescaped.json', 'utf8');  // mzfs. 0.212ms fs. 0.202ms
-//var countriesq = countries.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?:/g, '"$2": ');  // quoted correct JSON 0.245ms
-var countriesqp = JSON.parse(countries); // 0.150ms
-var recs = JSON.stringify(countriesqp[0]); // 0.140ms
-////console.timeEnd("fileread");
-console.log("country:",recs); // 2.810ms
-
 // mongodb container service name instead ip 172.17.0.1, ? 10.0.0.3
 /*
 the server/replSet/mongos options are deprecated,
@@ -82,7 +74,7 @@ var dbenv = {
     promiseLibrary: global.Promise,
 //  promiseLibrary: bluebird // deprecated
     authSource: "admin",
-    poolSize: 2,  // default 5  maxPoolSize
+    poolSize: 1,  // default 5  maxPoolSize
 //    socketOptions: {
        keepAlive: 1,
        connectTimeoutMS: 2000, // 500
@@ -97,7 +89,7 @@ var dbenv = {
 //  promiseLibrary: global.Promise,  // not applicable
 //  promiseLibrary: bluebird // deprecated
     authSource: "admin",
-    poolSize: 2,  // default 5  maxPoolSize
+    poolSize: 1,  // default 5  maxPoolSize
 //    socketOptions: {
        keepAlive: 1, // 120
        connectTimeoutMS: 2000, // 500
@@ -163,53 +155,76 @@ let Adder = new Function('return ' + funy.value.code)();
 //var Adder = function (x, y){ return x + y; }; // const btick = "`";
 await console.log(Adder(50,7));
 */
+/*
 
-module.exports = {
+module.exports.finds = (conexion) => new Promise((resolve, reject) =>
+                {console.log("conexion"+conexion);
+                  conexion.collection("geo").find({}, function(err, docs)  {
+                 resolve(docs);
+                 result = docs;
+  //               console.log("resujs"+JSON.stringify(docs));
+                });
+             });
+*/
+
+// module.exports = dbcon; // dbcon is not defined
+let dbcon = {
 dbenv: () => {return dbenv;},
 dbadmin: () => {return dbadminqp;},
-countries: () => {return countries;},
-openasync: async function () {
-      return await mongoClient.connect(dbadminqp.dbUrl, dbenv.optcli);
+dbconect: async () => {
+    try { return await mongoClient.connect(dbadminqp.dbUrl, dbenv.optcli);
+    } catch(err){ console.log("Can not connect to mongodb server: ",err); process.exit(0);}
     },
-openclip: () => new Promise((resolve, reject) => {
+dbget: async () => { if(!dbenv.dbcon) { try { dbenv.dbcon = await dbcon.dbconect();
+                                              console.log(`connected to db: ${dbenv.dbcon}`);
+                                            }
+                                         catch(err){ console.log("error open db: ",err);
+                                                     throw new Error('Call connect first....!',err);
+                                                   }
+                                         return dbenv.dbcon;
+                                        }
+                    },
+insert: async (tree) => { try { let dbconx = await dbcon.dbget();
+                                let colgeo = dbconx.db("kyxtree").collection("geo");
+                                let result = await colgeo.insert(tree);
+                                console.log("resul>",result.result,result.insertedCount,result.insertedIds,"<resul");
+//                              console.log("resul>",result,"<resul");
+//                              dbcon.close();
+                          } catch(err){ console.log("error open db: ",err) }
+},
+
+openclip: () => {new Promise((resolve, reject) => {
         mongoClient.connect(dbadminqp.dbUrl, dbenv.optcli)
-        .then((dbm) => {resolve(dbm);
-              console.log("connected mongodb openclip:", dbm);
-               dbx = dbenv.dbs.kyxtree = dbm.db("kyxtree");
-               dbx.createCollection("geo");
-               dbx.createCollection("lng");  
-              console.log(">>dbenv.dbs.kyxtree: ",dbenv.dbs.kyxtree);
-              return dbx;
-        })
-        .catch((err)=>{console.log("error mongodb opencli:" + err); reject(err);
-        });
-      }),  // end Promise
-opencli: () => {
-//  Connection URL. This is where your mongodb server is running.
-//  let url = dbUrl; //constants.MONGODB_URI;
-    return new Promise((resolve, reject)=>{
-        // Use connect method to connect to the Server
-        mongoClient.connect(dbadminqp.dbUrl, dbenv.optcli, (err, dbm) => {
-            if (err) { console.log("error mongodb opencli:" + err);
-                reject(err); // return;
-            } else { resolve(dbm);
-                console.log("connected mongodb opencli:", dbm.Db);
-                dbenv.dbs.kyxtree = dbm;
-                console.log(">>dbenv.dbs.kyxtree: ",dbenv.dbs.kyxtree);
-                return dbm;
-            }
-        }); //  end connect
-    });  // end Promise
-}, // end opencli
+        .then((dbcon) => {resolve(dbcon);
+//             dbenv.dbs.kyxtree = dbcon.db("kyxtree");
+//             dbenv.dbs.kyxtree.createCollection("geo");
+//             dbenv.dbs.geo = dbcon.db("kyxtree").collection("geo");
+               console.log("connected mongodb openclip:", dbcon);
+               return dbcon;  //  returns MongoClient connection
+         })
+        .catch((err)=>{console.log("error mongodb openclip:" + err); reject(err);
+         });
+      })},  // end Promise
+
+opencli: () => { return new Promise((resolve, reject)=>{
+                      mongoClient.connect(dbadminqp.dbUrl, dbenv.optcli, (err, dbcon) => {
+                          if (err) { console.log("error mongodb opencli:" + err); reject(err); return;
+                        } else { resolve(dbcon); console.log("connected mongodb opencli:", dbcon);
+                                 return dbcon;
+                        }
+                      }); //  end connect
+                  });  // end Promise
+                }, // end opencli
 
 //opengoose: () => {return mongoose.connect(dbadminqp.dbUrl, dbenv.optodm); },
 dbgoose: () => {var conn = mongoose.connect(dbadminqp.dbUrl, dbenv.optodm, dbenv.dboback);
 //               Check error in initial connection. There is no 2nd param to the callback.
                  return conn;},
 // Or using promises
+
 dbgoosep: async () => { try {
                             var conn = await mongoose.connect(dbadminqp.dbUrl, dbenv.optodm);
-                            console.log("Mongoose Db is ready to use", conn.user);
+                            console.log("Mongoose Db is ready to user", conn.user);
                             } catch(err) { console.log("Mongoose Db is not connected", err); };
                         return conn;
                       },
@@ -218,56 +233,26 @@ dbgoosep: async () => { try {
                  .catch(err => { console.log("Mongoose Db is not connected", err); });
                  return conn;},
 */
-/*
-                 .then(() => { console.log("Mongoose Db is ready to use");},//`mongoose.connect()` promise resolves to undefined
-                        err => { console.log("Mongoose Db is not connected", err); }
-                      ); return conn;},
-*/
 /*  https://github.com/Automattic/mongoose/issues/4413 Please update docs for createConnection
-                  mongoose.connect(connectionString)
+                  mongoose.connect(connectionString)   // mongoose.connect() promise resolves to undefined
                         .then(() => logger.info("Successfully connected to MongoDB. Starting web server..."))
                         .catch(err => logger.error("Unable to connect to MongoDB: ", err))
                         .then(() => server.start())
                         .then(() => logger.info("Successfully started web server. Waiting for incoming connections..."))
                         .catch((err) => logger.error(err));
 */
-close: function (db){
-    //Close connection
-    if(db){
-//        db.close();
-        db.disconnect();
-    }
-}
-} // end export
+close: function (dbcon){  //Close connection
+       if(dbcon){ db.command({ shutdown : 1 },
+                              function(err, result) { console.log('shutting down mongodb - ', err.message);
+                              dbcon.close(); process.exit(0);
+		                        });
+//                 dbcon.close();
+//no               db.disconnect();
+                 }
+         }
+} // end dbcon for export
+module.exports = dbcon;
 
-
-//module.export.dbinit = function () {
-
-/*
-  // runs in boot.js or what ever file your application starts with
-  dbconn.connect()
-      .then(() => console.log('database connected'))
-      .then(() => app())
-      .catch((e) => {
-          console.error(e);
-          // Always hard exit on a database connection error
-          process.exit(1);
-      });
-
-  appk.context.kyxtree = dbenv.dbs.kyxtree = {} = async function () {
-        return await MongoClient.connect(dbUrl, dbenv.optcli);
-      }
-
-//appk.context.kyxoose = dbenv.dbs.kyxoose = {}
-
-//const mongooseConn = mongoose.createConnection(dbUrl, dbenv.optodm, dbenv.dbback);
-  var dbms = mongoose.connect(dbUrl, dbenv.optodm);
-}
-
-var mygoose = async function () {
-      return await MongoClient.connect(dbUrl, dbenv.optcli);
-    }();
-*/
 //&& npm install --save mongoose@4.10.8 else 2Warnings: `open()` is deprecated & Db.prototype.authenticate
 //const mongooseConn = mongoose.connection.openUri(dbUrl, dbenv.opts);  // goto line 389 // specify Shard or replSet
 //const mongooseConn = mongoose.createConnection(dbUrl, dbenv.opts); // Db.prototype.authenticate method will no longer be available
@@ -292,26 +277,7 @@ dbAdmin.addUser(dbadminqp.dbuser.createUser,dbadminqp.dbuser.pwd,{roles: dbadmin
        .then(usr => console.log('Mongodb has been created:'+JSON.stringify(usr)))
        .catch(err => {console.log('Error while trying to create user dbuser mongodb: '+err); });  // throw err;
 **************/
-////////////////////////////////
-/* share connection multiple databases
-var mongodb = require("mongodb"),
-mongoClient = require('mongodb').MongoClient;
 
-mongoserver = new mongodb.Server(host, port, server_options),
-db_connector = new mongodb.Db(name, mongoserver, db_options);
-db_connector.open(callback);
-*/
-/*
-//const dbadmin = process.env.DBADMIN;  // already declared
-//console.log(dbadmin);
-const mongo = require('mongodb');
-const mongoClient = require('mongodb').MongoClient;
-var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//const dburl = "mongodb://kyxuser:555777@172.17.0.1:27017/kyxtree?authSource=admin";
-//var dburl = "mongodb://user:555777@mongo.kyx:27017/kyxtree?";
-//var conexion = null;
-var result = null;
-*/
 /*
 mongoose.connect(dbUrl, options);
 function opens(){
@@ -340,59 +306,9 @@ let db = {
     opens : opens,
     close: close
 }
+module.exports = db;
 */
-// module.exports = db;
-/*
-// exports.test = async function () {
-      return await MongoClient.connect(dburl, options);
-    }
-*/
-/*
-module.exports.conect = () => new Promise((resolve, reject) => {
-   MongoClient.connect(dburl, options)
-      .then(function (dbs) { // <- db as first argument
-        resolve(dbs);
-        conexion = dbs;
-    //    console.log(dbs)
-      })
-      .catch(function (err) {})
-   });
-*/
-//console.log(url);
-/*
-module.exports.conect = () => new Promise((resolve, reject) =>
-                              {MongoClient.connect(dburl,  options, function(err, dbs) {
-                                 if (err) { console.log("error mongopen:" + err); reject(err); return; };
-                                 resolve(dbs);
-                                 conexion = dbs;
-                                 return conexion;
-                                 });
-                            });
-*/
-//let conexion = conect();
-//module.exports.conect();
-/*
-module.exports.finds = (conexion) => new Promise((resolve, reject) =>
-                {console.log("conexion"+conexion);
-                  conexion.collection("geo").find({}, function(err, docs)  {
-                 resolve(docs);
-                 result = docs;
-  //               console.log("resujs"+JSON.stringify(docs));
-                });
-             });
 
-*/
-/*
-module.exports.get = () => {
-    if(!conexion) {
-      conect()
-      .then(conexion)
-      .catch((err) => {throw new Error('Call connect first....!'+err);});
-    }
-    console.log(`db conexion: ${conexion}`);
-    return conexion;
-}
-*/
 /*
 var dburl = "mongodb://user:555777@mongo.kyx";
 var dbport = 27017;
