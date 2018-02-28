@@ -1,38 +1,37 @@
-// "tree":"lng/root,lng/name,app/kyx" // app: axs->thesaurus geo->hasc   // sector: coran proverbios medicina farmacia
-// Validation: axireference ->      desc·riptor~ttag~list~zone       system·tag "stag":"axie|divs|vals|tree|mapa"
-// "lngs":{"spa":"ofi","cat":"cof"} -> "use":"ofi|cof|spk|sgn|biz|dia|clq|zon"
-// urlz>zone urll>lingua urlp>pyramidal urlt>event_transaction_target(kyx.dynu.net|keyax.org)
+//"app":"kyx/ini|geo->hasc|axs->thesaurus|sys|upload|srx|lrn" // system·tag "stag":"axie|divs|vals|tree|mapa"
+//"lngs":{"spa":"ofi","cat":"cof"} -> "use":"ofi|cof|spk|sgn|biz|dia|clq|zon", sector: coran proverbios medicina farmacia
+// Validation: axireference ->  desc·riptor~ttag zone list "tree":"lng/root,lng/name,app/kyx"
 var georec = {"app":"kyx/ini","geox":"","zone":"","divs":[],"lngs":{},"mapa":{},"dat":{}};
-var datccs = {"urls":{"sect":"","url":""},"tld":[],"iso":"","fon":"","post":"","ppl":{},"area":0,"bord":[],
+var datccs = {"urls":[{"sect":"","url":""}],"tld":[],"iso":"","fon":"","post":"","ppl":{},"area":0,"bord":[],
               "cont":"","deps":[],"curr":[],"cca3":"","cioc":"","ccn3":"","latlng":[],"alts":[] }; // ,"lang":[]
-var datsub = {"urlz":{"sect":"","url":""},"tld":[],"iso":"","fon":"","post":"","ppl":{},"area":0,"bord":[]};
-var filter = {"app":"kyx/axs","list":"cont/part","geox":"euro/south","lng":"spa","wrd":["Europa Sur","sureuropeo"],"desc":["euro","south","filter"]};
-
-var geolng = {"app":"kyx/ini","geox":"L/ZGH","divs":"$lng_ccs","fam":"ber","mapa":"$zgh.json","urll":{"sect":"","url":""}}; //"IRCAM","url":"http://zgh.ircam.ma/api"}
-var geocom = {"app":"kyx/axs","axie":"G/ES>com","lng":"spa","wrd":"España"}; // common ofi dem cap
-var geoofi = {"app":"kyx/axs","axie":"G/ES>ofi","lng":"spa","wrd":"Reino de España"};                   // official
-var geoadm = {"app":"kyx/axs","axie":"G/ES>adm","lng":"spa","wrd":["país","autonomía"]};     // adm1~ccs/reg
-var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"eng","wrds":"File not found" }; //  "list":"sys"
-var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"spa","wrds":"Archivo no encontrado" };
-
-var lngrut = {"app":"kyx/axs","axie":["فعل"],"lng":"ARB"}; // +morphemes -> deriv(stem)  ->inflect(word)
-var lngrut = {"app":"kyx/axs","axie":["فعل"],"lng":"ENG","wrd":"do"};
-var lngaxy = {"app":"kyx/axs","axie":["أسد","lion:eng"],"lng":"SPA","wrd":"león","desc":["name","animal","wild"],"mapa":{} };
-//            "axie":{"root":"and|when|they|break","sufx":"-able","prfx":"un-","stem":"unbreakable","flex":"","word":"","typ":"adj|adv|art|nam|vrb" }
-//            "axie":["and|when|they|break","-able","un-","flex",":eng"],"typ":"adj|adv|art|nam|vrb",
-//            "etym":{"lat":"","grk":""},"obs":[""]
-
-//        "app":"kyx/ini|geo|axs|sys|srx|bok|lrn","sect":"ling|basic|nature|science|techno|medical|social|cultur|econom|coloq",
-//          urlmrk|urldox|urlpic|urlaud|urlvid|subtitle  urlmin  text  desc:axies
-/*{"evt":[{"own":"session|owner_id|X509","gtg":"geotag>es/an","dts":"date_time_stamp","gps":"[lat,long]",
-           "urt":"https://keyax.org/kyx/srx|ups|vot","form":{"lng+desc+CSRF+query|pers.pic|file.ext|IoTcmd"} }]}*/
-var lngdok = {"app":"kyx/dok","axie":"G/ES.AN","desc":["turism"],"lng":"spa","title":"","urld":"part:1,cap:2,pag:22","txt":"Andalucía en 2020."}
-var appdat_cli = {"app":"kyx/account","geo":"ES","lng":"SPA","owner":"usr","doc":{}}
-
-//060DEH/guide+agenda+admin+vot
+var datsub = {"urls":[{"sect":"","url":""}],"tld":[],"iso":"","fon":"","post":"","ppl":{},"area":0,"bord":[]};
+var filter = {"app":"kyx/axs","geox":"euro/south","list":"cont/part","lng":"spa","wrd":["Europa Sur","sureuropeo"],"desc":["euro","south","filter"]};
 var geovot_srv = {"app":"kyx/vot","geot":"ES.AN","desc":["G/ES.AN","vote","apply daylight saving time?"],"obs":[""],
-                              "datree":{"ES":{"AN":{"dats":{},"SE":{"dats":{},"MA":{"dats":{"MR":{"dats":{}} }}}}}},
-// pyramidal data collecting system                 "dats":{"urlp":"","ppl2014":5973685,"yes":0,"no":0,"nul":0""}
+                              "datree":{"ES":{"AN":{"dats":{},"SE":{"dats":{},"MA":{"dats":{"MR":{"dats":{}} }}}}}}  };
+//Pyramidal Data Collect(admin+vot) + Distrib(guide+agenda+060DEH)//"dats":{"urlp":"","ppl2014":5973685,"yes":0,"no":0,"nul":0""}
+//urlz>zone urll>lingua urlp>pyramidal urlt>event_transaction_target(kyx.dynu.net|keyax.org) urld>document
+
+var geolng = {"app":"kyx/ini","geox":"L/ZGH","divs":"$lng_ccs","fam":"ber","mapa":"$zgh.json","urls":[{"sect":"","url":""}]}; //"IRCAM","url":"http://zgh.ircam.ma/api"}
+var geocom = {"app":"kyx/axs","axie":{"root":"G/ES","form":"com"},"lng":"SPA","conjug":{"nodiax":"Espana","diax":"España"} }; // common ofi dem cap
+var geoofi = {"app":"kyx/axs","axie":"G/ES>ofi","lng":"SPA","nodiax":"Reino de Espana","diax":"Reino de España"};                   // official
+var geoadm = {"app":"kyx/axs","axie":"G/ES>adm","lng":"SPA","wrd":["país","autonomía"]};        // adm1~ccs/reg
+var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"ENG","wrds":"File not found" };             // "list":"sys"
+var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"SPA","wrds":"Archivo no encontrado" };
+
+var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"ARB","conjug":[{"tense":"01","inflex":"131","nodiax":"فعل","diax":"فَعَلَ",}]};   // "deriv":["13","61","71","81"],
+var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"SPA","conjug":[{"tense":"01","inflex":"110","nodiax":"hago","diax":"hagoَ",}] } // "etym":{"lat":"facere"}
+var lngrot = {"app":"kyx/axs","axie":{"root":"أسد","form":"00"},"lng":"SPA","conjug":[{"tense":"name01","inflex":"101","nodiax":"leon","diax":"leónَ",}] } // "etym":{"lat":"leo"}
+//                          "axie":["and|when|they|break","-able","un-","flex",":eng"],"typ-tense":"asl|rot|adj|adv|art|nam|vrb",
+//  "desc":["name","animal","wild"], "sect":"any_neutr|ling|basic|nature|science|techno|medical|social|cultur|tourism|econom|coloq|hoby|mrktg|desin|advrt",
+// "aaa"-> DERIV: +morphemes -> stem(10forms) -> CONJUG: activ|passiv|reflex + infin|present|past|future -> inflex Time+Person
+// root/form/tense/inflex -> word -> -inflex -> -tense -> -form -> root  //  "desc":{"sect":"tourism","typw":"vrb","ttag":"animal","geo":"ES.AN","lng":"SPA"}
+
+var lngdok = {"app":"kyx/dok","desc":["T/2020","G/ES.AN","L/SPA","W/vrb","S/tourism","trips"],"lng":"spa","title":"Andalucía en 2020.","urld":"andalus2020.pdf#sec:1,cap:2,pag:22","txt":"Andalucía es ..."};
+var appdat_cli = {"app":"kyx/account","geo":"ES","lng":"SPA","owner":"usr","doc":{}}
+/*  {"evt":[{"own":"session|owner_id|X509","gtg":"ES.AN","dts":"date_time_stamp","gps":"[lat,long]",
+             "urt":"https://keyax.org/kyx/srx|ups|vot","form":{"lng+desc+CSRF+query|pers.pic|file.ext|IoTcmd"} }]}*/
+//            urlmrk|urldox|urlpic|urlaud|urlvid|subtitle  urlmin  text  desc:[]
+
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 var kyxini = {"ccsdiv":[],"lngdiv":[],"ccslng":{},"ccsdia":{},"ccsnat":{},"lngccs":{},"contval":{},"contdiv":[{}],"ccscont":{},
    "lstobj": (lst,dat)=>{var obj={};lst.forEach((elt)=>{obj[elt]=JSON.parse(JSON.stringify(dat));});return obj;}, // {AD:'',AE:'',...}

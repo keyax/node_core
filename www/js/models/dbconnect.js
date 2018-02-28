@@ -85,7 +85,7 @@ var dbenv = {
 //  ssl: true
   },  // end optcli
   optodm: {  // ODM object data modeling with mongoose.js
-    useMongoClient: true,
+//  useMongoClient: true, // WARNING: The `useMongoClient` option is no longer necessary in mongoose 5.x, please remove it.
 //  promiseLibrary: global.Promise,  // not applicable
 //  promiseLibrary: bluebird // deprecated
     authSource: "admin",

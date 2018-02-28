@@ -16,8 +16,6 @@ const dbx = {
   loki: { name: 'loki', species: 'ferret' },
   jane: { name: 'jane', species: 'ferret' }
 };
-const pets = {
-  app1:{
   list: (ctx) => {
     const names = Object.keys(dbx);
     ctx.body = 'pets: ' + names.join(', ');

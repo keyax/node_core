@@ -181,7 +181,7 @@ var filesize = 0;
  })
 // Execute commands in clean exit
  process.on('exit', function () { console.log('Exiting ...');
-                                  if (null != db) { db.close(); }
+                                  if (null != dbenv.dbcon) { dbenv.dbcon.close(); }
                                   // close other resources here
                                   setTimeout(function() { console.log('This will not run!'); }, 0);
                                   console.log('About to exit....bye');
