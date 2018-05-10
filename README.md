@@ -1,5 +1,5 @@
 # Keyax Framework: Nginx + Nodejs + MongoDB on Docker Swarm cluster.
-# Nodejs version 8.9.1 LTS on Ubuntu Core 16.04 LTS xenial for Docker image.
+# Nodejs version 10.1.0 LTS on Ubuntu Core 18.04 LTS Bionic for Docker image.
 
 
 What is Node.js  ?
@@ -101,8 +101,6 @@ License information for the software contained in this image. License informatio
 
 Supported Docker versions
 
-This image is officially supported on Docker version 17.04
-
-Support for older versions (down to 1.6) is provided on a best-effort basis.
+This image is officially supported on Docker version 18.04
 
 Please see the Docker installation documentation for details on how to upgrade your Docker daemon.
