@@ -48,15 +48,24 @@ server.listen(8080);
 
 //module.exports = function(app, passport)   // express
 //module.exports = function  (passport)
+const fs = require('fs');
+const fse = require('fs-extra');
+const util = require('util');
 const assert = require('assert');
 const path = require('path');
 const url = require('url');
 const URL = require('url').URL;
 // const myUrl = new URL('/a/path', 'https://example.org/');
-var progress = require('progress-stream');
-const kbb = require('koa-busboy');
+
 // const abb = require('async-busboy');
+const kbb = require('koa-busboy');
+// koa-busboy uploader puts fields in ctx.request.body & files in ctx.request.files[]
+const upkbb = kbb({ dest: "statics/upload",     // default is system /temp folder (`os.tmpdir()`)
+                    fnDestFilename: (fieldname, filename) =>  fieldname + '_' + filename  //uuid() default epoch+fieldname+filename
+                  });
+var progress = require('progress-stream');
 const exif = require('exiftool');
+
 const bodyParser = require('koa-bodyparser');
 //const passport = require('koa-passport');
 const Multer = require('koa-multer');
@@ -64,9 +73,6 @@ const Multer = require('koa-multer');
 var Koa = require('koa');
 var appk = new Koa();
 
-const fs = require('fs');
-const fse = require('fs-extra');
-const util = require('util');
 // function rutas(appk) {  // OK1
 const Router = require('koa-router');
 
@@ -108,8 +114,6 @@ appk.use(passport.session());
         res.render('index.ejs'); // load the index.ejs file
     });
 */
-
-
 
 routerk.post("/uploadf", async function (ctx, next) {
  try {
@@ -166,24 +170,13 @@ ctx.status = err.status || 500
 };
 });
 
-routerk.post("/uploadz", async function (ctx, next) {
- try {
 /*
 var yo = require("socket.io")(appk);
 yo.on('connect', function (socket) { console.log("sockrouter connected");
                                      socket.on('upload', function (msg) {console.log("msg??????????????:",msg);});
  });
 */
-let filesize = await ctx.state.filesize;
 //socket.on('upload', async function (msg) {filesize = msg; console.log("msg:",msg);});
-console.log('filesizerouter:',ctx.state.filesize);
-const {fields} = await kbb(ctx.req, {
-    onFile: function(fieldname, file, filename, encoding, mimetype) {
-            //uploadFilesToS3(file);
-          //  console.log("ctx.req:"+ctx.request.get);
-      //      console.log("filesinctx:"+ctx.req.files);
-            console.log("kbb:fieldname "+fieldname+" file** "+JSON.stringify(file)+"** filename "+filename+" encoding "+encoding+" mime "+mimetype);
-            var upfile = `statics/upload/${filename}`;  // as of `/home/node/statics/${filename}`;
 
 //exiftool for media >> filename user+timegeostamp >> translatable tags
 //json test + upsert mongodb
@@ -203,7 +196,7 @@ const {fields} = await kbb(ctx.req, {
               });
             });*/
 //        var stat = fs.statSync(upfile);
-
+/*
 var extFilter = "jpg";
 function extension(filename) {
 //  var extName = path.extname(filename);
@@ -211,15 +204,17 @@ function extension(filename) {
  console.log("ext"+extName);
   return extName === '.' + extFilter;
 };
+
 fse.readdir('statics/upload/')
 .then((list) => list.filter(extension))
 .then((listext) => listext.forEach((listitem) => console.log("listitem: "+listitem)))//  console.log("filelist"+filelist))
 .catch(err => console.error(err));
+*/
 /*
 var filelist = fse.readdir('statics/upload/', function(err, list) {
                           list.filter(extension).forEach(function(value) {console.log("value"+value);});
-//                filename =>  (filename.substr(0, filename.lastIndexOf('.')) == ".jpg") ? {filelistext.push(filename)}
-//                 console.log("filelistext"+filelistext);
+    //            filename =>  (filename.substr(0, filename.lastIndexOf('.')) == ".jpg") ? {filelistext.push(filename)}
+                 console.log("filelistext"+filelistext);
 })
 */
 /*
@@ -236,26 +231,6 @@ fs.unlink(upfile, function(err) {    // fse.remove
     }
 });
 */
-          var strm = progress({
-                  length: filesize, //stat.size,
-                  time: 1 // ms
-            });
-            wstream = fs.createWriteStream(upfile);
-            file.pipe(strm).pipe(wstream);
-            strm.on('progress', async function(progress) {
-                await console.log('progreso:',progress);
-                /* {percentage: 9.05,
-                    transferred: 949624,
-                    length: 10485760,
-                    remaining: 9536136,
-                    eta: 42,
-                    runtime: 3,
-                    delta: 295396,
-                    speed: 949624
-                } */
-            });
-          }  // onFile:  end
-    }); // await kbb ctx.req,
 /*
 function checkFile(files) {var filename = files[0].filename;
            console.log("filename+check:"+filename);
@@ -270,13 +245,40 @@ checkFile(files);
 console.log(util.inspect({files, fields}));
 */
 
-//  console.log("filelist:"+fields.filelist);
-  ctx.body = await {resp: "eureka!!"+ ctx.state.filesize};
+routerk.post("/uploadz", upkbb, async function (ctx, next) {
+try {
+  var fields = ctx.request.body; // fields in ctx.request.body + [] with file sizes
+
+      console.log(process.cwd()); console.log("Form fields: ",fields.kanimg);
+      var kanimg = fields.kanimg.replace(/^data:image\/jpeg;base64,/, "").replace(/^data:image\/png;base64,/, "");
+      fs.writeFile("statics/upload/kanimg.jpeg", kanimg, 'base64', function(err) { console.log(err); });
+
+  var files = ctx.request.files; // files in ctx.request.files array
+  console.log("file: ",files[0].path);  //  files[0].path|fieldname|filename|encoding|mimetype
+//  files.forEach((file)=>{console.log("filesize: ",file.entries());});
+  /*var strm = [];
+  files.forEach((file,idx,aray) => {   //   console.log("filesize: ",file);   //  sockt.emit('upload', fil.size);
+      strm[idx] = progress({
+                  length: fields.filarr[idx],  // file.size, //stat.size,
+                  time: 1 // ms
+                  });
+     wstream = fs.createWriteStream("upfile");
+///   ctx.request.files[0].pipe(wstream);
+      file.pipe(strm[idx]).pipe(wstream);
+      strm[idx].on('progress', function(progress) {   // no async
+                console.log('progreso:',JSON.stringify(progress));
+            //  {percentage: 9.05, transferred: 949624, length: 10485760, remaining: 9536136,
+            //   eta: 42, runtime: 3, delta: 295396, speed: 949624 }
+                });
+  });  //  files.forEach
+*/
+ctx.body = await {"resp:": "eureka!!","file":files[0].path, fields};  // POST >> [HTTP/1.1 404 Not Found 2468ms
 return ctx;
 } catch (err) {
 ctx.body = { message: err.message }
 ctx.status = err.status || 500
-};
+};  // end catch
+//next();
 });
 
 //appk.context.lista = {};  //  ctx.lista = f();

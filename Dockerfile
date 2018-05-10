@@ -2,10 +2,10 @@ FROM keyax/ubuntu_core
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
-      keyax.os.ver="16.04.3 xenial" \
+      keyax.os.ver="18.04 bionic LTS" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 8.5.0" \
-      keyax.app.ver="2.7"
+      keyax.app="Nodejs 8.11.1 LTS" \
+      keyax.app.ver="18.05 LTS"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN groupadd --gid 11000 node \
@@ -59,9 +59,9 @@ gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 77984A986EBC2AA786BC0F
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.9.1
+ENV NODE_VERSION 10.1.0
 # LTS
-# ENV NODE_VERSION 6.11.3
+# ENV NODE_VERSION 8.11.1
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
@@ -110,6 +110,7 @@ RUN cd /home/node \
 ## && npm install --save fs \
 && npm install --save fs-extra \
 && npm install --save mz \
+&& npm install --save rxjs \
 # && npm install --save jquery \
 # && npm install --save express \
 # && npm install --save formidable \
@@ -169,7 +170,6 @@ RUN cd /home/node \
  && npm install --save koa-session-store \
  && npm install --save koa-session-mongo \
 
-
 && npm install --save koa-if \
 && npm install --save koa-compose \
 && npm install --save koa-convert \
@@ -181,17 +181,17 @@ RUN cd /home/node \
 && npm install --save passport-local-mongoose \
 && npm install --save passport-client-certificate \
 && npm install --save passport-jwt \
- && npm install --save passport-facebook \
- && npm install --save passport-twitter \
- && npm install --save passport-google-auth \
- && npm install --save koa-jwt \
- && npm install --save jsonwebtoken \
- && npm install --save jwt-simple \
- # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
- && npm install --save ws \
+  && npm install --save passport-facebook \
+  && npm install --save passport-twitter \
+  && npm install --save passport-google-auth \
+  && npm install --save koa-jwt \
+  && npm install --save jsonwebtoken \
+  && npm install --save jwt-simple \
+  # && npm install --save x509 \ ERR! x509@0.3.2 install: `node-gyp rebuild`
+  && npm install --save ws \
 && npm install --save socket.io \
-&& npm install --save socketio-auth \
-&& npm install --save koa-socket-2 \
+  && npm install --save socketio-auth \
+  && npm install --save koa-socket-2 \
    && npm install --save koa-socket-passport \
    && npm install --save koa-socket.io \
    && npm install --save koa-socket-session \

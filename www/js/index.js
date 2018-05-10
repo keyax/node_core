@@ -349,7 +349,11 @@ appk.use(Convert(flash())); // use connect-flash for flash messages stored in se
 
 //appk.use((ctx) => {ctx.session.username="yones";console.log("sessionId:",JSON.stringify(ctx.session.username));});
 //appk.use((ctx) => {ctx.cookies.set('sessiond', 123456); ctx.session.username="yones";console.log("sessionId:",JSON.stringify(x = ctx.cookies.get()));});
-
+/*
+app.use((ctx, next) => {  if(ctx.url == '/') { ctx.url = '/some/other/path' }
+                          return next(); });
+app.use((ctx, next) => {  ctx.body = 'ok' });
+*/
 appk.use(async (ctx, next) => {
   const btick = "`";
 //process.stdout.write("\n"); // newline \n ,rewrite line \r = \x1B[0G in strict_mode = \033[0G in vt220 & windows
@@ -711,9 +715,13 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'};
 .on('connection', function (socket){
 //  socket.join('room1');  //  socket.leave('room1');  // default Socket#id
 //  socket.broadcast.in('room1').emit('hiserver', { hello: 'world baby '+socket.id });
+    console.log(`what ip ${socket.handshake.address}`);  //  what ip ::ffff:10.255.0.2
+    console.log(`remote ip ${JSON.stringify(socket.request.headers)}`);  //
+
     socket.emit('hiserver', { hello: ` world baby: ${socket.id}` });
     socket.on('hiclient', function (data) {
        console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
+
        console.log(`with socket cookie: ${socket.request.headers.cookie}`); // previous socket.id
        console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`); // previous socket.id
        var date = new Date();
@@ -723,7 +731,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'};
 // Not a function         socket.handshake.headers.cookie.kyxsoket = name+"="+value+expires+"; path=/";
 // socket.handshake.headers.cookie.set("kyx:socket", socket.id);// = {resp: "login eureka!!"};
     }); //  end on hiclient
-/////    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); filesize = msg;});
+    socket.on('upload', function (msg) { console.log("msg?????????:"+msg); });
 //  socket.on('upload', async function (msg) {ctx.session.filesize = msg; console.log("msg:",msg);
 //  socket.broadcast.emit('progress', bytesReceived);
 //  });

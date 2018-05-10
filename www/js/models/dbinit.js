@@ -6,10 +6,6 @@ var datccs = {"urls":[{"sect":"","url":""}],"tld":[],"iso":"","fon":"","post":""
               "cont":"","deps":[],"curr":[],"cca3":"","cioc":"","ccn3":"","latlng":[],"alts":[] }; // ,"lang":[]
 var datsub = {"urls":[{"sect":"","url":""}],"tld":[],"iso":"","fon":"","post":"","ppl":{},"area":0,"bord":[]};
 var filter = {"app":"kyx/axs","geox":"euro/south","list":"cont/part","lng":"spa","wrd":["Europa Sur","sureuropeo"],"desc":["euro","south","filter"]};
-var geovot_srv = {"app":"kyx/vot","geot":"ES.AN","desc":["G/ES.AN","vote","apply daylight saving time?"],"obs":[""],
-                              "datree":{"ES":{"AN":{"dats":{},"SE":{"dats":{},"MA":{"dats":{"MR":{"dats":{}} }}}}}}  };
-//Pyramidal Data Collect(admin+vot) + Distrib(guide+agenda+060DEH)//"dats":{"urlp":"","ppl2014":5973685,"yes":0,"no":0,"nul":0""}
-//urlz>zone urll>lingua urlp>pyramidal urlt>event_transaction_target(kyx.dynu.net|keyax.org) urld>document
 
 var geolng = {"app":"kyx/ini","geox":"L/ZGH","divs":"$lng_ccs","fam":"ber","mapa":"$zgh.json","urls":[{"sect":"","url":""}]}; //"IRCAM","url":"http://zgh.ircam.ma/api"}
 var geocom = {"app":"kyx/axs","axie":{"root":"G/ES","form":"com"},"lng":"SPA","conjug":{"nodiax":"Espana","diax":"España"} }; // common ofi dem cap
@@ -18,19 +14,28 @@ var geoadm = {"app":"kyx/axs","axie":"G/ES>adm","lng":"SPA","wrd":["país","auto
 var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"ENG","wrds":"File not found" };             // "list":"sys"
 var applbl = {"app":"kyx/sys","axie":"S/FNF","lng":"SPA","wrds":"Archivo no encontrado" };
 
-var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"ARB","conjug":[{"tense":"01","inflex":"131","nodiax":"فعل","diax":"فَعَلَ",}]};   // "deriv":["13","61","71","81"],
-var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"SPA","conjug":[{"tense":"01","inflex":"110","nodiax":"hago","diax":"hagoَ",}] } // "etym":{"lat":"facere"}
+var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"ARB","conjug":[{"tense":"01","inflex":"131","nodiax":"فعل",     "diax":"فَعَلَ",}]};  // "deriv":["13","61","71","81"],
+var lngrot = {"app":"kyx/axs","axie":{"root":"فعل","form":"13"},"lng":"SPA","conjug":[{"tense":"01","inflex":"110","nodiax":"hago",    "diax":"hagoَ",}] } // "etym":{"lat":"facere"}
 var lngrot = {"app":"kyx/axs","axie":{"root":"أسد","form":"00"},"lng":"SPA","conjug":[{"tense":"name01","inflex":"101","nodiax":"leon","diax":"leónَ",}] } // "etym":{"lat":"leo"}
-//                          "axie":["and|when|they|break","-able","un-","flex",":eng"],"typ-tense":"asl|rot|adj|adv|art|nam|vrb",
-//  "desc":["name","animal","wild"], "sect":"any_neutr|ling|basic|nature|science|techno|medical|social|cultur|tourism|econom|coloq|hoby|mrktg|desin|advrt",
-// "aaa"-> DERIV: +morphemes -> stem(10forms) -> CONJUG: activ|passiv|reflex + infin|present|past|future -> inflex Time+Person
-// root/form/tense/inflex -> word -> -inflex -> -tense -> -form -> root  //  "desc":{"sect":"tourism","typw":"vrb","ttag":"animal","geo":"ES.AN","lng":"SPA"}
+// root/form/tense/inflex -> word -> -inflex -> -tense -> -form -> root // "aaa"-> DERIV: +morphemes -> stem(10forms+arbgrps) -> CONJUG: tense+inflex
+//            "tense-typ":"vrb ( + infin|past|present|future + activ|passiv|reflex ) noun|adj| adv|pron|art|conj|prep"
+//            "inflex":"1sing,2dual,3plur,8stop,9noap + 0impers,1yo,2tu,3el,4vd,9noap + 0neutr,1masc,2fem,3bisx,9noap"
+// diax -> (axie+tense(name)+inflex) -> ttag + lng -> tag
 
-var lngdok = {"app":"kyx/dok","desc":["T/2020","G/ES.AN","L/SPA","W/vrb","S/tourism","trips"],"lng":"spa","title":"Andalucía en 2020.","urld":"andalus2020.pdf#sec:1,cap:2,pag:22","txt":"Andalucía es ..."};
-var appdat_cli = {"app":"kyx/account","geo":"ES","lng":"SPA","owner":"usr","doc":{}}
-/*  {"evt":[{"own":"session|owner_id|X509","gtg":"ES.AN","dts":"date_time_stamp","gps":"[lat,long]",
-             "urt":"https://keyax.org/kyx/srx|ups|vot","form":{"lng+desc+CSRF+query|pers.pic|file.ext|IoTcmd"} }]}*/
-//            urlmrk|urldox|urlpic|urlaud|urlvid|subtitle  urlmin  text  desc:[]
+// urlz>zone urll>lingua urlp>pyramidal urlt>target_event_transaction(kyx.dynu.net|keyax.org) urld>document
+// "sect":"any_neutr|ling|basic|nature|science|techno|medical|social|cultur|tourism|econom|coloq|hoby|mrktg|desin|advrt",
+// "desc":["Sect/tourism|gov|relig","Book/book1","Owner/gov|pub","Period/BO","G/ES.AN","D/2020","L/SPA","Word/vrb","C/comment","ttag","trips"]
+var appfrm =
+  {"app":"kyx/srx_ups|vot|acct","own":"session|owner_id|X509+CSRF","gtg":"ES.AN","lng":"SPA",//"dts":"date_time_stamp","gps":"[lat,long]",
+   "qrycmd": "dicc|trans|desc -> sentences|urldox|urlmrk|urlpic|urlaud|urlvid|IoT +urlmin +subtitle|txt",
+   "dokup":[{"desc":["ttag"],"obs":[""],"idxu":"Cap.Sntc","indx":"0.0", "endx":"9.99","txt":"Andalucía 2020","txtn":"andalucia 2020",
+                            "urld":"andalus2020.pdf","inpg":"","urlaud":"andalus2020.mp3","strt":"00:00:00.000","ends":"9.99"},
+            {"desc":["ttag"],"obs":[""],                  "indx":"0.1.0",             "txt":"Prólogo",       "txtn":"prologo"} ] };
+//          {"desc":["ttag"],"obs":[""],                  "indx":"1.1","endx":"1.35", "txt":"Andalucía...",  "txtn":"andalucia..."} ] };
+
+//Pyramidal Data Collect(admin+vot) + Distrib(guide+agenda+060DEH)//"dats":{"urlp":"","ppl2014":5973685,"yes":0,"no":0,"nul":0""}
+var geovot_srv = {"app":"kyx/vot","geot":"ES.AN","desc":["G/ES.AN","vote","apply daylight saving time?"],"obs":[""],
+                              "datree":{"ES":{"AN":{"dats":{},"SE":{"dats":{},"MA":{"dats":{"MR":{"dats":{}} }}}}}}  };
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 var kyxini = {"ccsdiv":[],"lngdiv":[],"ccslng":{},"ccsdia":{},"ccsnat":{},"lngccs":{},"contval":{},"contdiv":[{}],"ccscont":{},
