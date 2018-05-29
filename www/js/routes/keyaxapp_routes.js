@@ -1,4 +1,4 @@
-/*
+/*  
 // remove route 2014 https://github.com/alexmingoia/koa-router/issues/88
 var router = new koaRouter(app);
 app.use(router.middleware()); // Note .middleware()

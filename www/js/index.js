@@ -9,6 +9,13 @@
 const co = require("co");
 //const { spawn } = require('child_process')  // execute shell commands
 //var fs = Promise.promisifyAll(require("fs"));  // readFileAsync
+/**
+var cluster = require('cluster');
+const Cores = require('os').cpus();
+if (cluster.isMaster &&  Cores.length > 1) { Cores.forEach((core,idx)=>{cluster.fork(); console.log("CPU core #",idx,core,"\n"); })// Create a worker
+                      } else { console.log("var appx= Koa; ... appx.listen(80xx);"); };
+//  Error: bind EADDRINUSE null:8000
+*/
 const fs = require('fs');
 const mzfs = require('mz/fs');
 const assert = require('assert');
@@ -122,6 +129,8 @@ const nodeport =  parseInt(`${dbadmin.nodeport}`) || process.argv[2] || 8000; //
 //const dbsroot = dbadmin.dbsroot.createUser;  // dbsroot dbsuser dbsdemo
 //const dbsrootpwd = dbadmin.dbsroot.pwd;
 
+// var date = new Date( parseInt( _id.toString().substring(0,8), 16 ) * 1000 ); // extract Timestamp from mongodb _id
+
 var dbinit = require('./models/dbinit.js');
 var tosave = dbinit.tosave();
 //console.log("lngnat: ",dbinit.lngnat());console.log("lngeng: ",dbinit.lngeng()); console.log("lngfra: ",dbinit.lngfra());
@@ -175,26 +184,29 @@ appk.proxy = true;  // koa passport trust proxy
 let expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 var filesize = 0;
 
+// Using a single function to handle multiple signals
+function exiting(signal) { console.log(`Received ${signal}`);
+                           if (signal === 'SIGINT')  { console.log( '\nGracefully shutting down from  SIGINT (Crtl-C)' ) }
+                           if (signal === 'SIGTERM') { console.log( 'Parent SIGTERM detected (kill)'); }
+                        // If the Node process ends, close the Mongoose connection
+                           if (dbenv.dbcon != null) { dbenv.dbcon.close(function () {
+                                                      console.log('Mongoose disconnected on app termination');
+                                                    } ); }
+                        // close other resources here
+                           setTimeout(() => { console.log('About to exit....bye');
+                                              process.exit(0);  //  exit cleanly
+                                            }, 100);
+                           process.kill(process.pid, 'SIGHUP');
+                           console.log("process.kill 'SIGHUP'...bye");
+}
 // Improve debugging
- process.on('unhandledRejection', (reason, p) => {
-     console.log('Unhandled Rejection at:', p, 'reason:', reason)
- })
+ process.on('unhandledRejection', (reason, p) => { console.log('Unhandled Rejection at:', p, 'reason:', reason) })
 // Execute commands in clean exit
- process.on('exit', function () { console.log('Exiting ...');
-                                  if (null != dbenv.dbcon) { dbenv.dbcon.close(); }
-                                  // close other resources here
-                                  setTimeout(function() { console.log('This will not run!'); }, 0);
-                                  console.log('About to exit....bye');
-                                });
-// happens when you press Ctrl+C
- process.on('SIGINT', function () { console.log( '\nGracefully shutting down from  SIGINT (Crtl-C)' );
-                                    process.exit();
-                                  });
-// usually called with kill
- process.on('SIGTERM', function () { console.log('Parent SIGTERM detected (kill)'); //  ps aux | grep node >> kill pid
-//                                   exit cleanly
-                                     process.exit(0);
-                                   });
+ process.on('exit', function () { console.log('Exiting ...'); });
+ process.on('SIGINT', exiting);  // happens when you press Ctrl+C
+ process.on('SIGTERM', exiting); // usually called with kill // ps aux | grep node >> kill pid
+ process.on('SIGHUP', exiting);  // SIGHUP,  SIGKILL,  SIGABORT >> 6+128 >> 134 exit code
+
 /*
 //var langs=["eng","spa","arb"];var sysmsgs={};langs.forEach((x)=>{sysmsgs[x]=kyxtree.lng.findOne({"lang":x,"id":"sysmsgs"}));
 var sysmsgs = {
@@ -708,6 +720,7 @@ serverk.listen(parseInt(`${nodeport}`), (err) => {
       console.log(`server is listening on port: ${nodeport}`)
 });
 
+
 // koa + socket.io first style
 //var siok = require('socket.io')(8200);  // note, io(<port>) will create a http server for you
 var siok = require('socket.io')(serverk);
@@ -722,7 +735,7 @@ siok  //.of('/uploadz');    //, {path: '/uploadz'};
     socket.on('hiclient', function (data) {
        console.log(`connected socket ${socket.id} event hiclient received: ${JSON.stringify(data)}`);
 
-       console.log(`with socket cookie: ${socket.request.headers.cookie}`); // previous socket.id
+       console.log(`with socket cookie: ${socket.request.headers.cookie}`); // socket.handshake.query.token;
        console.log(`with socket cookie handshake: ${socket.handshake.headers.cookie}`); // previous socket.id
        var date = new Date();
            date.setTime(date.getTime()+(1*24*60*60*1000)); // set 1 day value to expiry

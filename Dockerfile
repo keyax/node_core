@@ -4,12 +4,12 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
       keyax.os.ver="18.04 bionic LTS" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 8.11.1 LTS" \
+      keyax.app="Nodejs 10.1.0 LTS" \
       keyax.app.ver="18.05 LTS"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN groupadd --gid 11000 node \
-  && useradd --uid 11000 --gid node --shell /bin/bash --create-home node
+#RUN groupadd --gid 11000 node \
+#  && useradd --uid 11000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -65,7 +65,7 @@ ENV NODE_VERSION 10.1.0
 
 RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.xz" \
   && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+  && gpg2 --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
   && grep " node-v$NODE_VERSION-linux-x64.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
   && tar -xJf "node-v$NODE_VERSION-linux-x64.tar.xz" -C /usr/local --strip-components=1 \
   && rm "node-v$NODE_VERSION-linux-x64.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
@@ -95,9 +95,9 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node
-COPY package.json /home/node/
-RUN cd /home/node \
+RUN su kyxusr
+COPY package.json /home/kyxusr/
+RUN cd /home/kyxusr \
  && npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
@@ -206,7 +206,7 @@ RUN cd /home/node \
 
 && npm init --yes
 
-WORKDIR /home/node
+# WORKDIR /home/kyxusr
 
 ### RUN mkdir /home/node/js && mkdir /home/node/statics
 # empty directory not allowed in ADD throws error:  no such file or directory

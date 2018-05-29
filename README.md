@@ -17,7 +17,7 @@ How to use this image
 Create a Dockerfile in your Node.js app project
 
 FROM keyax/node_core
-# replace this with your application's default port
+replace this with your application's default port
 EXPOSE 8888
 You can then build and run the Docker image:
 

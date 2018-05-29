@@ -1,4 +1,4 @@
-/*
+ /*
 const mongoose = require('mongoose')
 const userSchema = {
   username: String,
@@ -18,7 +18,7 @@ var bcrypt   = require('bcrypt-nodejs');
 // define the schema for our user model
 // var Schema = mongoose.Schema;  //  TypeError: Schema is not a constructor at new MongooseStore
 //var Schema = mongoose.Schema(); // remove new
-//var userSchema = new mongoose.Schema({
+//var userSchema = new mongoose.Schema({    // NO
 
 var userSchema = Schema({
   local: {
