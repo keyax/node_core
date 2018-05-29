@@ -95,7 +95,7 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su kyxusr
+# RUN su kyxusr
 COPY package.json /home/kyxusr/
 RUN cd /home/kyxusr \
  && npm init --yes \
