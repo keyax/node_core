@@ -94,7 +94,7 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
 RUN  groupadd --gid 11000 nodejs \
   && useradd  --uid 11000 --gid nodejs --shell /bin/bash nodejs
-RUN mkdir -m 770 -p -v /home/nodejs; \
+RUN mkdir -m ug=rwx -p -v /home/nodejs; \
     chown -R nodejs:nodejs /home/nodejs;
 USER nodejs
 WORKDIR /home/nodejs
