@@ -95,12 +95,11 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node; \
-    mkdir -m770 -p -v /home/node; \
+RUN mkdir -m 770 -p -v /home/node; \
     chown -R 11000:11000 /home/node;
 WORKDIR /home/node
 COPY package.json /home/node/
-RUN npm init --yes \
+RUN su node; npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
@@ -228,6 +227,7 @@ RUN npm init --yes \
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
+#CMD gosu 11000:11000 bash -c "nodemon -L --watch /home/node js/index.js"
 CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
 #CMD [ "gosu", "11000:11000", "bash", "-c", "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
 # CMD [ "gosu 11000:11000 bash -c 'nodemon -L --watch /home/node js/index.js'"]
