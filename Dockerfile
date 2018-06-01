@@ -96,7 +96,7 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 # this forces "apt-get update" in dependent images, which is also good
 
 ## RUN su kyxusr
-RUN gosu 11000:11000 mkdir -m777 -p -v /home/node;
+RUN gosu 11000:11000 bash -c "mkdir -m770 -p -v /home/node";
 # chown -R 11000:11000 /home;
 WORKDIR /home/node
 COPY package.json /home/node/
@@ -228,4 +228,5 @@ RUN npm init --yes \
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
+#CMD [ "gosu", "11000:11000", "bash", "-c", "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
+CMD [ "gosu 11000:11000 bash -c 'nodemon -L --watch /home/node js/index.js'"]
