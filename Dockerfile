@@ -8,8 +8,8 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.app.ver="18.05 LTS"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-###RUN  groupadd --gid 11000 node \
-###  && useradd  --uid 11000 --gid node --shell /bin/bash --create-home node
+RUN  groupadd --gid 11000 node \
+  && useradd  --uid 11000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -95,8 +95,8 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-## RUN su kyxusr
-RUN mkdir -m770 -p -v /home/node; \
+RUN su node; \
+    mkdir -m770 -p -v /home/node; \
     chown -R 11000:11000 /home/node;
 WORKDIR /home/node
 COPY package.json /home/node/
