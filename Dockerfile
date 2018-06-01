@@ -8,8 +8,8 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.app.ver="18.05 LTS"
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN  groupadd --gid 11000 node \
-  && useradd  --uid 11000 --gid node --shell /bin/bash --create-home node
+###RUN  groupadd --gid 11000 node \
+###  && useradd  --uid 11000 --gid node --shell /bin/bash --create-home node
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -95,9 +95,9 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su node
-COPY package.json /home/node/
-RUN cd /home/node \
+RUN su kyxusr
+COPY package.json /home/kyxusr/
+RUN cd /home/kyxusr \
  && npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
@@ -206,7 +206,7 @@ RUN cd /home/node \
 
 && npm init --yes
 
-WORKDIR /home/node
+WORKDIR /home/kyxusr
 
 ### RUN mkdir /home/node/js && mkdir /home/node/statics
 # empty directory not allowed in ADD throws error:  no such file or directory
@@ -228,4 +228,4 @@ WORKDIR /home/node
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/kyxusr", "js/index.js"]
