@@ -96,8 +96,8 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 # this forces "apt-get update" in dependent images, which is also good
 
 ## RUN su kyxusr
-RUN gosu 11000:11000 bash -c "mkdir -m770 -p -v /home/node";
-# chown -R 11000:11000 /home;
+RUN mkdir -m770 -p -v /home/node;
+    chown -R 11000:11000 /home/node;
 WORKDIR /home/node
 COPY package.json /home/node/
 RUN npm init --yes \
