@@ -228,5 +228,6 @@ RUN npm init --yes \
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
 #CMD [ "gosu", "11000:11000", "bash", "-c", "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
-CMD [ "gosu 11000:11000 bash -c 'nodemon -L --watch /home/node js/index.js'"]
+# CMD [ "gosu 11000:11000 bash -c 'nodemon -L --watch /home/node js/index.js'"]
