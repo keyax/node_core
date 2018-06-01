@@ -7,10 +7,6 @@ LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.app="Nodejs 10.1.0 LTS" \
       keyax.app.ver="18.05 LTS"
 
-# RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN  groupadd --gid 11000 node \
-  && useradd  --uid 11000 --gid node --shell /bin/bash --create-home node
-
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN ["/bin/bash", "-c",  "set -ex; \
   gpg2 --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 94AE36675C464D64BAFA68DD7434390BDBE9B9C5; \
@@ -95,11 +91,16 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN mkdir -m 770 -p -v /home/node; \
-    chown -R 11000:11000 /home/node;
-WORKDIR /home/node
-COPY package.json /home/node/
-RUN su node; npm init --yes \
+# RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
+RUN  groupadd --gid 11000 nodejs \
+  && useradd  --uid 11000 --gid nodejs --shell /bin/bash nodejs
+RUN mkdir -m 770 -p -v /home/nodejs; \
+    chown -R nodejs:nodejs /home/nodejs;
+USER nodejs
+WORKDIR /home/nodejs
+
+COPY package.json /home/nodejs/
+RUN su nodejs; npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
