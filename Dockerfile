@@ -95,10 +95,12 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 ## && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # this forces "apt-get update" in dependent images, which is also good
 
-RUN su kyxusr
-COPY package.json /home/kyxusr/
-RUN cd /home/kyxusr \
- && npm init --yes \
+## RUN su kyxusr
+RUN gosu 11000:11000 mkdir -m777 -p -v /home/node;
+# chown -R 11000:11000 /home;
+WORKDIR /home/node
+COPY package.json /home/node/
+RUN npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
 # && npm install -g strongloop \
@@ -202,11 +204,9 @@ RUN cd /home/kyxusr \
 && npm install --save d3 \
 && npm install --save leaflet \
 && npm install --save mysql \
-   && npm install --save mysql2 \
+   && npm install --save mysql2
+#&& npm init --yes
 
-&& npm init --yes
-
-WORKDIR /home/kyxusr
 
 ### RUN mkdir /home/node/js && mkdir /home/node/statics
 # empty directory not allowed in ADD throws error:  no such file or directory
@@ -228,4 +228,4 @@ WORKDIR /home/kyxusr
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
-CMD [ "nodemon", "-L", "--watch", "/home/kyxusr", "js/index.js"]
+CMD [ "nodemon", "-L", "--watch", "/home/node", "js/index.js"]
