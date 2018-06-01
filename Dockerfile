@@ -96,7 +96,6 @@ RUN  groupadd --gid 11000 nodejs \
   && useradd  --uid 11000 --gid nodejs --shell /bin/bash nodejs
 RUN mkdir -m ug=rwx -p -v /home/nodejs; \
     chown -R nodejs:nodejs /home/nodejs;
-USER nodejs
 WORKDIR /home/nodejs
 
 COPY package.json /home/nodejs/
@@ -225,6 +224,7 @@ RUN su nodejs; npm init --yes \
 #VOLUME /home/node/js /home/node/statics     Unexpected error
 #VOLUME ["/home/node/js/","/home/node/statics/"]   Unexpected error
 
+USER nodejs
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
