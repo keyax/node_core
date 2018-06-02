@@ -92,13 +92,13 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 # this forces "apt-get update" in dependent images, which is also good
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN  groupadd --gid 11000 nodejs \
-  && useradd  --uid 11000 --gid nodejs --shell /bin/bash nodejs
-RUN mkdir -m ug=rwx -p -v /home/nodejs; \
-    chown -R nodejs:nodejs /home/nodejs;
-WORKDIR /home/nodejs
+RUN  groupadd --gid 11000 node \
+  && useradd  --uid 11000 --gid node --shell /bin/bash node
+RUN mkdir -m ug=rwx,o= -p -v /home/node; \
+    chown -R node:node /home/node;
+WORKDIR /home/node
 
-COPY package.json /home/nodejs/
+COPY package.json /home/node/
 RUN su nodejs; npm init --yes \
 && npm install -g nodemon \
 && npm install -g --no-optional pm2 \
@@ -224,7 +224,8 @@ RUN su nodejs; npm init --yes \
 #VOLUME /home/node/js /home/node/statics     Unexpected error
 #VOLUME ["/home/node/js/","/home/node/statics/"]   Unexpected error
 
-USER nodejs
+USER node
+
 EXPOSE 8000 8100 8200 8443
 
 # CMD [ "pm2-docker", "js/index.js"]
