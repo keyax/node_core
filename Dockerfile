@@ -106,7 +106,7 @@ RUN set -ex \
 #  && ls -shal
 #  && su mongo
 
-USER node
+# USER node
 WORKDIR /home/node
 
 COPY package.json /home/node/
@@ -216,7 +216,6 @@ RUN su nodejs; npm init --yes \
 && npm install --save mysql \
    && npm install --save mysql2
 #&& npm init --yes
-
 
 ### RUN mkdir /home/node/js && mkdir /home/node/statics
 # empty directory not allowed in ADD throws error:  no such file or directory
