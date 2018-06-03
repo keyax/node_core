@@ -92,10 +92,21 @@ RUN  curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux
 # this forces "apt-get update" in dependent images, which is also good
 
 # RUN groupadd -r nodejs && useradd -r -g nodejs nodejs --create-home nodejs
-RUN  groupadd --gid 11000 node \
-  && useradd  --uid 11000 --gid node --shell /bin/bash node
-RUN mkdir -m ug=rwx,o= -p -v /home/node; \
-    chown -R node:node /home/node;
+RUN set -ex \
+ && echo root:mypass | chpasswd \
+ && groupadd --gid 11000 kyxgrp \
+ && useradd --uid 11000 --gid kyxgrp --shell /bin/bash --create-home node
+## && useradd --uid 11000 --gid kyxgrp --shell /bin/bash -M yones
+#  && usermod -a -G kyxgrp mongo \
+#  && usermod -a -G kyxgrp yones \
+#  && getent group mongo \
+#  && id -Gn mongo \
+#  && mkdir -m u=rwx,g=rw,o=r -p -v /home/node \
+#  && chown -R node:kyxgrp /home/node \
+#  && ls -shal
+#  && su mongo
+
+USER node
 WORKDIR /home/node
 
 COPY package.json /home/node/
