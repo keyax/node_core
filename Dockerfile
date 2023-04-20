@@ -1,11 +1,11 @@
-FROM keyax/ubuntu_core:18.05
+FROM keyax/ubuntu_core:22.04
 
 LABEL maintainer="yones.lebady AT gmail.com" \
       keyax.os="ubuntu core" \
-      keyax.os.ver="18.04 bionic LTS" \
+      keyax.os.ver="22.04 jammy LTS" \
       keyax.vendor="Keyax" \
-      keyax.app="Nodejs 10.1.0 LTS" \
-      keyax.app.ver="18.05 LTS"
+      keyax.app="Nodejs 18.16.0 LTS" \
+      keyax.app.ver="22.04 LTS"
 
 # gpg keys listed at https://github.com/nodejs/node#release-team
 RUN ["/bin/bash", "-c",  "set -ex; \
@@ -55,7 +55,7 @@ gpg2 --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 77984A986EBC2AA786BC0
 #    apt-key adv --recv-key --keyserver keyserver.pgp.com $key
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 10.1.0
+ENV NODE_VERSION 18.16.0
 # LTS
 # ENV NODE_VERSION 8.11.1
 
@@ -181,7 +181,6 @@ RUN su nodejs; npm init --yes \
  && npm install --save mongodb \
  && npm install --save koa-session-store \
  && npm install --save koa-session-mongo \
-
 && npm install --save koa-if \
 && npm install --save koa-compose \
 && npm install --save koa-convert \
