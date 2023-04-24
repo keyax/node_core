@@ -1,5 +1,5 @@
-# Keyax Framework: Nginx + Nodejs + MongoDB on Docker Swarm cluster.
-# Nodejs version 10.1.0 LTS on Ubuntu Core 18.04 LTS Bionic for Docker image.
+# Keyax Framework: Nginx + Nodejs + MongoDB on Kubernetes & Docker Swarm cluster.
+# Nodejs version 18.16.0 LTS on Ubuntu Core 22.04 LTS Jammy for Docker image.
 
 
 What is Node.js  ?
